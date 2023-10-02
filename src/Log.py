@@ -1,3 +1,11 @@
+"""
+A simple logging facility intended to be used to log messages to the
+console or a log file. It may be extended in the future, but for now
+is intended to define a stable interface with which messages can be
+logged such that, if the log format needs to change in the future, it
+can easily be changed in only one spot and all log messages will be
+updated accordingly.
+"""
 import inspect
 import logging
 
@@ -8,16 +16,41 @@ ERROR = 40
 CRITICAL = 50
 
 class Log():
-	def __init__(self, level):
+	"""
+	The `Log` class provides all of the logging functionality. Note
+	that there is a global log instance accessible via the global
+	getLogger() function, so this class will not normally be
+	instantiated by outside code.
+	"""
+	def __init__(self, level: int):
+		"""
+		Initialize the logging class with an initial log level.
+		Messages with a lower log level will not be displayed. The
+		log level can be changed with setLevel() after the class is
+		constructed.
+		"""
 		self.level = level
 
-	def setLevel(self, level):
+	def setLevel(self, level: int) -> None:
+		"""
+		Set the log level, above which to log messages as they show
+		up. Messages with a lower log level will not be displayed.
+		"""
 		self.level = level
 
-	def getLevel(self):
+	def getLevel(self) -> int:
+		"""
+		Get the current log level.
+		"""
 		return self.level
 
-	def msg(self, level, text):
+	def msg(self, level: int, text: str) -> bool:
+		"""
+		Log a message to the output. The message is prefaced with a
+		string representation of the log level, the function and module
+		from which the log call was made, and the message itself, in
+		that order.
+		"""
 		if level < self.level:
 			return False
 
@@ -52,8 +85,16 @@ class Log():
 
 log = Log(INFO)
 
-def getLogger():
+def getLogger() -> Log:
+	"""
+	Get the default logger. All code should use this logger; that is,
+	there should only ever be one instance of the Log class.
+	"""
 	return log
 
-def msg(level, text):
-	log.msg(level, text)
+def msg(level: int, text: str) -> bool:
+	"""
+	A shorthand for Log.getLogger().msg() that allows the syntax
+	Log.msg() to be used.
+	"""
+	return log.msg(level, text)
