@@ -13,8 +13,8 @@ font_size = 20
 # COMPONENTS
 window = pygame.display.set_mode((width, height)) # create window and set size
 pygame.display.set_caption("ARG") # set window title
-background_image = pygame.image.load(os.path.join('Assets', "background.png")) # set background
-background = pygame.transform.scale(background_image, (width, height)) # scale correctly
+background_image = pygame.image.load(os.path.join('..', 'assets', "background.png")) # set background
+background_image = pygame.transform.scale(background_image, (width, height)) # scale correctly
 font = pygame.font.SysFont("comicsans", font_size)
 pause_info = font.render("Press SPACEBAR to pause.", True, "black") # antialias makes text look better
 
