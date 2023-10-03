@@ -1,7 +1,4 @@
 import random
-import pygame
-import pygame_gui
-
 
 def generate_arithmetic() -> list:
     """
