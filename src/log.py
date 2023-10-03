@@ -1,6 +1,6 @@
 """
-A simple logging facility intended to be used to log messages to the
-console or a log file. It may be extended in the future, but for now
+log module: A simple logging facility intended to be used to log messages to
+the console or a log file. It may be extended in the future, but for now
 is intended to define a stable interface with which messages can be
 logged such that, if the log format needs to change in the future, it
 can easily be changed in only one spot and all log messages will be

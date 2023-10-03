@@ -1,3 +1,7 @@
+"""
+arithmetic module: arithmetic prompt and answer handling
+"""
+
 import random
 
 def generate_arithmetic() -> list:
