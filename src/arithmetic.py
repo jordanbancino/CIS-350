@@ -4,6 +4,7 @@ arithmetic module: arithmetic prompt and answer handling
 
 import random
 
+
 def generate_arithmetic() -> list:
     """
     The function generate_arithmetic is a function that is designed to make a random arithmetic problem that ensures
