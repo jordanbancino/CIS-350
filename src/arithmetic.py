@@ -27,7 +27,7 @@ def generate_arithmetic() -> list:
     return [f"{random_num_arth1} {random_sign} {random_num_arth2}", random_num_arth1, random_sign, random_num_arth2]
 
 
-def solve_arithmetic(problem: list) -> bool:
+def solve_arithmetic(problem: list, user_input: int) -> bool:
     """
     The function solve_arithmetic is a function that allows the player to input an answer to the arithmetic problem
     and checks if it is right or wrong.
@@ -48,9 +48,5 @@ def solve_arithmetic(problem: list) -> bool:
     elif problem[2] == "-":
         answer = int(problem[1] / problem[3])
     print(answer)
-    user_input = input("Please enter an integer that solves the problem: ")
-    while not user_input.isdigit():
-        user_input = input("Please enter an integer that solves the problem: ")
-    if int(user_input) != answer:
-        return False
-    return True
+
+    return user_input == answer
