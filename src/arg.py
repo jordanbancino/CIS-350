@@ -8,19 +8,6 @@ import arithmetic
 
 fps = 120  # frames per second
 
-def not_exit():
-    """
-    Returns True if user clicked "QUIT" or window's "X" buttons.
-    """
-    if quit_button.draw(window):
-        pygame.quit()  # close window, end program
-        return False
-    for event in pygame.event.get():  # iterate over all occurred events since last while-loop iteration
-        if event.type == pygame.QUIT:  # if user pressed window's "X"
-            pygame.quit()  # close window, end program
-            return False
-    return True
-
 def main() -> None:
     """
 	The game entry function. All initial setup and final teardown
@@ -29,15 +16,21 @@ def main() -> None:
 	exits.
 	"""
     clock = pygame.time.Clock()  # keep track of time
-    set_main_menu(window,)
-    while not_exit():
-        if start_button.draw(window):
-            break
+    set_main_menu(window)
     # start_game()
-    while not_exit():
-        clock.tick(fps)  # run while-loop at a max rate of fps
-        update_ui(window)
-        stickman.x += 1  # character moves 1 pixel per frame
+    running = True
+    while running:
+        clock.tick(fps) # run while-loop at a max rate of fps
+        if start_button.draw(window):
+            update_ui(window)
+        if quit_button.draw(window):
+            running = False
+        for event in pygame.event.get():  # iterate over all occurred events since last while-loop iteration
+            if event.type == pygame.QUIT:  # if user pressed window's "X"
+                running = False
+                pygame.quit()
+
+    
 
 
 if __name__ == "__main__":
