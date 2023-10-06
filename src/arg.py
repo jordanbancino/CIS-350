@@ -54,6 +54,11 @@ class Button():
 		window.blit(self.image, (self.rect.x, self.rect.y))
 
 		return action
+	
+#create button instances
+start_button = Button(350, 75, start_button_img)
+score_button = Button(350, 200, score_button_img)
+quit_button = Button(350, 325, quit_button_img)
 
 def set_main_menu():
 	window.fill((47, 79, 79)) # make screen gray
@@ -73,11 +78,6 @@ def set_ui(char) -> None:
 	window.blit(pause_info, (width - pause_info.get_width() - 5, 5)) # blit pause_info post background to be front
 	window.blit(character, (char.x, char.y)) # displays the character at a position
 	pygame.display.update() # let set graphics (via blit, draw, etc.) take effect
-
-#create button instances
-start_button = Button(350, 75, start_button_img)
-score_button = Button(350, 200, score_button_img)
-quit_button = Button(350, 325, quit_button_img)
 
 def main() -> None:
 	"""
