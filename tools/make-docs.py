@@ -1,5 +1,6 @@
 import os
 import glob
+import pathlib
 import sys
 
 import pydoc
@@ -16,4 +17,7 @@ if not os.path.isdir(out):
     os.mkdir(out)
 
 for html in glob.glob('*.html'):
-    os.rename(html, f"{out}/{html}")
+    out_f = f"{out}/{html}"
+    if pathlib.Path(out_f).exists():
+        os.unlink(out_f)
+    os.rename(html, out_f)
