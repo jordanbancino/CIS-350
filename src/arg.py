@@ -33,7 +33,7 @@ def main() -> None:
     window = pygame.display.set_mode((width, height))  # create window and set size
     pygame.display.set_caption("ARG")  # set window title
 
-    state = GameState.MAIN_MENU
+    state = GameState.MAIN_MENU  # Initial state
     handlers = {
         GameState.GAME_QUIT: QuitHandler(),
         GameState.MAIN_MENU: MainMenuHandler(),

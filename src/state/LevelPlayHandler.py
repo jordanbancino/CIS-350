@@ -35,6 +35,5 @@ class LevelPlayHandler(game_state.StateHandler):
         window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))  # blit pause_info post background to be front
         window.blit(score_info, (350, 5))
         window.blit(self.image_character, (self.stickman.x, self.stickman.y))  # displays the character at a position
-        pygame.display.update()  # let set graphics (via blit, draw, etc.) take effect
 
         return game_state.GameState.LEVEL_PLAY

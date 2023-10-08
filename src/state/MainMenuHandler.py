@@ -73,7 +73,6 @@ class MainMenuHandler(game_state.StateHandler):
 
         # Dispatch all events to all buttons
         for event in context.get_events():
-
             for button in buttons:
                 if button.dispatch_event(event):
                     clicked_buttons.append(button)
@@ -85,7 +84,7 @@ class MainMenuHandler(game_state.StateHandler):
             elif button == start_button:
                 return game_state.GameState.LEVEL_PLAY
             elif button == score_button:
-                # Handle score button click
+                # TODO: Handle score button click
                 pass
 
         return game_state.GameState.MAIN_MENU
