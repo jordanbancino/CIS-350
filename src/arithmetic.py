@@ -37,7 +37,6 @@ def solve_arithmetic(problem: list, user_input: int) -> bool:
     The function returns a boolean that represents if the answer to the problem is right or wrong.  True is correct
     and False is incorrect.
     """
-    print(problem[0])
     answer = 0
     if problem[2] == "+":
         answer = int(problem[1] + problem[3])
@@ -45,8 +44,6 @@ def solve_arithmetic(problem: list, user_input: int) -> bool:
         answer = int(problem[1] - problem[3])
     elif problem[2] == "*":
         answer = int(problem[1] * problem[3])
-    elif problem[2] == "-":
+    elif problem[2] == "/":
         answer = int(problem[1] / problem[3])
-    print(answer)
-
     return user_input == answer
