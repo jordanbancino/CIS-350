@@ -53,7 +53,7 @@ def main() -> None:
     log.msg(log.DEBUG, f"Entering game loop with handlers {handlers}")
     while state != GameState.GAME_QUIT:
         events = pygame.event.get()
-       # ui_refresh_rate = clock.tick(60)/10000  # makes game have a strobe effect but makes text box pop-up
+        ui_refresh_rate = clock.tick(60)/750  # makes cursor in textbox "|" appear and disappear
         for event in events:
             # Check for quit state
             if event.type == pygame.QUIT:
@@ -69,13 +69,10 @@ def main() -> None:
 
             gui_manager.process_events(event)
 
-        gui_manager.update(fps)  # updates cursor on text box
+        gui_manager.draw_ui(window)  # has manager look at the full window
 
         # Clear last frame
         window.fill('black')
-
-        gui_manager.draw_ui(window)  # has manager look at the full window
-        pygame.display.update()  # updates screen
 
         # Invoke state handler to update state
         if state not in handlers:
@@ -87,8 +84,10 @@ def main() -> None:
 
         state = handler.process(context)
 
-        # Push to display and tick the clock
-        pygame.display.flip()
+        gui_manager.update(ui_refresh_rate)  # updates cursor on text box
+        gui_manager.draw_ui(window)  # has manager look at the full window
+        pygame.display.update()  # updates screen
+        # Tick the clock
         clock.tick(fps)
 
     pygame.quit()
