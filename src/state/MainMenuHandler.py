@@ -38,24 +38,24 @@ class Button:
 
 
 class MainMenuHandler(game_state.StateHandler):
-    def __init__(self):
+    def __init__(self, context: game_state.StateHandlerContext):
+        super().__init__(context)
+
         self.image_border = load_asset('menu_border.png')
         self.image_button_start = load_asset('start_button.png')
         self.image_button_score = load_asset('score_button.png')
         self.image_button_quit = load_asset('quit_button.png')
 
-        self.init = False
+        window = context.get_window()
+        width = window.get_width()
+        height = window.get_height()
+
+        self.image_border = pygame.transform.scale(self.image_border, (width, height))
 
     def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
+        super().process(context)
+
         window = context.get_window()
-
-        if not self.init:
-            width = window.get_width()
-            height = window.get_height()
-
-            self.image_border = pygame.transform.scale(self.image_border, (width, height))
-
-            self.init = True
 
         # create button instances
         start_button = Button(350, 75, self.image_button_start)

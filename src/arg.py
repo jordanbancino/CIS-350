@@ -36,11 +36,14 @@ def main() -> None:
     window = pygame.display.set_mode((width, height))  # create window and set size
     pygame.display.set_caption("ARG")  # set window title
 
+    prev_state = None
     state = GameState.MAIN_MENU  # Initial state
+
+    init_context = StateHandlerContext(state, None, window, gui_manager)
     handlers = {
-        GameState.GAME_QUIT: QuitHandler(),
-        GameState.MAIN_MENU: MainMenuHandler(),
-        GameState.LEVEL_PLAY: LevelPlayHandler()
+        GameState.GAME_QUIT: QuitHandler(init_context),
+        GameState.MAIN_MENU: MainMenuHandler(init_context),
+        GameState.LEVEL_PLAY: LevelPlayHandler(init_context)
     }
 
     # equation = arithmetic.generate_arithmetic()  # initial equation
@@ -66,18 +69,25 @@ def main() -> None:
         handler = handlers[state]
         context = StateHandlerContext(state, events, window, gui_manager)
 
+        if state != prev_state:
+            handler.on_enter(context)
+
+        prev_state = state
         state = handler.process(context)
+
+        if state != prev_state:
+            handler.on_exit(context)
 
         for event in events:
             # Check for quit state
             if event.type == pygame.QUIT:
                 state = GameState.GAME_QUIT
+
+            # Dispatch events to Pygame GUI
             gui_manager.process_events(event)
 
-        gui_manager.draw_ui(window)  # has manager look at the full window
-
-        gui_manager.update(time_delta)  # updates cursor on text box
-        gui_manager.draw_ui(window)  # has manager look at the full window
+        gui_manager.update(time_delta)
+        gui_manager.draw_ui(window)
 
         pygame.display.update()  # updates screen
 
