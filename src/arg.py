@@ -2,18 +2,21 @@
 arg module: where the game lives
 """
 import pygame
-from game_state import GameState, StateHandler
+import pygame_gui
+
+import arithmetic
+from game_state import GameState, StateHandler, StateHandlerContext
+import log
 from src.state.LevelPlayHandler import LevelPlayHandler
 from src.state.QuitHandler import QuitHandler
 from state.MainMenuHandler import MainMenuHandler
-import log
 
 
 def main() -> None:
     """
     The game entry function. All initial setup and final teardown
     happens here; this function is always the first pushed on the
-    stack and the last popped off, at which point the program
+    stack and that last popped off, at which point the program
     exits.
     """
     log.getLogger().set_level(log.DEBUG)
@@ -26,41 +29,67 @@ def main() -> None:
     clock = pygame.time.Clock()  # keep track of time
 
     width, height = 900, 500
-    fps = 60  # frames per second
+    fps = 120  # frames per second
+
+    gui_manager = pygame_gui.UIManager((width, height)) # keeps track / creates of all gui components
+    user_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((50, 400), (100, 50)), manager=
+                                                     gui_manager, object_id="answer_input_box")
+    user_input.placeholder_text = ""
 
     window = pygame.display.set_mode((width, height))  # create window and set size
     pygame.display.set_caption("ARG")  # set window title
 
-    state = prev_state = GameState.MAIN_MENU  # Initialize state, prev_state for knowing when to set level for example
-    events = pygame.event.get()
+    state = GameState.MAIN_MENU  # Initial state
     handlers = {
-        GameState.GAME_QUIT: QuitHandler(state, events, window),
-        GameState.MAIN_MENU: MainMenuHandler(state, events, window),
-        GameState.LEVEL_PLAY: LevelPlayHandler(state, events, window)
+        GameState.GAME_QUIT: QuitHandler(),
+        GameState.MAIN_MENU: MainMenuHandler(),
+        GameState.LEVEL_PLAY: LevelPlayHandler()
     }
+
+    equation = arithmetic.generate_arithmetic()  # initial equation
+    print(equation[0])  # test first answer
+    speed = 1  # speed of character
 
     log.msg(log.DEBUG, f"Entering game loop with handlers {handlers}")
     while state != GameState.GAME_QUIT:
-        window.fill('black')  # Clear last frame
         events = pygame.event.get()
-        for event in events:  # Check for quit state
+        ui_refresh_rate = clock.tick(60)/750  # makes cursor in textbox "|" appear and disappear
+        for event in events:
+            # Check for quit state
             if event.type == pygame.QUIT:
                 state = GameState.GAME_QUIT
-                break
-        match state:
-            case GameState.GAME_QUIT:
-                break
-            case GameState.MAIN_MENU:
-                pass
-            case GameState.LEVEL_PLAY:
-                handlers[state].game_step(pygame.key.get_pressed())  # transfer pressed keys during last iteration
-            case _:
-                log.msg(log.ERROR, f"Game entered invalid state: {state}. This is a programming error.")
-                state = GameState.GAME_QUIT
+            # check if player presses enter in text box
+            if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "answer_input_box":
+                answer = int(event.text)
+                if arithmetic.solve_arithmetic(equation[1:], int(answer)):  # checks if answer is correct
+                    speed += 1  # increase speed by 1 to character
+                else:
+                    speed = 0  # set speed of character to 0
+                user_input.set_text("")  # reset textbox
+
+            gui_manager.process_events(event)
+
+        gui_manager.draw_ui(window)  # has manager look at the full window
+
+        # Clear last frame
+        window.fill('black')
+
+        # Invoke state handler to update state
+        if state not in handlers:
+            log.msg(log.ERROR, f"Game entered invalid state: {state}. This is a programming error.")
+            state = GameState.GAME_QUIT
+
         handler = handlers[state]
-        state = handler.assign_state()
-        pygame.display.update()  # new frame, updates screen
-        clock.tick(fps)  # next iteration after fps ms
+        context = StateHandlerContext(state, events, window)
+
+        state = handler.process(context)
+
+        gui_manager.update(ui_refresh_rate)  # updates cursor on text box
+        gui_manager.draw_ui(window)  # has manager look at the full window
+        pygame.display.update()  # updates screen
+        # Tick the clock
+        clock.tick(fps)
+
     pygame.quit()
 
 

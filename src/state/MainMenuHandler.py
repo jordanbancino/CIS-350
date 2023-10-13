@@ -38,17 +38,24 @@ class Button:
 
 
 class MainMenuHandler(game_state.StateHandler):
-    def __init__(self, state, events, window):
-        super().__init__(state, events, window)
+    def __init__(self):
         self.image_border = load_asset('menu_border.png')
         self.image_button_start = load_asset('start_button.png')
         self.image_button_score = load_asset('score_button.png')
         self.image_button_quit = load_asset('quit_button.png')
-        width = self.window.get_width()
-        height = self.window.get_height()
-        self.image_border = pygame.transform.scale(self.image_border, (width, height))
 
-    def assign_state(self) -> game_state.GameState:
+        self.init = False
+
+    def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
+        window = context.get_window()
+
+        if not self.init:
+            width = window.get_width()
+            height = window.get_height()
+
+            self.image_border = pygame.transform.scale(self.image_border, (width, height))
+
+            self.init = True
 
         # create button instances
         start_button = Button(350, 75, self.image_button_start)
@@ -56,16 +63,16 @@ class MainMenuHandler(game_state.StateHandler):
         quit_button = Button(350, 325, self.image_button_quit)
         buttons = [start_button, score_button, quit_button]
 
-        self.window.fill((47, 79, 79))  # Gray
-        self.window.blit(self.image_border, (0, 0))
+        window.fill((47, 79, 79))  # Gray
+        window.blit(self.image_border, (0, 0))
 
         for button in buttons:
-            button.draw(self.window)
+            button.draw(window)
 
         clicked_buttons = []
 
         # Dispatch all events to all buttons
-        for event in pygame.event.get():
+        for event in context.get_events():
             for button in buttons:
                 if button.dispatch_event(event):
                     clicked_buttons.append(button)

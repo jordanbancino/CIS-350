@@ -5,11 +5,9 @@ class GameState:
     GAME_QUIT = 0
     MAIN_MENU = 1
     LEVEL_PLAY = 2
-    PAUSE = 3
-    LEVEL_END = 4
 
 
-class StateHandler:
+class StateHandlerContext:
     def __init__(self, state: GameState, events: list[pygame.event.Event], window: pygame.Surface):
         self.state = state
         self.events = events
@@ -24,5 +22,7 @@ class StateHandler:
     def get_window(self):
         return self.window
 
-    def assign_state(self) -> GameState:
+
+class StateHandler:
+    def process(self, context: StateHandlerContext) -> GameState:
         pass
