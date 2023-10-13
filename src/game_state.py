@@ -7,6 +7,7 @@ class GameState:
     GAME_QUIT = 0
     MAIN_MENU = 1
     LEVEL_PLAY = 2
+    LEVEL_PAUSE = 3
 
 
 class StateHandlerContext:

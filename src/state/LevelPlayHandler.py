@@ -47,18 +47,24 @@ class LevelPlayHandler(game_state.StateHandler):
 
         window.blit(self.image_background, (0, 0))
         # set pause_info text on top right with 5x5 px padding
-        window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))  # blit pause_info post background to be front
+        window.blit(pause_info,
+                    (window.get_width() - pause_info.get_width() - 5, 5))  # blit pause_info post background to be front
         window.blit(score_info, (350, 5))
         window.blit(self.image_character, (self.stickman.x, self.stickman.y))  # displays the character at a position
+
+        next_state = game_state.GameState.LEVEL_PLAY
 
         # check if player presses enter in text box
         for event in context.get_events():
             if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "answer_input_box":
-                answer = int(event.text) #  TODO: throws an error when text is not an integer
+                answer = int(event.text)  # TODO: throws an error when text is not an integer
                 if arithmetic.solve_arithmetic(self.equation[1:], answer):  # checks if answer is correct
                     self.speed += 1  # increase speed by 1 to character
                 else:
                     self.speed = 0  # set speed of character to 0
                 self.user_input.set_text("")  # reset textbox
+            elif event.type == pygame.KEYUP and event.__dict__['key'] == 32: # Space
+                # If user pressed the space key, go to the pause state.
+                next_state = game_state.GameState.LEVEL_PAUSE
 
-        return game_state.GameState.LEVEL_PLAY
+        return next_state
