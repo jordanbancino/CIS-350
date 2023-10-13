@@ -31,10 +31,7 @@ def main() -> None:
     width, height = 900, 500
     fps = 120  # frames per second
 
-    gui_manager = pygame_gui.UIManager((width, height)) # keeps track / creates of all gui components
-    user_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((50, 400), (100, 50)), manager=
-                                                     gui_manager, object_id="answer_input_box")
-    user_input.placeholder_text = ""
+    gui_manager = pygame_gui.UIManager((width, height))  # keeps track / creates of all gui components
 
     window = pygame.display.set_mode((width, height))  # create window and set size
     pygame.display.set_caption("Arithman")  # set window title
@@ -46,30 +43,17 @@ def main() -> None:
         GameState.LEVEL_PLAY: LevelPlayHandler()
     }
 
-    equation = arithmetic.generate_arithmetic()  # initial equation
-    print(equation[0])  # test first answer
-    speed = 1  # speed of character
+    # equation = arithmetic.generate_arithmetic()  # initial equation
+    # print(equation[0])  # test first answer
+    # speed = 1  # speed of character
 
     log.msg(log.DEBUG, f"Entering game loop with handlers {handlers}")
     while state != GameState.GAME_QUIT:
+        # Tick the clock
+        time_delta = clock.tick(fps) / 1000
+
+        # Empty the pygame event queue
         events = pygame.event.get()
-        ui_refresh_rate = clock.tick(60)/750  # makes cursor in textbox "|" appear and disappear
-        for event in events:
-            # Check for quit state
-            if event.type == pygame.QUIT:
-                state = GameState.GAME_QUIT
-            # check if player presses enter in text box
-            if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "answer_input_box":
-                answer = int(event.text)
-                if arithmetic.solve_arithmetic(equation[1:], int(answer)):  # checks if answer is correct
-                    speed += 1  # increase speed by 1 to character
-                else:
-                    speed = 0  # set speed of character to 0
-                user_input.set_text("")  # reset textbox
-
-            gui_manager.process_events(event)
-
-        gui_manager.draw_ui(window)  # has manager look at the full window
 
         # Clear last frame
         window.fill('black')
@@ -80,15 +64,22 @@ def main() -> None:
             state = GameState.GAME_QUIT
 
         handler = handlers[state]
-        context = StateHandlerContext(state, events, window)
+        context = StateHandlerContext(state, events, window, gui_manager)
 
         state = handler.process(context)
 
-        gui_manager.update(ui_refresh_rate)  # updates cursor on text box
+        for event in events:
+            # Check for quit state
+            if event.type == pygame.QUIT:
+                state = GameState.GAME_QUIT
+            gui_manager.process_events(event)
+
         gui_manager.draw_ui(window)  # has manager look at the full window
+
+        gui_manager.update(time_delta)  # updates cursor on text box
+        gui_manager.draw_ui(window)  # has manager look at the full window
+
         pygame.display.update()  # updates screen
-        # Tick the clock
-        clock.tick(fps)
 
     pygame.quit()
 

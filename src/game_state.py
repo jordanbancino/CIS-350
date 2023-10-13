@@ -1,4 +1,5 @@
 import pygame
+import pygame_gui
 
 
 class GameState:
@@ -8,10 +9,11 @@ class GameState:
 
 
 class StateHandlerContext:
-    def __init__(self, state: GameState, events: list[pygame.event.Event], window: pygame.Surface):
+    def __init__(self, state: GameState, events: list[pygame.event.Event], window: pygame.Surface, gui: pygame_gui.UIManager):
         self.state = state
         self.events = events
         self.window = window
+        self.gui = gui
 
     def get_state(self):
         return self.state
@@ -22,6 +24,8 @@ class StateHandlerContext:
     def get_window(self):
         return self.window
 
+    def get_gui(self):
+        return self.gui
 
 class StateHandler:
     def process(self, context: StateHandlerContext) -> GameState:
