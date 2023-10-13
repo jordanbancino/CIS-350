@@ -37,7 +37,7 @@ def main() -> None:
     user_input.placeholder_text = ""
 
     window = pygame.display.set_mode((width, height))  # create window and set size
-    pygame.display.set_caption("ARG")  # set window title
+    pygame.display.set_caption("Arithman")  # set window title
 
     state = GameState.MAIN_MENU  # Initial state
     handlers = {
