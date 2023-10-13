@@ -14,10 +14,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self.image_character = load_asset('stickman.png')
         self.stickman = pygame.Rect(300, 315, 100, 100)
         self.font = pygame.font.SysFont("comicsans", self.font_size)
-        self.gui_manager = pygame_gui.UIManager((900, 500)) # keeps track / creates of all gui components
-        self.user_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((50, 400), (100, 50)), manager=
-                                                     self.gui_manager, object_id="answer_input_box")
-        self.user_input.placeholder_text = ""
+
         self.speed = 0
         self.equation = arithmetic.generate_arithmetic()
 
@@ -33,6 +30,10 @@ class LevelPlayHandler(game_state.StateHandler):
             self.image_background = pygame.transform.scale(self.image_background, (width, height))
             self.image_character = pygame.transform.scale(self.image_character, (100, 100))
 
+            self.user_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((50, 400), (100, 50)),
+                                                                  manager=
+                                                                  context.get_gui(), object_id="answer_input_box")
+            self.user_input.placeholder_text = ""
 
             self.init = True
 
