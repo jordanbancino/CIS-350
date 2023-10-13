@@ -34,7 +34,7 @@ def main() -> None:
     gui_manager = pygame_gui.UIManager((width, height))  # keeps track / creates of all gui components
 
     window = pygame.display.set_mode((width, height))  # create window and set size
-    pygame.display.set_caption("ARG")  # set window title
+    pygame.display.set_caption("Arithman")  # set window title
 
     prev_state = None
     state = GameState.MAIN_MENU  # Initial state
