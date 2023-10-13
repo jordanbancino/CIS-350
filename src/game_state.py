@@ -11,12 +11,16 @@ class GameState:
 
 
 class StateHandlerContext:
-    def __init__(self, state: GameState, events: list[pygame.event.Event] | None, window: pygame.Surface,
-                 gui: pygame_gui.UIManager):
+    def __init__(self,
+                 state: GameState, events: list[pygame.event.Event] | None,
+                 window: pygame.Surface,
+                 gui: pygame_gui.UIManager,
+                 delta: int):
         self.state = state
         self.events = events
         self.window = window
         self.gui = gui
+        self.delta = delta
 
     def get_state(self):
         return self.state
@@ -29,6 +33,9 @@ class StateHandlerContext:
 
     def get_gui(self):
         return self.gui
+
+    def get_delta(self):
+        return self.delta
 
 
 class StateHandler:

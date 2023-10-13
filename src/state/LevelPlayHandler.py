@@ -31,26 +31,40 @@ class LevelPlayHandler(game_state.StateHandler):
 
     def on_enter(self, context: StateHandlerContext) -> None:
         super().on_enter(context)
+        window = context.get_window()
 
-        self.user_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((50, 400), (100, 50)),
-                                                              manager=
-                                                              context.get_gui(), object_id="answer_input_box")
+        input_width = 100
+        input_height = 50
+        input_left = (window.get_width() - input_width) / 2
+        input_top = window.get_height() - input_height - 10  # 10px padding from bottom
+        input_rect = pygame.Rect((input_left, input_top), (input_width, input_height))
+
+        self.user_input = pygame_gui.elements.UITextEntryLine(relative_rect=input_rect,
+                                                              manager=context.get_gui(),
+                                                              object_id="answer_input_box")
         self.user_input.placeholder_text = ""
+
+    def draw_scene(self, window):
+        pause_info = self.font.render("Press SPACEBAR To Pause", True, "black")  # antialias makes text look better
+        score_info = self.font.render("SCORE: " + str(self.score), True, "black")
+
+        window.blit(self.image_background, (0, 0))
+        # set pause_info text on top right with 5x5 px padding
+        window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))
+        window.blit(score_info, (350, 5))
+
+    def update_character_position(self, window):
+        # Character is always centered on the screen
+        self.stickman.x = (window.get_width() - self.image_character.get_width()) / 2
+        window.blit(self.image_character, (self.stickman.x, self.stickman.y))  # displays the character at a position
 
     def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
         super().process(context)
 
         window = context.get_window()
 
-        pause_info = self.font.render("Press SPACEBAR To Pause", True, "black")  # antialias makes text look better
-        score_info = self.font.render("SCORE: " + str(self.score), True, "black")
-
-        window.blit(self.image_background, (0, 0))
-        # set pause_info text on top right with 5x5 px padding
-        window.blit(pause_info,
-                    (window.get_width() - pause_info.get_width() - 5, 5))  # blit pause_info post background to be front
-        window.blit(score_info, (350, 5))
-        window.blit(self.image_character, (self.stickman.x, self.stickman.y))  # displays the character at a position
+        self.draw_scene(window)
+        self.update_character_position(window)
 
         next_state = game_state.GameState.LEVEL_PLAY
 

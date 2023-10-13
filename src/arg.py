@@ -40,7 +40,7 @@ def main() -> None:
     prev_state = None
     state = GameState.MAIN_MENU  # Initial state
 
-    init_context = StateHandlerContext(state, None, window, gui_manager)
+    init_context = StateHandlerContext(state, None, window, gui_manager, -1)
     handlers = {
         GameState.GAME_QUIT: QuitHandler(init_context),
         GameState.MAIN_MENU: MainMenuHandler(init_context),
@@ -55,7 +55,7 @@ def main() -> None:
     log.msg(log.DEBUG, f"Entering game loop with handlers {handlers}")
     while state != GameState.GAME_QUIT:
         # Tick the clock
-        time_delta = clock.tick(fps) / 1000
+        time_delta = clock.tick(fps) // 1000
 
         # Empty the pygame event queue
         events = pygame.event.get()
@@ -69,7 +69,7 @@ def main() -> None:
             state = GameState.GAME_QUIT
 
         handler = handlers[state]
-        context = StateHandlerContext(state, events, window, gui_manager)
+        context = StateHandlerContext(state, events, window, gui_manager, time_delta)
 
         if state != prev_state:
             log.msg(log.DEBUG, f"Entering state {state}.")
