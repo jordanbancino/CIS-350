@@ -1,13 +1,13 @@
 import pygame
 import pygame_gui
 
-import log
 
 class GameState:
     GAME_QUIT = 0
     MAIN_MENU = 1
     LEVEL_PLAY = 2
     LEVEL_PAUSE = 3
+    LEVEL_END = 4
 
 
 class StateHandlerContext:

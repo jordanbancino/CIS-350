@@ -63,7 +63,7 @@ class LevelPlayHandler(game_state.StateHandler):
                 else:
                     self.speed = 0  # set speed of character to 0
                 self.user_input.set_text("")  # reset textbox
-            elif event.type == pygame.KEYUP and event.__dict__['key'] == 32: # Space
+            elif event.type == pygame.KEYUP and event.__dict__['key'] == 32:  # Space
                 # If user pressed the space key, go to the pause state.
                 next_state = game_state.GameState.LEVEL_PAUSE
 

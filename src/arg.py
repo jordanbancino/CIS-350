@@ -30,7 +30,7 @@ def main() -> None:
     clock = pygame.time.Clock()  # keep track of time
 
     width, height = 900, 500
-    fps = 120  # frames per second
+    fps = 60  # frames per second
 
     gui_manager = pygame_gui.UIManager((width, height))  # keeps track / creates of all gui components
 
@@ -78,18 +78,21 @@ def main() -> None:
         prev_state = state
         state = handler.process(context)
 
-        if state != prev_state:
-            log.msg(log.DEBUG, f"Leaving state {prev_state}.")
-            handler.on_exit(context)
-
         for event in events:
             log.msg(log.DEBUG, f"Received event: {event}")
-            # Check for quit state
+
+            # Process global events
             if event.type == pygame.QUIT:
                 state = GameState.GAME_QUIT
+            if event.type == pygame.WINDOWLEAVE and state == GameState.LEVEL_PLAY:
+                state = GameState.LEVEL_PAUSE
 
             # Dispatch events to Pygame GUI
             gui_manager.process_events(event)
+
+        if state != prev_state:
+            log.msg(log.DEBUG, f"Leaving state {prev_state}.")
+            handler.on_exit(context)
 
         gui_manager.update(time_delta)
         gui_manager.draw_ui(window)
