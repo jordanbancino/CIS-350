@@ -13,18 +13,22 @@ class LevelPlayHandler(game_state.StateHandler):
 
         self.font_size = 20
         self.score = 0
-        self.image_background = load_asset('background.png')
+        self.image_background_night = load_asset('night.jpg')
+        self.image_background_day = load_asset("day.jpg")
         self.image_character = load_asset('stickman.png')
         self.stickman = pygame.Rect(300, 315, 100, 100)
         self.font = pygame.font.SysFont("comicsans", self.font_size)
 
-        self.speed = 0
+        self.speed = 1
         self.equation = arithmetic.generate_arithmetic()
 
         window = context.get_window()
         width = window.get_width()
         height = window.get_height()
-        self.image_background = pygame.transform.scale(self.image_background, (width, height))
+        self.image_background_night = pygame.transform.scale(self.image_background_night, (width, height))
+        self.image_background_night_pos = pygame.Rect(0, 0, 900, 500)  # position of initial night background
+        self.image_background_day = pygame.transform.scale(self.image_background_day, (width, height))
+        self.image_background_day_pos = pygame.Rect(900, 0, 900, 500)  # position of initial day background
         self.image_character = pygame.transform.scale(self.image_character, (100, 100))
 
         self.user_input = None
@@ -48,15 +52,23 @@ class LevelPlayHandler(game_state.StateHandler):
         pause_info = self.font.render("Press SPACEBAR To Pause", True, "black")  # antialias makes text look better
         score_info = self.font.render("SCORE: " + str(self.score), True, "black")
 
-        window.blit(self.image_background, (0, 0))
         # set pause_info text on top right with 5x5 px padding
         window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))
         window.blit(score_info, (350, 5))
 
     def update_character_position(self, window):
+        self.image_background_night_pos.update(self.image_background_night_pos.x - self.speed, 0, 900, 500)
+        window.blit(self.image_background_night, (self.image_background_night_pos.x,
+                                                  self.image_background_night.get_rect().y))
+        self.image_background_day_pos.update(self.image_background_day_pos.x - self.speed, 0, 900, 500)
+        window.blit(self.image_background_day, (self.image_background_day_pos.x,
+                                                self.image_background_day.get_rect().y))
         # Character is always centered on the screen
         self.stickman.x = (window.get_width() - self.image_character.get_width()) / 2
         window.blit(self.image_character, (self.stickman.x, self.stickman.y))  # displays the character at a position
+
+        display_equation = self.font.render(self.equation[0], True, "white")  # create equation display
+        window.blit(display_equation, (425, 5))  # show equation
 
     def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
         super().process(context)
@@ -71,12 +83,16 @@ class LevelPlayHandler(game_state.StateHandler):
         # check if player presses enter in text box
         for event in context.get_events():
             if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "answer_input_box":
-                answer = int(event.text)  # TODO: throws an error when text is not an integer
-                if arithmetic.solve_arithmetic(self.equation[1:], answer):  # checks if answer is correct
-                    self.speed += 1  # increase speed by 1 to character
-                else:
+                if event.text.isdigit() or (event.text[0] == "-" and event.text[1:].isdigit()):
+                    answer = int(event.text)
+                    if arithmetic.solve_arithmetic(self.equation[1:], answer):  # checks if answer is correct
+                        self.speed += 1  # increase speed by 1 to character
+                    elif self.speed > 0:
+                        self.speed = 0  # set speed of character to 0
+                elif self.speed > 0:
                     self.speed = 0  # set speed of character to 0
                 self.user_input.set_text("")  # reset textbox
+                self.equation = arithmetic.generate_arithmetic()  # generate new equation
             elif event.type == pygame.KEYUP and event.__dict__['key'] == 32:  # Space
                 # If user pressed the space key, go to the pause state.
                 next_state = game_state.GameState.LEVEL_PAUSE

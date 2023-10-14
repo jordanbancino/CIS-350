@@ -38,12 +38,12 @@ def solve_arithmetic(problem: list, user_input: int) -> bool:
     and False is incorrect.
     """
     answer = 0
-    if problem[2] == "+":
-        answer = int(problem[1] + problem[3])
-    elif problem[2] == "-":
-        answer = int(problem[1] - problem[3])
-    elif problem[2] == "*":
-        answer = int(problem[1] * problem[3])
-    elif problem[2] == "/":
-        answer = int(problem[1] / problem[3])
+    if problem[1] == "+":
+        answer = int(problem[0] + problem[2])
+    elif problem[1] == "-":
+        answer = int(problem[0] - problem[2])
+    elif problem[1] == "*":
+        answer = int(problem[0] * problem[2])
+    elif problem[1] == "/":
+        answer = int(problem[0] / problem[2])
     return user_input == answer
