@@ -30,7 +30,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self.image_background_day = pygame.transform.scale(self.image_background_day, (width, height))
         self.image_background_day_pos = pygame.Rect(900, 0, 900, 500)  # position of initial day background
         self.image_character = pygame.transform.scale(self.image_character, (100, 100))
-
+        self.distance_covered = 0
         self.user_input = None
 
     def on_enter(self, context: StateHandlerContext) -> None:
@@ -63,6 +63,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self.image_background_day_pos.update(self.image_background_day_pos.x - self.speed, 0, 900, 500)
         window.blit(self.image_background_day, (self.image_background_day_pos.x,
                                                 self.image_background_day.get_rect().y))
+        self.distance_covered += self.speed
         # Character is always centered on the screen
         self.stickman.x = (window.get_width() - self.image_character.get_width()) / 2
         window.blit(self.image_character, (self.stickman.x, self.stickman.y))  # displays the character at a position
@@ -87,8 +88,10 @@ class LevelPlayHandler(game_state.StateHandler):
                     answer = int(event.text)
                     if arithmetic.solve_arithmetic(self.equation[1:], answer):  # checks if answer is correct
                         self.speed += 1  # increase speed by 1 to character
-                    elif self.speed > 0:
-                        self.speed = 0  # set speed of character to 0
+                    else:
+                        next_state = game_state.GameState.LEVEL_END
+                        self.__init__(context)
+                        break
                 elif self.speed > 0:
                     self.speed = 0  # set speed of character to 0
                 self.user_input.set_text("")  # reset textbox
@@ -96,5 +99,8 @@ class LevelPlayHandler(game_state.StateHandler):
             elif event.type == pygame.KEYUP and event.__dict__['key'] == 32:  # Space
                 # If user pressed the space key, go to the pause state.
                 next_state = game_state.GameState.LEVEL_PAUSE
+            if self.distance_covered >= (window.get_width() * (3/2)):
+                next_state = game_state.GameState.LEVEL_END
+                self.__init__(context)
 
         return next_state
