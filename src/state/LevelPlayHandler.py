@@ -48,14 +48,6 @@ class LevelPlayHandler(game_state.StateHandler):
                                                               object_id="answer_input_box")
         self.user_input.placeholder_text = ""
 
-    def draw_scene(self, window):
-        pause_info = self.font.render("Press SPACEBAR To Pause", True, "black")  # antialias makes text look better
-        score_info = self.font.render("SCORE: " + str(self.score), True, "black")
-
-        # set pause_info text on top right with 5x5 px padding
-        window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))
-        window.blit(score_info, (350, 5))
-
     def update_character_position(self, window):
         self.image_background_night_pos.update(self.image_background_night_pos.x - self.speed, 0, 900, 500)
         window.blit(self.image_background_night, (self.image_background_night_pos.x,
@@ -71,12 +63,18 @@ class LevelPlayHandler(game_state.StateHandler):
         display_equation = self.font.render(self.equation[0], True, "white")  # create equation display
         window.blit(display_equation, (425, 5))  # show equation
 
+        pause_info = self.font.render("Press SPACEBAR To Pause", True, "white")
+        score_info = self.font.render("SCORE: " + str(self.score), True, "white")
+
+        # set pause_info text on top right with 5x5 px padding
+        window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))
+        window.blit(score_info, (250, 5))
+
     def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
         super().process(context)
 
         window = context.get_window()
 
-        self.draw_scene(window)
         self.update_character_position(window)
 
         next_state = game_state.GameState.LEVEL_PLAY
@@ -88,6 +86,7 @@ class LevelPlayHandler(game_state.StateHandler):
                     answer = int(event.text)
                     if arithmetic.solve_arithmetic(self.equation[1:], answer):  # checks if answer is correct
                         self.speed += 1  # increase speed by 1 to character
+                        self.score += 1  # increase score if answer is correct
                     else:
                         next_state = game_state.GameState.LEVEL_END
                         self.__init__(context)
