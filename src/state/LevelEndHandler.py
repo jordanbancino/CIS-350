@@ -8,7 +8,7 @@ from src.state.MainMenuHandler import Button
 class LevelEndHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
-        self.font = pygame.font.SysFont("comicsans", 30)
+        self.font = pygame.font.SysFont("comicsans", 80)
         self.border_image = load_asset('menu_border.png')
         self.reset_image = load_asset('reset_button.png')
         self.image_button_main_menu = load_asset('main_menu_button.png')
@@ -54,8 +54,10 @@ class LevelEndHandler(game_state.StateHandler):
             elif button == reset_button:
                 return game_state.GameState.LEVEL_PLAY
 
-        end_info = self.font.render("GAME OVER", True, "white")  # antialias makes text look better
-        window.blit(end_info, ((window.get_width() - end_info.get_width()) / 2, 50))
+        end_info_game = self.font.render("GAME", True, "white")  # antialias makes text look better
+        end_info_over = self.font.render("OVER", True, "white")
+        window.blit(end_info_game, (100, (window.get_height() - end_info_game.get_height()) / 2))
+        window.blit(end_info_over, (575, (window.get_height() - end_info_over.get_height()) / 2))
 
         next_state = game_state.GameState.LEVEL_END
 
