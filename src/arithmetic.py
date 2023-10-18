@@ -24,26 +24,15 @@ def generate_arithmetic() -> list:
         random_num_arth1 = random.randint(0, 10)
         random_num_arth2 = random.randint(0, 10)
 
-    return [f"{random_num_arth1} {random_sign} {random_num_arth2}", random_num_arth1, random_sign, random_num_arth2]
+    if random_sign == '+':
+        answer = random_num_arth1 + random_num_arth2
+    elif random_sign == '-':
+        answer = random_num_arth1 - random_num_arth2
+    elif random_sign == '*':
+        answer = random_num_arth1 * random_num_arth2
+    elif random_sign == '/':
+        answer = random_num_arth1 / random_num_arth2
+    else:
+        raise AssertionError(f"Unknown sign: {random_sign}. This should be impossible.")
 
-
-def solve_arithmetic(problem: list, user_input: int) -> bool:
-    """
-    The function solve_arithmetic is a function that allows the player to input an answer to the arithmetic problem
-    and checks if it is right or wrong.
-    problem is a list in the format: [(printable arithmetic function), first num of arithmetic problem, arithmetic
-    sign (+, -, *, /), second num of arithmetic problem] that serves as the printable random arithmetic problem
-    and contains the equation that is used to check the player's answer.
-    The function returns a boolean that represents if the answer to the problem is right or wrong.  True is correct
-    and False is incorrect.
-    """
-    answer = 0
-    if problem[2] == "+":
-        answer = int(problem[1] + problem[3])
-    elif problem[2] == "-":
-        answer = int(problem[1] - problem[3])
-    elif problem[2] == "*":
-        answer = int(problem[1] * problem[3])
-    elif problem[2] == "/":
-        answer = int(problem[1] / problem[3])
-    return user_input == answer
+    return [f"{random_num_arth1} {random_sign} {random_num_arth2}", str(answer)]

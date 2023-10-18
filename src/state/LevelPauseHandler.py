@@ -22,7 +22,7 @@ class LevelPauseHandler(game_state.StateHandler):
         next_state = game_state.GameState.LEVEL_PAUSE
 
         for event in context.get_events():
-            if event.type == pygame.KEYUP and event.__dict__['key'] == 32:  # Space
+            if event.type == pygame.KEYUP and event.__dict__['key'] == pygame.K_SPACE:  # Space
                 next_state = game_state.GameState.LEVEL_PLAY
 
         return next_state

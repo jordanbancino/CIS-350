@@ -29,6 +29,10 @@ class LevelPlayHandler(game_state.StateHandler):
 
         self.user_input = None
 
+        self.ground = 315
+        self.gravity = 2000
+        self.jump = 0
+
     def on_enter(self, context: StateHandlerContext) -> None:
         super().on_enter(context)
         window = context.get_window()
@@ -44,7 +48,9 @@ class LevelPlayHandler(game_state.StateHandler):
                                                               object_id="answer_input_box")
         self.user_input.placeholder_text = ""
 
-    def draw_scene(self, window):
+    def draw_scene(self, context):
+        window = context.get_window()
+
         pause_info = self.font.render("Press SPACEBAR To Pause", True, "black")  # antialias makes text look better
         score_info = self.font.render("SCORE: " + str(self.score), True, "black")
 
@@ -53,31 +59,41 @@ class LevelPlayHandler(game_state.StateHandler):
         window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))
         window.blit(score_info, (350, 5))
 
-    def update_character_position(self, window):
+        equation = self.font.render(self.equation[0] + ' = ', True, "white")
+        window.blit(equation, ((window.get_width() - equation.get_width()) / 3, 450))
+
+    def update_character_position(self, context):
+        window = context.get_window()
+        dt = context.get_delta()
+
         # Character is always centered on the screen
         self.stickman.x = (window.get_width() - self.image_character.get_width()) / 2
+
+        self.stickman.y += self.jump * dt
+        self.jump += self.gravity * dt
+
+        if self.stickman.y > self.ground:
+            self.stickman.y = self.ground
+            self.jump = 0
+
         window.blit(self.image_character, (self.stickman.x, self.stickman.y))  # displays the character at a position
 
     def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
         super().process(context)
 
-        window = context.get_window()
-
-        self.draw_scene(window)
-        self.update_character_position(window)
+        self.draw_scene(context)
+        self.update_character_position(context)
 
         next_state = game_state.GameState.LEVEL_PLAY
 
         # check if player presses enter in text box
         for event in context.get_events():
             if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "answer_input_box":
-                answer = int(event.text)  # TODO: throws an error when text is not an integer
-                if arithmetic.solve_arithmetic(self.equation[1:], answer):  # checks if answer is correct
-                    self.speed += 1  # increase speed by 1 to character
-                else:
-                    self.speed = 0  # set speed of character to 0
+                if event.text == self.equation[1]:  # checks if answer is correct
+                    self.jump = -600
+                    self.equation = arithmetic.generate_arithmetic()
                 self.user_input.set_text("")  # reset textbox
-            elif event.type == pygame.KEYUP and event.__dict__['key'] == 32:  # Space
+            elif event.type == pygame.KEYUP and event.__dict__['key'] == pygame.K_SPACE:
                 # If user pressed the space key, go to the pause state.
                 next_state = game_state.GameState.LEVEL_PAUSE
 

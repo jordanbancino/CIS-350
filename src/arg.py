@@ -55,7 +55,7 @@ def main() -> None:
     log.msg(log.DEBUG, f"Entering game loop with handlers {handlers}")
     while state != GameState.GAME_QUIT:
         # Tick the clock
-        time_delta = clock.tick(fps) // 1000
+        time_delta = clock.tick(fps) / 1000
 
         # Empty the pygame event queue
         events = pygame.event.get()
@@ -79,7 +79,7 @@ def main() -> None:
         state = handler.process(context)
 
         for event in events:
-            log.msg(log.DEBUG, f"Received event: {event}")
+            # log.msg(log.DEBUG, f"Received event: {event}")
 
             # Process global events
             if event.type == pygame.QUIT:

@@ -15,7 +15,7 @@ class StateHandlerContext:
                  state: GameState, events: list[pygame.event.Event] | None,
                  window: pygame.Surface,
                  gui: pygame_gui.UIManager,
-                 delta: int):
+                 delta: float):
         self.state = state
         self.events = events
         self.window = window
