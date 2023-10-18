@@ -60,6 +60,7 @@ class LevelPlayHandler(game_state.StateHandler):
         window = context.get_window()
         width = window.get_width()
         height = window.get_height()
+        dt = context.get_delta()
 
         self.image_background_night_pos.update(self.image_background_night_pos.x - self.speed, 0, width, height)
         window.blit(self.image_background_night, (self.image_background_night_pos.x,
@@ -67,7 +68,6 @@ class LevelPlayHandler(game_state.StateHandler):
         self.image_background_day_pos.update(self.image_background_day_pos.x - self.speed, 0, width, height)
         window.blit(self.image_background_day, (self.image_background_day_pos.x,
                                                 self.image_background_day.get_rect().y))
-        self.distance_covered += self.speed
 
     def draw_ui(self, context):
         window = context.get_window()
@@ -107,6 +107,8 @@ class LevelPlayHandler(game_state.StateHandler):
         next_state = game_state.GameState.LEVEL_PLAY
         window = context.get_window()
 
+        self.distance_covered += self.speed
+
         # check if player presses enter in text box
         for event in context.get_events():
             if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "answer_input_box":
@@ -128,7 +130,7 @@ class LevelPlayHandler(game_state.StateHandler):
         return next_state
 
     def on_exit(self, context):
-        super().process(context)
+        super().on_exit(context)
 
         if context.get_state() == game_state.GameState.LEVEL_END:
             # The game has ended; reset all state so that when we are re-started,
