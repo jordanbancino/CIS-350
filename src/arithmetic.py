@@ -35,4 +35,5 @@ def generate_arithmetic() -> list:
     else:
         raise AssertionError(f"Unknown sign: {random_sign}. This should be impossible.")
 
-    return [f"{random_num_arth1} {random_sign} {random_num_arth2}", str(answer)]
+    result = [f"{random_num_arth1} {random_sign} {random_num_arth2}", str(answer)]
+    return result

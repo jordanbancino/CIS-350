@@ -89,6 +89,9 @@ def main() -> None:
 
         if state != prev_state:
             log.msg(log.DEBUG, f"Leaving state {prev_state}.")
+            # State handler on_exit() should know what the next state is
+            # so it may modify its behavior based on this.
+            context.state = state
             handler.on_exit(context)
 
         gui_manager.update(time_delta)

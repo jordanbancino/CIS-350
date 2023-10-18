@@ -11,6 +11,7 @@ class LevelPlayHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
 
+        self.equation = None
         self.font_size = 20
         self.score = 0
         self.image_background_night = load_asset('night.jpg')
@@ -20,7 +21,6 @@ class LevelPlayHandler(game_state.StateHandler):
         self.font = pygame.font.SysFont("comicsans", self.font_size)
 
         self.speed = 1
-        self.equation = arithmetic.generate_arithmetic()
 
         window = context.get_window()
         width = window.get_width()
@@ -51,6 +51,10 @@ class LevelPlayHandler(game_state.StateHandler):
                                                               manager=context.get_gui(),
                                                               object_id="answer_input_box")
         self.user_input.placeholder_text = ""
+        self.user_input.focus()
+
+        self.equation = arithmetic.generate_arithmetic()
+
 
     def draw_scene(self, context):
         window = context.get_window()
@@ -65,6 +69,8 @@ class LevelPlayHandler(game_state.StateHandler):
                                                 self.image_background_day.get_rect().y))
         self.distance_covered += self.speed
 
+    def draw_ui(self, context):
+        window = context.get_window()
         pause_info = self.font.render("Press SPACEBAR To Pause", True, "white")  # antialias makes text look better
         score_info = self.font.render("SCORE: " + str(self.score), True, "white")
 
@@ -75,8 +81,7 @@ class LevelPlayHandler(game_state.StateHandler):
         equation = self.font.render(self.equation[0] + ' = ', True, "white")
         window.blit(equation, ((window.get_width() - equation.get_width()) / 3, 450))
 
-
-    def update_character_position(self, context):
+    def draw_character(self, context):
         window = context.get_window()
         dt = context.get_delta()
 
@@ -96,17 +101,16 @@ class LevelPlayHandler(game_state.StateHandler):
         super().process(context)
 
         self.draw_scene(context)
-        self.update_character_position(context)
-        self.update_character_position(context)
+        self.draw_character(context)
+        self.draw_ui(context)
 
         next_state = game_state.GameState.LEVEL_PLAY
-
         window = context.get_window()
 
         # check if player presses enter in text box
         for event in context.get_events():
             if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "answer_input_box":
-                if event.text == self.equation[1]:  # checks if answer is correct
+                if float(event.text) == float(self.equation[1]):  # checks if answer is correct
                     self.jump = -600
                     self.equation = arithmetic.generate_arithmetic()
                     self.speed += 1
@@ -122,3 +126,17 @@ class LevelPlayHandler(game_state.StateHandler):
                 next_state = game_state.GameState.LEVEL_END
 
         return next_state
+
+    def on_exit(self, context):
+        super().process(context)
+
+        if context.get_state() == game_state.GameState.LEVEL_END:
+            # The game has ended; reset all state so that when we are re-started,
+            # we start from the beginning and not where we left off.
+            self.speed = 1
+            self.score = 0
+            self.distance_covered = 0
+            pass
+        else:
+            # The game was just paused, don't reset the state.
+            pass
