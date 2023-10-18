@@ -50,11 +50,6 @@ def main() -> None:
         GameState.LEVEL_END: LevelEndHandler(init_context)
     }
 
-    # equation = arithmetic.generate_arithmetic()  # initial equation
-    # print(equation[0])  # test first answer
-    # speed = 1  # speed of character
-
-    log.msg(log.DEBUG, f"Entering game loop with handlers {handlers}")
     while state != GameState.GAME_QUIT:
         # Tick the clock
         time_delta = clock.tick(fps) / 1000

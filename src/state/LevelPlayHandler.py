@@ -54,11 +54,20 @@ class LevelPlayHandler(game_state.StateHandler):
 
     def draw_scene(self, context):
         window = context.get_window()
+        width = window.get_width()
+        height = window.get_height()
 
-        pause_info = self.font.render("Press SPACEBAR To Pause", True, "black")  # antialias makes text look better
-        score_info = self.font.render("SCORE: " + str(self.score), True, "black")
+        self.image_background_night_pos.update(self.image_background_night_pos.x - self.speed, 0, width, height)
+        window.blit(self.image_background_night, (self.image_background_night_pos.x,
+                                                  self.image_background_night.get_rect().y))
+        self.image_background_day_pos.update(self.image_background_day_pos.x - self.speed, 0, width, height)
+        window.blit(self.image_background_day, (self.image_background_day_pos.x,
+                                                self.image_background_day.get_rect().y))
+        self.distance_covered += self.speed
 
-        window.blit(self.image_background_day, (0, 0))
+        pause_info = self.font.render("Press SPACEBAR To Pause", True, "white")  # antialias makes text look better
+        score_info = self.font.render("SCORE: " + str(self.score), True, "white")
+
         # set pause_info text on top right with 5x5 px padding
         window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))
         window.blit(score_info, (350, 5))
@@ -66,17 +75,10 @@ class LevelPlayHandler(game_state.StateHandler):
         equation = self.font.render(self.equation[0] + ' = ', True, "white")
         window.blit(equation, ((window.get_width() - equation.get_width()) / 3, 450))
 
+
     def update_character_position(self, context):
         window = context.get_window()
         dt = context.get_delta()
-
-        self.image_background_night_pos.update(self.image_background_night_pos.x - self.speed, 0, 900, 500)
-        window.blit(self.image_background_night, (self.image_background_night_pos.x,
-                                                  self.image_background_night.get_rect().y))
-        self.image_background_day_pos.update(self.image_background_day_pos.x - self.speed, 0, 900, 500)
-        window.blit(self.image_background_day, (self.image_background_day_pos.x,
-                                                self.image_background_day.get_rect().y))
-        self.distance_covered += self.speed
 
         # Character is always centered on the screen
         self.stickman.x = (window.get_width() - self.image_character.get_width()) / 2
@@ -89,16 +91,6 @@ class LevelPlayHandler(game_state.StateHandler):
             self.jump = 0
 
         window.blit(self.image_character, (self.stickman.x, self.stickman.y))  # displays the character at a position
-
-        display_equation = self.font.render(self.equation[0], True, "white")  # create equation display
-        window.blit(display_equation, (425, 5))  # show equation
-
-        pause_info = self.font.render("Press SPACEBAR To Pause", True, "white")
-        score_info = self.font.render("SCORE: " + str(self.score), True, "white")
-
-        # set pause_info text on top right with 5x5 px padding
-        window.blit(pause_info, (window.get_width() - pause_info.get_width() - 5, 5))
-        window.blit(score_info, (250, 5))
 
     def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
         super().process(context)
@@ -128,6 +120,5 @@ class LevelPlayHandler(game_state.StateHandler):
                 next_state = game_state.GameState.LEVEL_PAUSE
             if self.distance_covered >= (window.get_width() * (3/2)):
                 next_state = game_state.GameState.LEVEL_END
-                self.__init__(context)
 
         return next_state
