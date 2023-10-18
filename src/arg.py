@@ -11,6 +11,7 @@ from src.state.LevelPlayHandler import LevelPlayHandler
 from src.state.LevelPauseHandler import LevelPauseHandler
 from src.state.QuitHandler import QuitHandler
 from state.MainMenuHandler import MainMenuHandler
+from state.LevelEndHandler import LevelEndHandler
 
 
 def main() -> None:
@@ -45,7 +46,8 @@ def main() -> None:
         GameState.GAME_QUIT: QuitHandler(init_context),
         GameState.MAIN_MENU: MainMenuHandler(init_context),
         GameState.LEVEL_PLAY: LevelPlayHandler(init_context),
-        GameState.LEVEL_PAUSE: LevelPauseHandler(init_context)
+        GameState.LEVEL_PAUSE: LevelPauseHandler(init_context),
+        GameState.LEVEL_END: LevelEndHandler(init_context)
     }
 
     # equation = arithmetic.generate_arithmetic()  # initial equation
