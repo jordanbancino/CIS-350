@@ -17,7 +17,6 @@ class LevelPlayHandler(game_state.StateHandler):
         self.image_background_night = load_asset('night.jpg')
         self.image_background_day = load_asset("day.jpg")
         self.image_character = load_asset('stickman.png')
-        self.stickman = pygame.Rect(300, 315, 100, 100)
         self.font = pygame.font.SysFont("comicsans", self.font_size)
 
         self.speed = 1
@@ -26,16 +25,17 @@ class LevelPlayHandler(game_state.StateHandler):
         width = window.get_width()
         height = window.get_height()
         self.image_background_night = pygame.transform.scale(self.image_background_night, (width, height))
-        self.image_background_night_pos = pygame.Rect(0, 0, 900, 500)  # position of initial night background
+        self.image_background_night_pos = pygame.Rect(0, 0, width, height)  # position of initial night background
         self.image_background_day = pygame.transform.scale(self.image_background_day, (width, height))
-        self.image_background_day_pos = pygame.Rect(900, 0, 900, 500)  # position of initial day background
+        self.image_background_day_pos = pygame.Rect(width, 0, width, height)  # position of initial day background
         self.image_character = pygame.transform.scale(self.image_character, (100, 100))
         self.distance_covered = 0
         self.user_input = None
 
-        self.ground = 315
+        self.ground = 330
         self.gravity = 2000
-        self.jump = 0
+        self.jump = -100
+        self.stickman = pygame.Rect(0, self.ground, 100, 100)
 
     def on_enter(self, context: StateHandlerContext) -> None:
         super().on_enter(context)
@@ -131,6 +131,8 @@ class LevelPlayHandler(game_state.StateHandler):
 
     def on_exit(self, context):
         super().on_exit(context)
+
+        self.jump = -100
 
         if context.get_state() == game_state.GameState.LEVEL_END:
             # The game has ended; reset all state so that when we are re-started,
