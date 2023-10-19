@@ -21,13 +21,16 @@ class LevelPlayHandler(game_state.StateHandler):
 
         self.speed = 1
 
-        window = context.get_window()
-        width = window.get_width()
-        height = window.get_height()
-        self.image_background_night = pygame.transform.scale(self.image_background_night, (width, height))
-        self.image_background_night_pos = pygame.Rect(0, 0, width, height)  # position of initial night background
-        self.image_background_day = pygame.transform.scale(self.image_background_day, (width, height))
-        self.image_background_day_pos = pygame.Rect(width, 0, width, height)  # position of initial day background
+        self.window = context.get_window()
+        self.width = self.window.get_width()
+        self.height = self.window.get_height()
+        self.image_background_night = pygame.transform.scale(self.image_background_night, (self.width, self.height))
+        self.image_background_night_pos1 = pygame.Rect(0, 0, self.width, self.height)  # pos of initial night background
+        self.image_background_night_pos2 = pygame.Rect(self.width, 0, self.width, self.height)  # pos of init night img
+
+        self.image_background_day = pygame.transform.scale(self.image_background_day, (self.width, self.height))
+        self.image_background_day_pos1 = pygame.Rect(self.width * 2, 0, self.width, self.height)  # pos init day image
+        self.image_background_day_pos2 = pygame.Rect(self.width * 3, 0, self.width, self.height)  # pos init day image
         self.image_character = pygame.transform.scale(self.image_character, (100, 100))
         self.distance_covered = 0
         self.user_input = None
@@ -55,19 +58,34 @@ class LevelPlayHandler(game_state.StateHandler):
 
         self.equation = arithmetic.generate_arithmetic()
 
-
     def draw_scene(self, context):
-        window = context.get_window()
-        width = window.get_width()
-        height = window.get_height()
         dt = context.get_delta()
 
-        self.image_background_night_pos.update(self.image_background_night_pos.x - self.speed, 0, width, height)
-        window.blit(self.image_background_night, (self.image_background_night_pos.x,
-                                                  self.image_background_night.get_rect().y))
-        self.image_background_day_pos.update(self.image_background_day_pos.x - self.speed, 0, width, height)
-        window.blit(self.image_background_day, (self.image_background_day_pos.x,
-                                                self.image_background_day.get_rect().y))
+        n1 = self.image_background_night_pos1.x
+        n2 = self.image_background_night_pos2.x
+        d1 = self.image_background_day_pos1.x
+        d2 = self.image_background_day_pos2.x
+
+        n1 -= self.speed
+        n2 -= self.speed
+        d1 -= self.speed
+        d2 -= self.speed
+
+        if d2 <= 0:
+            n1 = d2 + self.width
+            n2 = n1 + self.width
+        if d2 <= -self.width:
+            d1 = n2 + self.width
+            d2 = d1 + self.width
+
+        self.image_background_night_pos1.update(n1, 0, self.width, self.height)
+        self.window.blit(self.image_background_night, (n1, self.image_background_night.get_rect().y))
+        self.image_background_night_pos2.update(n2, 0, self.width, self.height)
+        self.window.blit(self.image_background_night, (n2, self.image_background_night.get_rect().y))
+        self.image_background_day_pos1.update(d1, 0, self.width, self.height)
+        self.window.blit(self.image_background_day, (d1, self.image_background_day.get_rect().y))
+        self.image_background_day_pos2.update(d2, 0, self.width, self.height)
+        self.window.blit(self.image_background_day, (d2, self.image_background_day.get_rect().y))
 
     def draw_ui(self, context):
         window = context.get_window()
@@ -124,8 +142,6 @@ class LevelPlayHandler(game_state.StateHandler):
             elif event.type == pygame.KEYUP and event.__dict__['key'] == pygame.K_SPACE:
                 # If user pressed the space key, go to the pause state.
                 next_state = game_state.GameState.LEVEL_PAUSE
-            if self.distance_covered >= (window.get_width() * (3/2)):
-                next_state = game_state.GameState.LEVEL_END
 
         return next_state
 
