@@ -50,9 +50,11 @@ class MainMenuHandler(game_state.StateHandler):
         width = window.get_width()
         height = window.get_height()
 
-        self.image_border = pygame.transform.scale(self.image_border, (width, height))
+        self.image_border = pygame.transform.scale(
+            self.image_border, (width, height))
 
-    def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
+    def process(self, context: game_state.StateHandlerContext) \
+            -> game_state.GameState:
         super().process(context)
 
         window = context.get_window()

@@ -32,9 +32,11 @@ def main() -> None:
     width, height = 900, 500
     fps = 60  # frames per second
 
-    gui_manager = pygame_gui.UIManager((width, height))  # keeps track / creates of all gui components
+    # keeps track / creates of all gui components
+    gui_manager = pygame_gui.UIManager((width, height))
 
-    window = pygame.display.set_mode((width, height))  # create window and set size
+    # create window and set size
+    window = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Arithman")  # set window title
 
     prev_state = None
@@ -61,11 +63,17 @@ def main() -> None:
 
         # Invoke state handler to update state
         if state not in handlers:
-            log.msg(log.ERROR, f"Game entered invalid state: {state}. This is a programming error.")
+            log.msg(log.ERROR,
+                    f"Game entered invalid state: {state}."
+                    f"This is a programming error.")
             state = GameState.GAME_QUIT
 
         handler = handlers[state]
-        context = StateHandlerContext(state, events, window, gui_manager, time_delta)
+        context = StateHandlerContext(state,
+                                      events,
+                                      window,
+                                      gui_manager,
+                                      time_delta)
 
         if state != prev_state:
             log.msg(log.DEBUG, f"Entering state {state}.")
@@ -80,7 +88,8 @@ def main() -> None:
             # Process global events
             if event.type == pygame.QUIT:
                 state = GameState.GAME_QUIT
-            if event.type == pygame.WINDOWLEAVE and state == GameState.LEVEL_PLAY:
+            if (event.type == pygame.WINDOWLEAVE and
+                    state == GameState.LEVEL_PLAY):
                 state = GameState.LEVEL_PAUSE
 
             # Dispatch events to Pygame GUI

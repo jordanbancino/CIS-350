@@ -4,7 +4,6 @@ from src.graphics import load_asset
 from src.state.MainMenuHandler import Button
 
 
-
 class LevelEndHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
@@ -18,9 +17,12 @@ class LevelEndHandler(game_state.StateHandler):
         width = window.get_width()
         height = window.get_height()
 
-        self.border_image = pygame.transform.scale(self.border_image, (width, height))
+        self.border_image = pygame.transform.scale(self.border_image,
+                                                   (width, height))
 
-    def process(self, context: game_state.StateHandlerContext) -> game_state.GameState:
+    def process(self,
+                context: game_state.StateHandlerContext) \
+            -> game_state.GameState:
         super().process(context)
 
         window = context.get_window()
@@ -54,10 +56,16 @@ class LevelEndHandler(game_state.StateHandler):
             elif button == reset_button:
                 return game_state.GameState.LEVEL_PLAY
 
-        end_info_game = self.font.render("GAME", True, "white")  # antialias makes text look better
+        # antialias makes text look better
+        end_info_game = self.font.render("GAME", True,
+                                         "white")
         end_info_over = self.font.render("OVER", True, "white")
-        window.blit(end_info_game, (100, (window.get_height() - end_info_game.get_height()) / 2))
-        window.blit(end_info_over, (575, (window.get_height() - end_info_over.get_height()) / 2))
+        window.blit(end_info_game,
+                    (100,
+                     (window.get_height() - end_info_game.get_height()) / 2))
+        window.blit(end_info_over,
+                    (575,
+                     (window.get_height() - end_info_over.get_height()) / 2))
 
         next_state = game_state.GameState.LEVEL_END
 
