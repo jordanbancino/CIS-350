@@ -66,51 +66,51 @@ class UserData:
                 'Handle already open. '
                 'Did you forget to call close() on a different UserData?')
 
-        self.store = store
-        self.cache = {}
+        self._store = store
+        self._cache = {}
 
-        log.msg(log.DEBUG, f"User data store: {self.store}")
-        if not self.store.exists():
+        log.msg(log.DEBUG, f"User data store: {self._store}")
+        if not self._store.exists():
             log.msg(log.DEBUG, "Creating new data store...")
-            self.store.write_text(json.dumps(self.cache))
+            self._store.write_text(json.dumps(self._cache))
         else:
-            json_str = self.store.read_text()
-            self.cache = json.loads(json_str)
+            json_str = self._store.read_text()
+            self._cache = json.loads(json_str)
             log.msg(log.DEBUG,
-                    f"Loaded {len(self.cache.keys())} key(s) from data store.")
+                    f"Loaded {len(self._cache.keys())} key(s) from data store.")
 
-        UserData.__open_handles.append(self.store)
-        self.closed = False
+        UserData.__open_handles.append(self._store)
+        self._closed = False
 
     def __getitem__(self, key):
-        if self.closed:
+        if self._closed:
             raise AssertionError('Use after close.')
 
-        if key not in self.cache:
+        if key not in self._cache:
             # This message is worded the way it is because if we say
             # "Key not fount in" then PEP8 throws a warning? For a Python-ism
             # inside a string literal?
             log.msg(log.WARNING, f"Key found not in data store: '{key}'")
             return None
 
-        value = self.cache[key]
+        value = self._cache[key]
         log.msg(log.DEBUG, f"'{key}' = '{value}'")
         return value
 
     def __setitem__(self, key, value):
-        if self.closed:
+        if self._closed:
             raise AssertionError('Use after close.')
 
-        self.cache[key] = value
-        json_str = json.dumps(self.cache)
-        self.store.write_text(json_str)
+        self._cache[key] = value
+        json_str = json.dumps(self._cache)
+        self._store.write_text(json_str)
         log.msg(log.DEBUG, f"'{key}' = '{value}'")
 
     def get_path(self) -> pathlib.Path:
         """
         Get the name of the file backing this persistent user data store.
         """
-        return self.store
+        return self._store
 
     def close(self):
         """
@@ -121,18 +121,18 @@ class UserData:
 
         Note that closed stores can no longer be used; they must be re-created.
         """
-        if self.store in UserData.__open_handles:
-            UserData.__open_handles.remove(self.store)
+        if self._store in UserData.__open_handles:
+            UserData.__open_handles.remove(self._store)
             log.msg(log.DEBUG,
-                    f"Removed store {self.store} from __open_handles.")
-            self.closed = True
+                    f"Removed store {self._store} from __open_handles.")
+            self._closed = True
         else:
             raise AssertionError(
                 'Failed to remove handle. Double-close() on UserData?')
 
 
 #  Construct a global, default user data store.
-data = UserData(UserData.get_data_dir() / 'arg.json')
+_data = UserData(UserData.get_data_dir() / 'arg.json')
 
 
 def get() -> UserData:
@@ -142,4 +142,4 @@ def get() -> UserData:
     create new UserData stores. Note that this store should be closed before
     the program exits.
     """
-    return data
+    return _data

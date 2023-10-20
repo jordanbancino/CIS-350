@@ -1,26 +1,38 @@
+"""
+This handler handles the `MAIN_MENU` state. It displays the main menu and waits
+for the user to make a selection.
+"""
 import pygame
 
 import game_state
-from graphics import load_asset
+from arg import load_asset
 
 
 class Button:
+    """
+    A simple class that represents a Pygame button. Note that this class does
+    *not* use the Pygame GUI module; rather, it simply blits an image to the
+    window and monitors incoming events to know if that area was clicked. In
+    the future, this class may be a proper button class that takes button text
+    and color instead of an image.
+    """
     def __init__(self, x, y, image):
-        self.image = pygame.transform.scale(image, (200, 100))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-        self.clicked = False
+        self._image = pygame.transform.scale(image, (200, 100))
+        self._rect = self._image.get_rect()
+        self._rect.topleft = (x, y)
+        self._clicked = False
 
-    def draw(self, window):
+    def blit(self, window):
         """
-        Draws a button on the display and monitors clicking.
+        Draw the button image on the screen.
         """
-        window.blit(self.image, (self.rect.x, self.rect.y))
+        window.blit(self._image, (self._rect.x, self._rect.y))
 
     def dispatch_event(self, event) -> bool:
         """
         Receive an event from the processor context and use it to determine
-        whether this button was clicked.
+        whether this button was clicked, returning `False` if this event does
+        not indicate a click of this button and `True` if it does.
         """
 
         # Only respond to mouse up events
@@ -32,7 +44,7 @@ class Button:
 
             # If the click was inside our bounding box, this button was
             # pressed.
-            return self.rect.collidepoint(pos)
+            return self._rect.collidepoint(pos)
         # Not even a mouse up event, so this can't be a click
         return False
 
@@ -41,17 +53,17 @@ class MainMenuHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
 
-        self.image_border = load_asset('menu_border.png')
-        self.image_button_start = load_asset('start_button.png')
-        self.image_button_score = load_asset('score_button.png')
-        self.image_button_quit = load_asset('quit_button.png')
+        self._image_border = load_asset('menu_border.png')
+        self._image_button_start = load_asset('start_button.png')
+        self._image_button_score = load_asset('score_button.png')
+        self._image_button_quit = load_asset('quit_button.png')
 
         window = context.get_window()
         width = window.get_width()
         height = window.get_height()
 
-        self.image_border = pygame.transform.scale(
-            self.image_border, (width, height))
+        self._image_border = pygame.transform.scale(
+            self._image_border, (width, height))
 
     def process(self, context: game_state.StateHandlerContext) \
             -> game_state.GameState:
@@ -60,16 +72,16 @@ class MainMenuHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        start_button = Button(350, 75, self.image_button_start)
-        score_button = Button(350, 200, self.image_button_score)
-        quit_button = Button(350, 325, self.image_button_quit)
+        start_button = Button(350, 75, self._image_button_start)
+        score_button = Button(350, 200, self._image_button_score)
+        quit_button = Button(350, 325, self._image_button_quit)
         buttons = [start_button, score_button, quit_button]
 
         window.fill((47, 79, 79))  # Gray
-        window.blit(self.image_border, (0, 0))
+        window.blit(self._image_border, (0, 0))
 
         for button in buttons:
-            button.draw(window)
+            button.blit(window)
 
         clicked_buttons = []
 

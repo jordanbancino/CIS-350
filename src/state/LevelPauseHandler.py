@@ -6,7 +6,7 @@ import game_state
 class LevelPauseHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
-        self.font = pygame.font.SysFont("comicsans", 50)
+        self._font = pygame.font.SysFont("comicsans", 50)
 
     def process(self, context: game_state.StateHandlerContext) \
             -> game_state.GameState:
@@ -16,7 +16,7 @@ class LevelPauseHandler(game_state.StateHandler):
         window.fill('black')
 
         # antialias makes text look better
-        pause_info = self.font.render(
+        pause_info = self._font.render(
             "Press SPACEBAR To Resume", True, "white")
         window.blit(pause_info,
                     ((window.get_width() - pause_info.get_width()) / 2,

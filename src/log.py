@@ -9,17 +9,32 @@ updated accordingly.
 import inspect
 
 DEBUG = 10
+"""Debug messages are intended only for developers and should be disabled in 
+production."""
+
 INFO = 20
+"""Info messages are informative to users and developers."""
+
 WARNING = 30
+"""Notify the user that something is wrong. Note that this is a non-fatal
+condition, and that the user can't be reasonably expected to actually check
+this since users might not even be running the program in a terminal. If the
+warning must be presented to the user, it must be drawn in the GUI."""
+
 ERROR = 40
+"""Notify the user that something is *very* wrong. Same statements apply as
+noted in `WARNING`."""
+
 CRITICAL = 50
+"""Only use this if you are about to abort the program immediately after
+writing the message."""
 
 
 class Log:
     """
     The `Log` class provides all the logging functionality. Note
     that there is a global log instance accessible via the global
-    getLogger() function, so this class will not normally be
+    `get_logger()` function, so this class will not normally be
     instantiated by outside code.
     """
 
@@ -30,20 +45,20 @@ class Log:
         log level can be changed with setLevel() after the class is
         constructed.
         """
-        self.level = level
+        self._level = level
 
     def set_level(self, level: int) -> None:
         """
         Set the log level, above which to log messages as they show
         up. Messages with a lower log level will not be displayed.
         """
-        self.level = level
+        self._level = level
 
     def get_level(self) -> int:
         """
         Get the current log level.
         """
-        return self.level
+        return self._level
 
     def msg(self, level: int, text: str) -> bool:
         """
@@ -52,7 +67,7 @@ class Log:
         from which the log call was made, and the message itself, in
         that order.
         """
-        if level < self.level:
+        if level < self._level:
             return False
 
         stack = inspect.stack()
@@ -85,20 +100,20 @@ class Log:
         return True
 
 
-log = Log(INFO)
+_log = Log(INFO)
 
 
-def getLogger() -> Log:
+def get_logger() -> Log:
     """
     Get the default logger. All code should use this logger; that is,
     there should only ever be one instance of the Log class.
     """
-    return log
+    return _log
 
 
 def msg(level: int, text: str) -> bool:
     """
-    A shorthand for Log.getLogger().msg() that allows the syntax
-    Log.msg() to be used.
+    A shorthand for `log.get_logger().msg()` that allows the syntax
+    `log.msg()` to be used.
     """
-    return log.msg(level, text)
+    return get_logger().msg(level, text)

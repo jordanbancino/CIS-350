@@ -1,8 +1,12 @@
+"""
+TODO: This class is not currently in use, but it is probably a good idea to
+use it at some point.
+"""
 import random
 
 import pygame
 
-import graphics
+import arg
 
 
 class Obstacle:
@@ -31,7 +35,7 @@ def create_random():
         'rock.png'
     ]
 
-    img = graphics.load_asset(random.choice(assets))
+    img = arg.load_asset(random.choice(assets))
     rect = pygame.Rect(0, 0, 0, 0)
 
     return Obstacle(img, rect)
