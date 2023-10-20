@@ -4,7 +4,6 @@ arg module: where the game lives
 import pygame
 import pygame_gui
 
-import arithmetic
 from game_state import GameState, StateHandlerContext
 import log
 from src.state.LevelPlayHandler import LevelPlayHandler

@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import pygame_gui
 
@@ -17,6 +19,9 @@ class LevelPlayHandler(game_state.StateHandler):
         self.image_background_night = load_asset('night.jpg')
         self.image_background_day = load_asset("day.jpg")
         self.image_character = load_asset('stickman.png')
+        self.obstacle_image = load_asset("calculator1.jpg")
+        self.obstacle_width = 125
+        self.obstacle_height = 188
         self.font = pygame.font.SysFont("comicsans", self.font_size)
 
         self.speed = 1
@@ -36,9 +41,12 @@ class LevelPlayHandler(game_state.StateHandler):
         self.user_input = None
 
         self.ground = 330
-        self.gravity = 2000
-        self.jump = -100
+        self.gravity = 500
+        self.jump = -150
         self.stickman = pygame.Rect(0, self.ground, 100, 100)
+
+        self.obstacle_image = pygame.transform.scale(self.obstacle_image, (self.obstacle_width, self.obstacle_height))
+        self.obstacle_hitbox = pygame.Rect(800, self.ground - 75, self.obstacle_width, self.obstacle_height)
 
     def on_enter(self, context: StateHandlerContext) -> None:
         super().on_enter(context)
@@ -86,6 +94,15 @@ class LevelPlayHandler(game_state.StateHandler):
         self.window.blit(self.image_background_day, (d1, self.image_background_day.get_rect().y))
         self.image_background_day_pos2.update(d2, 0, self.width, self.height)
         self.window.blit(self.image_background_day, (d2, self.image_background_day.get_rect().y))
+
+        obstacle = self.obstacle_hitbox.x
+        obstacle -= self.speed
+        self.obstacle_hitbox.update(obstacle, self.ground - 75, self.obstacle_width, self.obstacle_height)
+        self.window.blit(self.obstacle_image, (obstacle, self.ground - 75))
+        if obstacle < -51:
+            # makes the obstacle have a random position off-screen that the player has to overcome
+            self.obstacle_hitbox.update(random.randint(905, 1800), self.ground - 75, self.obstacle_width,
+                                        self.obstacle_height)
 
     def draw_ui(self, context):
         window = context.get_window()
@@ -142,13 +159,16 @@ class LevelPlayHandler(game_state.StateHandler):
             elif event.type == pygame.KEYUP and event.__dict__['key'] == pygame.K_SPACE:
                 # If user pressed the space key, go to the pause state.
                 next_state = game_state.GameState.LEVEL_PAUSE
+        if self.stickman.right > self.obstacle_hitbox.left and self.stickman.left < self.obstacle_hitbox.right:
+            if self.obstacle_hitbox.top <= self.stickman.bottom:
+                next_state = game_state.GameState.LEVEL_END
 
         return next_state
 
     def on_exit(self, context):
         super().on_exit(context)
 
-        self.jump = -100
+        self.jump = -150
 
         if context.get_state() == game_state.GameState.LEVEL_END:
             # The game has ended; reset all state so that when we are re-started,
