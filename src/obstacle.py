@@ -1,6 +1,8 @@
-import pygame
 import random
-from src import graphics
+
+import pygame
+
+import graphics
 
 
 class Obstacle:

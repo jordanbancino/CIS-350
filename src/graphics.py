@@ -1,8 +1,9 @@
 """
 graphics module:
 """
-import pygame
 import os
+
+import pygame
 
 
 def load_asset(asset: str) -> pygame.Surface | pygame.SurfaceType:

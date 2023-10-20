@@ -1,7 +1,8 @@
 import pygame
-from src import game_state
-from src.graphics import load_asset
-from src.state.MainMenuHandler import Button
+
+import game_state
+from graphics import load_asset
+from state.MainMenuHandler import Button
 
 
 class LevelEndHandler(game_state.StateHandler):

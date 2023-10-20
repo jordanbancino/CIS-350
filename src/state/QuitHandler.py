@@ -1,6 +1,4 @@
-import pygame
-
-from src import game_state
+import game_state
 
 
 class QuitHandler(game_state.StateHandler):

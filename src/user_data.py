@@ -7,8 +7,8 @@ UserData instead of instantiating it yourself in most cases, although you
 may wish to instantiate a new UserData with a different store location."""
 import json
 import os
-import sys
 import pathlib
+import sys
 
 import log
 

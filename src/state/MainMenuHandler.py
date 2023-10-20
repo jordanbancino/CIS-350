@@ -1,7 +1,7 @@
 import pygame
 
-from src import game_state, log
-from src.graphics import load_asset
+import game_state
+from graphics import load_asset
 
 
 class Button:

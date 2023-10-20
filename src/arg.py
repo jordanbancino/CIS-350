@@ -1,16 +1,21 @@
 """
 arg module: where the game lives
 """
+import os
+import sys
+
 import pygame
 import pygame_gui
 
-from game_state import GameState, StateHandlerContext
 import log
-from src.state.LevelPlayHandler import LevelPlayHandler
-from src.state.LevelPauseHandler import LevelPauseHandler
-from src.state.QuitHandler import QuitHandler
-from state.MainMenuHandler import MainMenuHandler
+from game_state import GameState, StateHandlerContext
 from state.LevelEndHandler import LevelEndHandler
+from state.LevelPauseHandler import LevelPauseHandler
+from state.LevelPlayHandler import LevelPlayHandler
+from state.MainMenuHandler import MainMenuHandler
+from state.QuitHandler import QuitHandler
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 def main() -> None:
