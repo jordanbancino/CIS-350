@@ -3,10 +3,10 @@ import random
 import pygame
 import pygame_gui
 
-from src import game_state
-from src.game_state import StateHandlerContext
-from src.graphics import load_asset
-from src import arithmetic
+import arithmetic
+import game_state
+from game_state import StateHandlerContext
+from graphics import load_asset
 
 
 class LevelPlayHandler(game_state.StateHandler):
@@ -20,11 +20,11 @@ class LevelPlayHandler(game_state.StateHandler):
         self.image_background_day = load_asset("day.jpg")
         self.image_character = load_asset('stickman.png')
         self.obstacle_image = load_asset("calculator1.jpg")
-        self.obstacle_width = 125
-        self.obstacle_height = 188
+        self.obstacle_width = 50
+        self.obstacle_height = 125
         self.font = pygame.font.SysFont("comicsans", self.font_size)
 
-        self.speed = 2.5
+        self.speed = 1
 
         self.window = context.get_window()
         self.width = self.window.get_width()
@@ -217,7 +217,7 @@ class LevelPlayHandler(game_state.StateHandler):
             # The game has ended; reset all state so that when we are
             # re-started, we start from the beginning and not where we left
             # off.
-            self.speed = 2.5
+            self.speed = 1
             self.score = 0
             self.distance_covered = 0
             pass
