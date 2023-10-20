@@ -30,7 +30,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_height = 125
         self._font = pygame.font.SysFont("comicsans", self._font_size)
 
-        self._speed = 1
+        self._speed = 2
 
         self._window = context.get_window()
         self._width = self._window.get_width()
@@ -58,15 +58,22 @@ class LevelPlayHandler(game_state.StateHandler):
         self._image_background_day_pos2 = pygame.Rect(self._width * 3, 0,
                                                       self._width,
                                                       self._height)
+
+        # Scale character, then crop it so that the bounding box doesn't extend
+        # out into space, thus creating ghost hits.
         self._image_character = pygame.transform.scale(self._image_character,
                                                        (100, 100))
+        self._image_character = self._image_character.subsurface((20, 5, 60, 80))
+
         self._distance_covered = 0
         self._user_input = None
 
         self._ground = 330
-        self._gravity = 2500
+        self._gravity = 3000
         self._jump = -100
-        self._stickman = pygame.Rect(0, self._ground, 100, 100)
+        self._stickman = pygame.Rect(0, self._ground,
+                                     self._image_character.get_width(),
+                                     self._image_character.get_height())
 
         self._obstacle_y = self._ground
         self._obstacle_image = pygame.transform.scale(
@@ -139,6 +146,7 @@ class LevelPlayHandler(game_state.StateHandler):
                                      self._obstacle_width,
                                      self._obstacle_height)
         self._window.blit(self._obstacle_image, (obstacle, self._obstacle_y))
+
         if obstacle < -51:
             # makes the obstacle have a random position off-screen that the
             # player has to overcome
@@ -203,7 +211,7 @@ class LevelPlayHandler(game_state.StateHandler):
                 try:
                     # checks if answer is correct
                     if float(event.text) == self._equation[1]:
-                        self._jump = -1100
+                        self._jump = -1350
                         self._equation = arithmetic.generate_arithmetic()
                         self._speed += 1
                         self._score += 1
