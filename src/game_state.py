@@ -24,7 +24,7 @@ class GameState:
     """The program is ending and should exit as quickly as possible."""
 
     MAIN_MENU = 1
-    """The game is displaying the main menu and waiting for the user to make 
+    """The game is displaying the main menu and waiting for the user to make
     a choice."""
 
     LEVEL_PLAY = 2
@@ -34,7 +34,7 @@ class GameState:
     """The game is paused. It is waiting for user input before resuming."""
 
     LEVEL_END = 4
-    """The current game has ended, either because the user hit an obstacle, 
+    """The current game has ended, either because the user hit an obstacle,
     or because a question was incorrectly answered."""
 
 

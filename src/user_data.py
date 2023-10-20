@@ -76,8 +76,8 @@ class UserData:
         else:
             json_str = self._store.read_text()
             self._cache = json.loads(json_str)
-            log.msg(log.DEBUG,
-                    f"Loaded {len(self._cache.keys())} key(s) from data store.")
+            n_keys = len(self._cache.keys())
+            log.msg(log.DEBUG, f"Loaded {n_keys} key(s) from data store.")
 
         UserData.__open_handles.append(self._store)
         self._closed = False

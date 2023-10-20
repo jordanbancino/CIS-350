@@ -41,19 +41,23 @@ class LevelPlayHandler(game_state.StateHandler):
 
         # pos of initial night background
         self._image_background_night_pos1 = pygame.Rect(0, 0,
-                                                        self._width, self._height)
+                                                        self._width,
+                                                        self._height)
         # pos of init night img
         self._image_background_night_pos2 = pygame.Rect(self._width, 0,
-                                                        self._width, self._height)
+                                                        self._width,
+                                                        self._height)
 
         self._image_background_day = pygame.transform.scale(
             self._image_background_day, (self._width, self._height))
         # pos init day image
         self._image_background_day_pos1 = pygame.Rect(self._width * 2, 0,
-                                                      self._width, self._height)
+                                                      self._width,
+                                                      self._height)
         # pos init day image
         self._image_background_day_pos2 = pygame.Rect(self._width * 3, 0,
-                                                      self._width, self._height)
+                                                      self._width,
+                                                      self._height)
         self._image_character = pygame.transform.scale(self._image_character,
                                                        (100, 100))
         self._distance_covered = 0
@@ -112,29 +116,35 @@ class LevelPlayHandler(game_state.StateHandler):
             d1 = n2 + self._width
             d2 = d1 + self._width
 
-        self._image_background_night_pos1.update(n1, 0, self._width, self._height)
+        self._image_background_night_pos1.update(n1, 0,
+                                                 self._width, self._height)
         self._window.blit(self._image_background_night,
                           (n1, self._image_background_night.get_rect().y))
-        self._image_background_night_pos2.update(n2, 0, self._width, self._height)
+        self._image_background_night_pos2.update(n2, 0,
+                                                 self._width, self._height)
         self._window.blit(self._image_background_night,
                           (n2, self._image_background_night.get_rect().y))
-        self._image_background_day_pos1.update(d1, 0, self._width, self._height)
+        self._image_background_day_pos1.update(d1, 0,
+                                               self._width, self._height)
         self._window.blit(self._image_background_day,
                           (d1, self._image_background_day.get_rect().y))
-        self._image_background_day_pos2.update(d2, 0, self._width, self._height)
+        self._image_background_day_pos2.update(d2, 0,
+                                               self._width, self._height)
         self._window.blit(self._image_background_day,
                           (d2, self._image_background_day.get_rect().y))
 
         obstacle = self._obstacle_hitbox.x
         obstacle -= self._speed
         self._obstacle_hitbox.update(obstacle, self._obstacle_y,
-                                     self._obstacle_width, self._obstacle_height)
+                                     self._obstacle_width,
+                                     self._obstacle_height)
         self._window.blit(self._obstacle_image, (obstacle, self._obstacle_y))
         if obstacle < -51:
             # makes the obstacle have a random position off-screen that the
             # player has to overcome
             self._obstacle_hitbox.update(random.randint(905, 1800),
-                                         self._obstacle_y, self._obstacle_width,
+                                         self._obstacle_y,
+                                         self._obstacle_width,
                                          self._obstacle_height)
 
     def draw_ui(self, context):
@@ -170,7 +180,8 @@ class LevelPlayHandler(game_state.StateHandler):
             self._jump = 0
 
         # displays the character at a position
-        window.blit(self._image_character, (self._stickman.x, self._stickman.y))
+        window.blit(self._image_character,
+                    (self._stickman.x, self._stickman.y))
 
     def process(self, context: game_state.StateHandlerContext) \
             -> game_state.GameState:

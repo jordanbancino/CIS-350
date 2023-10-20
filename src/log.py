@@ -9,7 +9,7 @@ updated accordingly.
 import inspect
 
 DEBUG = 10
-"""Debug messages are intended only for developers and should be disabled in 
+"""Debug messages are intended only for developers and should be disabled in
 production."""
 
 INFO = 20
