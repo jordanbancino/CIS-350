@@ -63,7 +63,8 @@ class LevelPlayHandler(game_state.StateHandler):
         # out into space, thus creating ghost hits.
         self._image_character = pygame.transform.scale(self._image_character,
                                                        (100, 100))
-        self._image_character = self._image_character.subsurface((20, 5, 60, 80))
+        self._image_character = self._image_character.subsurface((20, 5,
+                                                                  60, 80))
 
         self._distance_covered = 0
         self._user_input = None
