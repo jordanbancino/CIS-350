@@ -1,6 +1,8 @@
 """
-TODO: This class is not currently in use, but it is probably a good idea to
-use it at some point.
+This class is deprecated and scheduled for removal or significant refactoring
+before the final release, so it has not yet been properly documented. This code
+is also not used anywhere else in the project, so there is nothing that
+depends on it at this time.
 """
 import random
 

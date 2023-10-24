@@ -32,7 +32,7 @@ print("Generating UML class diagram...")
 cmd_exec(['pyreverse', *srcs, '--output', 'puml'])
 
 print("Executing style checks...")
-cmd_exec(['pep8', '--statistics', *srcs])
+cmd_exec(['pycodestyle', '--statistics', *srcs])
 
 print("Performing static analysis...")
 cmd_exec(['pylint', '--errors-only', '--generated-members', 'pygame.*', *srcs])
