@@ -25,7 +25,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._image_background_night = load_asset('night.jpg')
         self._image_background_day = load_asset("day.jpg")
         self._image_character = load_asset('stickman.png')
-        self._obstacle_image = load_asset("calculator1.jpg")
+        self._obstacle_image = load_asset("calculator1.png")
         self._obstacle_width = 50
         self._obstacle_height = 125
         self._font = pygame.font.SysFont("comicsans", self._font_size)
