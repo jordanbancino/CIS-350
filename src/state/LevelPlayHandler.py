@@ -101,7 +101,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._user_input.placeholder_text = ""
         self._user_input.focus()
 
-        self._equation = arithmetic.generate_arithmetic()
+        self._equation = arithmetic.generate_arithmetic("hard")
 
     def draw_scene(self, context):
         dt = context.get_delta()
@@ -212,7 +212,7 @@ class LevelPlayHandler(game_state.StateHandler):
                     # checks if answer is correct
                     if float(event.text) == self._equation[1]:
                         self._jump = -1350
-                        self._equation = arithmetic.generate_arithmetic()
+                        self._equation = arithmetic.generate_arithmetic("hard")
                         self._speed += 1
                         self._score += 1
                     else:
