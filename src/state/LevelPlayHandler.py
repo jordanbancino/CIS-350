@@ -216,7 +216,7 @@ class LevelPlayHandler(game_state.StateHandler):
                         self._speed += 1
                         self._score += 1
                     else:
-                        next_state = game_state.GameState.LEVEL_END
+                        self._speed = 0
                 except ValueError:
                     # If the user inputs an invalid number, just clear the box.
                     pass

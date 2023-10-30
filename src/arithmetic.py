@@ -18,16 +18,12 @@ def generate_arithmetic(mode: str) -> (str, float):
     for our purposes, we only need the display string for the equation and its
     solution.
     """
-    sign = {0: "+", 1: "-", 2: "*", 3: "/"}
     if mode.lower() == "easy":
         sign = {0: "+", 1: "-"}
-    elif mode.lower() == "medium":
-        pass
-    elif mode.lower() == "hard":
-        pass
+    elif mode.lower() == "medium" or mode.lower() == "hard":
+        sign = {0: "+", 1: "-", 2: "*", 3: "/"}
     else:
         raise AssertionError(f"Difficulty option not valid.")
-    sign = {0: "+", 1: "-", 2: "*", 3: "/"}
     random_sign = sign[random.randint(0, 3)]
     random_num_arth1 = random.randint(0, 10)
     random_num_arth2 = random.randint(0, 10)
