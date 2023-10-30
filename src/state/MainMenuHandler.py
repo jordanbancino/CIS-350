@@ -57,6 +57,7 @@ class MainMenuHandler(game_state.StateHandler):
         self._image_button_start = load_asset('start_button.png')
         self._image_button_score = load_asset('score_button.png')
         self._image_button_quit = load_asset('quit_button.png')
+        self._font = pygame.font.SysFont("consolas", 80)
 
         window = context.get_window()
         width = window.get_width()
@@ -79,6 +80,8 @@ class MainMenuHandler(game_state.StateHandler):
 
         window.fill((47, 79, 79))  # Gray
         window.blit(self._image_border, (0, 0))
+       # welcome = self._font.render("ARG", True, "white")
+        #window.blit(welcome, (((window.get_width() - welcome.get_width()) / 2), 0))
 
         for button in buttons:
             button.blit(window)
