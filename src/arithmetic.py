@@ -5,7 +5,7 @@ Arithmetic prompt and answer handling.
 import random
 
 
-def generate_arithmetic() -> (str, float):
+def generate_arithmetic(mode: str) -> (str, float):
     """
     Generate a random arithmetic problem that ensures the answer to the random
     problem is an integer. This function returns a tuple whose first value is
@@ -19,14 +19,33 @@ def generate_arithmetic() -> (str, float):
     solution.
     """
     sign = {0: "+", 1: "-", 2: "*", 3: "/"}
+    if mode.lower() == "easy":
+        sign = {0: "+", 1: "-"}
+    elif mode.lower() == "medium":
+        pass
+    elif mode.lower() == "hard":
+        pass
+    else:
+        raise AssertionError(f"Difficulty option not valid.")
+    sign = {0: "+", 1: "-", 2: "*", 3: "/"}
     random_sign = sign[random.randint(0, 3)]
     random_num_arth1 = random.randint(0, 10)
     random_num_arth2 = random.randint(0, 10)
+    if mode.lower() == "hard":
+        random_num_arth1 = random.randint(-10, 10)
+        random_num_arth2 = random.randint(-10, 10)
     while random_sign == "/":
         while random_num_arth2 == 0:
-            random_num_arth2 = random.randint(0, 100)
+            if mode.lower() == "hard":
+                random_num_arth2 = random.randint(-10, 10)
+                continue
+            random_num_arth2 = random.randint(0, 10)
         if random_num_arth1 % random_num_arth2 == 0:
             break
+        if mode.lower() == "hard":
+            random_num_arth1 = random.randint(-10, 10)
+            random_num_arth2 = random.randint(-10, 10)
+            continue
         random_num_arth1 = random.randint(0, 10)
         random_num_arth2 = random.randint(0, 10)
 

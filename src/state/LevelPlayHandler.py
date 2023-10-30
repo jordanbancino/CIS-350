@@ -9,9 +9,8 @@ import random
 import pygame
 import pygame_gui
 
-import arithmetic
-import game_state
-from game_state import StateHandlerContext
+from src import arithmetic
+from src import game_state
 from arg import load_asset
 
 
@@ -25,7 +24,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._image_background_night = load_asset('night.jpg')
         self._image_background_day = load_asset("day.jpg")
         self._image_character = load_asset('stickman.png')
-        self._obstacle_image = load_asset("calculator1.jpg")
+        self._obstacle_image = load_asset("calculator1.png")
         self._obstacle_width = 50
         self._obstacle_height = 125
         self._font = pygame.font.SysFont("comicsans", self._font_size)
@@ -40,22 +39,22 @@ class LevelPlayHandler(game_state.StateHandler):
                                    (self._width, self._height)))
 
         # pos of initial night background
-        self._image_background_night_pos1 = pygame.Rect(0, 0,
+        self._image_background_night_pos1 = pygame.Rect(self._width * 2, 0,
                                                         self._width,
                                                         self._height)
         # pos of init night img
-        self._image_background_night_pos2 = pygame.Rect(self._width, 0,
+        self._image_background_night_pos2 = pygame.Rect(self._width * 3, 0,
                                                         self._width,
                                                         self._height)
 
         self._image_background_day = pygame.transform.scale(
             self._image_background_day, (self._width, self._height))
         # pos init day image
-        self._image_background_day_pos1 = pygame.Rect(self._width * 2, 0,
+        self._image_background_day_pos1 = pygame.Rect(0, 0,
                                                       self._width,
                                                       self._height)
         # pos init day image
-        self._image_background_day_pos2 = pygame.Rect(self._width * 3, 0,
+        self._image_background_day_pos2 = pygame.Rect(self._width, 0,
                                                       self._width,
                                                       self._height)
 
@@ -84,7 +83,7 @@ class LevelPlayHandler(game_state.StateHandler):
                                             self._obstacle_width,
                                             self._obstacle_height)
 
-    def on_enter(self, context: StateHandlerContext) -> None:
+    def on_enter(self, context: game_state.StateHandlerContext) -> None:
         super().on_enter(context)
         window = context.get_window()
 
@@ -102,36 +101,28 @@ class LevelPlayHandler(game_state.StateHandler):
         self._user_input.placeholder_text = ""
         self._user_input.focus()
 
-        self._equation = arithmetic.generate_arithmetic()
+        self._equation = arithmetic.generate_arithmetic("hard")
 
     def draw_scene(self, context):
         dt = context.get_delta()
 
-        n1 = self._image_background_night_pos1.x
-        n2 = self._image_background_night_pos2.x
         d1 = self._image_background_day_pos1.x
         d2 = self._image_background_day_pos2.x
+        n1 = self._image_background_night_pos1.x
+        n2 = self._image_background_night_pos2.x
 
-        n1 -= self._speed
-        n2 -= self._speed
         d1 -= self._speed
         d2 -= self._speed
+        n1 -= self._speed
+        n2 -= self._speed
 
-        if d2 <= 0:
-            n1 = d2 + self._width
-            n2 = n1 + self._width
-        if d2 <= -self._width:
+        if n2 <= 0:
             d1 = n2 + self._width
             d2 = d1 + self._width
+        if n2 <= -self._width:
+            n1 = d2 + self._width
+            n2 = n1 + self._width
 
-        self._image_background_night_pos1.update(n1, 0,
-                                                 self._width, self._height)
-        self._window.blit(self._image_background_night,
-                          (n1, self._image_background_night.get_rect().y))
-        self._image_background_night_pos2.update(n2, 0,
-                                                 self._width, self._height)
-        self._window.blit(self._image_background_night,
-                          (n2, self._image_background_night.get_rect().y))
         self._image_background_day_pos1.update(d1, 0,
                                                self._width, self._height)
         self._window.blit(self._image_background_day,
@@ -140,6 +131,14 @@ class LevelPlayHandler(game_state.StateHandler):
                                                self._width, self._height)
         self._window.blit(self._image_background_day,
                           (d2, self._image_background_day.get_rect().y))
+        self._image_background_night_pos1.update(n1, 0,
+                                                 self._width, self._height)
+        self._window.blit(self._image_background_night,
+                          (n1, self._image_background_night.get_rect().y))
+        self._image_background_night_pos2.update(n2, 0,
+                                                 self._width, self._height)
+        self._window.blit(self._image_background_night,
+                          (n2, self._image_background_night.get_rect().y))
 
         obstacle = self._obstacle_hitbox.x
         obstacle -= self._speed
@@ -213,7 +212,7 @@ class LevelPlayHandler(game_state.StateHandler):
                     # checks if answer is correct
                     if float(event.text) == self._equation[1]:
                         self._jump = -1350
-                        self._equation = arithmetic.generate_arithmetic()
+                        self._equation = arithmetic.generate_arithmetic("hard")
                         self._speed += 1
                         self._score += 1
                     else:
