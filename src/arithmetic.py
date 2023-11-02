@@ -20,11 +20,12 @@ def generate_arithmetic(mode: str) -> (str, float):
     """
     if mode.lower() == "easy":
         sign = {0: "+", 1: "-"}
+        random_sign = sign[random.randint(0, 1)]
     elif mode.lower() == "medium" or mode.lower() == "hard":
         sign = {0: "+", 1: "-", 2: "*", 3: "/"}
+        random_sign = sign[random.randint(0, 3)]
     else:
         raise AssertionError(f"Difficulty option not valid.")
-    random_sign = sign[random.randint(0, 3)]
     random_num_arth1 = random.randint(0, 10)
     random_num_arth2 = random.randint(0, 10)
     if mode.lower() == "hard":

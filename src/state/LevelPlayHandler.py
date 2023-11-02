@@ -102,7 +102,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._user_input.placeholder_text = ""
         self._user_input.focus()
 
-        self._equation = arithmetic.generate_arithmetic("hard")
+        self._equation = arithmetic.generate_arithmetic("easy")
 
     def draw_scene(self, context):
         dt = context.get_delta()
@@ -209,7 +209,12 @@ class LevelPlayHandler(game_state.StateHandler):
                 and not self._stickman.left > self._obstacle_hitbox.right):
             self._jump = -650
             self._score += 1
-            self._equation = arithmetic.generate_arithmetic("hard")
+            if self._score >= 10:
+                self._equation = arithmetic.generate_arithmetic("hard")
+            elif self._score >= 5:
+                self._equation = arithmetic.generate_arithmetic("medium")
+            else:
+                self._equation = arithmetic.generate_arithmetic("easy")
             self._jumping = False
 
         # check if player presses enter in text box
