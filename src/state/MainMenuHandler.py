@@ -73,9 +73,9 @@ class MainMenuHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        start_button = Button(125, 200, self._image_button_start)
-        score_button = Button(350, 200, self._image_button_score)
-        quit_button = Button(575, 200, self._image_button_quit)
+        start_button = Button(125, 300, self._image_button_start)
+        score_button = Button(350, 300, self._image_button_score)
+        quit_button = Button(575, 300, self._image_button_quit)
         buttons = [start_button, score_button, quit_button]
 
         window.fill((47, 79, 79))  # Gray
