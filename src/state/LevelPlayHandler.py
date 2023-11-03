@@ -27,9 +27,10 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_image = load_asset("calculator1.png")
         self._obstacle_width = 50
         self._obstacle_height = 125
-        self._font = pygame.font.SysFont("comicsans", self._font_size)
+        self._font = pygame.font.SysFont("consolas", self._font_size)
 
         self._speed = 2
+        self._jumping = False
 
         self._window = context.get_window()
         self._width = self._window.get_width()
@@ -69,8 +70,8 @@ class LevelPlayHandler(game_state.StateHandler):
         self._user_input = None
 
         self._ground = 330
-        self._gravity = 3000
-        self._jump = -100
+        self._gravity = 980
+        self._jump = -150
         self._stickman = pygame.Rect(0, self._ground,
                                      self._image_character.get_width(),
                                      self._image_character.get_height())
@@ -79,7 +80,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_image = pygame.transform.scale(
             self._obstacle_image,
             (self._obstacle_width, self._obstacle_height))
-        self._obstacle_hitbox = pygame.Rect(800, self._obstacle_y,
+        self._obstacle_hitbox = pygame.Rect(950, self._obstacle_y,
                                             self._obstacle_width,
                                             self._obstacle_height)
 
@@ -101,7 +102,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._user_input.placeholder_text = ""
         self._user_input.focus()
 
-        self._equation = arithmetic.generate_arithmetic("hard")
+        self._equation = arithmetic.generate_arithmetic("easy")
 
     def draw_scene(self, context):
         dt = context.get_delta()
@@ -204,19 +205,27 @@ class LevelPlayHandler(game_state.StateHandler):
 
         self._distance_covered += self._speed
 
+        if (self._jumping and self._stickman.right >= self._obstacle_hitbox.left - 30
+                and not self._stickman.left > self._obstacle_hitbox.right):
+            self._jump = -650
+            self._score += 1
+            if self._score >= 10:
+                self._equation = arithmetic.generate_arithmetic("hard")
+            elif self._score >= 5:
+                self._equation = arithmetic.generate_arithmetic("medium")
+            else:
+                self._equation = arithmetic.generate_arithmetic("easy")
+            self._jumping = False
+
         # check if player presses enter in text box
         for event in context.get_events():
             if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
                     event.ui_object_id == "answer_input_box"):
                 try:
                     # checks if answer is correct
-                    if float(event.text) == self._equation[1]:
-                        self._jump = -1350
-                        self._equation = arithmetic.generate_arithmetic("hard")
-                        self._speed += 1
-                        self._score += 1
-                    else:
-                        next_state = game_state.GameState.LEVEL_END
+                    if float(event.text) == self._equation[1] and not self._jumping:
+                        self._jumping = True
+
                 except ValueError:
                     # If the user inputs an invalid number, just clear the box.
                     pass
