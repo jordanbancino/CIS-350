@@ -10,6 +10,7 @@ TODO: This screen should display the time and the score.
 """
 import pygame
 
+from pygame import mixer
 import game_state
 from arg import load_asset
 from state.MainMenuHandler import Button
@@ -37,6 +38,7 @@ class LevelEndHandler(game_state.StateHandler):
         super().process(context)
 
         window = context.get_window()
+
         window.fill((47, 79, 79))
 
         window.blit(self._border_image, (0, 0))
@@ -61,6 +63,7 @@ class LevelEndHandler(game_state.StateHandler):
         # Handle buttons that were clicked
         for button in clicked_buttons:
             if button == quit_button:
+                mixer.music.stop()
                 return game_state.GameState.GAME_QUIT
             elif button == main_menu_button:
                 return game_state.GameState.MAIN_MENU

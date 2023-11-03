@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 
 import game_state
 
@@ -13,6 +14,9 @@ class LevelPauseHandler(game_state.StateHandler):
         super().process(context)
 
         window = context.get_window()
+
+        mixer.music.pause()
+
         window.fill('black')
 
         # antialias makes text look better

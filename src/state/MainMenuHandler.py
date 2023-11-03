@@ -3,7 +3,7 @@ This handler handles the `MAIN_MENU` state. It displays the main menu and waits
 for the user to make a selection.
 """
 import pygame
-
+from pygame import mixer
 import game_state
 from arg import load_asset
 
@@ -71,6 +71,11 @@ class MainMenuHandler(game_state.StateHandler):
         super().process(context)
 
         window = context.get_window()
+
+        mixer.music.init()
+        mixer.music.load("song.mp3")
+        mixer.music.set_volume(0.7)
+        mixer.music.play()
 
         # create button instances
         start_button = Button(350, 75, self._image_button_start)
