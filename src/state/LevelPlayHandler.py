@@ -28,7 +28,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_width = 50
         self._obstacle_height = 125
         self._clock = pygame.time.Clock()
-        # self._time = 0  # start stopwatch at 0
+        self._time = 0  # start stopwatch at 0
         self._countdown_time = 120  # 2 minutes
         self._font = pygame.font.SysFont("consolas", self._font_size)
 
@@ -159,8 +159,12 @@ class LevelPlayHandler(game_state.StateHandler):
                                          self._obstacle_width,
                                          self._obstacle_height)
 
-        # self._time += self._clock.tick(60) / 1000
-        self._countdown_time -= self._clock.tick(60) / 1000
+        if self._countdown_time == 120 and self._time == 0:
+            tick_reset = self._clock.tick(60) / 1000  # resets the tick
+        # stopwatch
+        self._time += self._clock.tick(60) / 1000
+        # countdown
+        # self._countdown_time -= self._clock.tick(60) / 1000
 
     def draw_ui(self, context):
         window = context.get_window()
@@ -169,15 +173,19 @@ class LevelPlayHandler(game_state.StateHandler):
             "Press SPACEBAR To Pause", True, "white")
         score_info = self._font.render(
             "SCORE: " + str(self._score), True, "white")
-        # time_info = self._font.render(f"Time in game: {self._time:.2f}s", True, "white")
-        countdown_info = self._font.render(f"Time remaining: {self._countdown_time:.2f}s", True, "white")
+        # stopwatch
+        time_info = self._font.render(f"Time in game: {self._time:.2f}s", True, "white")
+        # countdown
+        # countdown_info = self._font.render(f"Time remaining: {self._countdown_time:.2f}s", True, "white")
 
         # set pause_info text on top right with 5x5 px padding
         window.blit(pause_info,
                     (window.get_width() - pause_info.get_width() - 5, 5))
         window.blit(score_info, (350, 5))
-        # window.blit(time_info, (5, 5))
-        window.blit(countdown_info, (5, 105))
+        # stopwatch
+        window.blit(time_info, (5, 5))
+        # countdown
+        # window.blit(countdown_info, (5, 105))
 
         equation = self._font.render(self._equation[0] + ' = ', True, "white")
         window.blit(equation,
