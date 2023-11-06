@@ -32,7 +32,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._countdown_time = 120  # 2 minutes
         self._font = pygame.font.SysFont("consolas", self._font_size)
 
-        self._speed = 2
+        self._speed = 3
         self._jumping = False
 
         self._window = context.get_window()
@@ -73,7 +73,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._user_input = None
 
         self._ground = 330
-        self._gravity = 980
+        self._gravity = 970.2
         self._jump = -150
         self._stickman = pygame.Rect(0, self._ground,
                                      self._image_character.get_width(),
@@ -86,7 +86,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_hitbox = pygame.Rect(950, self._obstacle_y,
                                             self._obstacle_width,
                                             self._obstacle_height)
-
+        print("t, s =", self._stickman.right - self._stickman.left, self._stickman.top - self._stickman.bottom)
     def on_enter(self, context: game_state.StateHandlerContext) -> None:
         super().on_enter(context)
         window = context.get_window()
@@ -226,9 +226,9 @@ class LevelPlayHandler(game_state.StateHandler):
             next_state = game_state.GameState.LEVEL_END
 
         self._distance_covered += self._speed
-        if (self._jumping and self._stickman.right >= self._obstacle_hitbox.left - 30
+        if (self._jumping and self._stickman.right >= self._obstacle_hitbox.left - 50
                 and not self._stickman.left > self._obstacle_hitbox.right):
-            self._jump = -650
+            self._jump = -490
             self._score += 1
             if self._score >= 10:
                 self._equation = arithmetic.generate_arithmetic("hard")
