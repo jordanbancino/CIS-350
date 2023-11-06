@@ -44,6 +44,7 @@ def main() -> None:
     from state.LevelPlayHandler import LevelPlayHandler
     from state.MainMenuHandler import MainMenuHandler
     from state.QuitHandler import QuitHandler
+    from state.DifficultyHandler import DifficultyHandler
 
     log.get_logger().set_level(log.DEBUG)
 
@@ -73,7 +74,8 @@ def main() -> None:
         GameState.MAIN_MENU: MainMenuHandler(init_context),
         GameState.LEVEL_PLAY: LevelPlayHandler(init_context),
         GameState.LEVEL_PAUSE: LevelPauseHandler(init_context),
-        GameState.LEVEL_END: LevelEndHandler(init_context)
+        GameState.LEVEL_END: LevelEndHandler(init_context),
+        GameState.DIFFICULTY: DifficultyHandler(init_context)
     }
 
     while state != GameState.GAME_QUIT:

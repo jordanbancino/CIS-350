@@ -54,10 +54,8 @@ class MainMenuHandler(game_state.StateHandler):
         super().__init__(context)
 
         self._image_border = load_asset('menu_border.png')
-        self._image_button_start = load_asset('start_button.png')
-        self._image_button_score = load_asset('score_button.png')
-        self._image_button_quit = load_asset('quit_button.png')
-        self._font = pygame.font.SysFont("consolas", 80)
+        self.button = load_asset('button.png')
+        self._font = pygame.font.SysFont("consolas", 50)
 
         window = context.get_window()
         width = window.get_width()
@@ -72,26 +70,34 @@ class MainMenuHandler(game_state.StateHandler):
 
         window = context.get_window()
 
-        mixer.music.init()
+        """mixer.music.init()
         mixer.music.load("song.mp3")
         mixer.music.set_volume(0.7)
-        mixer.music.play()
+        mixer.music.play()"""
 
         # create button instances
-        start_button = Button(125, 300, self._image_button_start)
-        score_button = Button(350, 300, self._image_button_score)
-        quit_button = Button(575, 300, self._image_button_quit)
+        start_button = Button(125, 300, self.button)
+        score_button = Button(350, 300, self.button)
+        quit_button = Button(575, 300, self.button)
         buttons = [start_button, score_button, quit_button]
 
-        window.fill((47, 79, 79))  # Gray
+        window.fill((100, 100, 100))  # Gray
         window.blit(self._image_border, (0, 0))
-       # welcome = self._font.render("ARG", True, "white")
-        #window.blit(welcome, (((window.get_width() - welcome.get_width()) / 2), 0))
+
+        start = self._font.render("START", True, "white")
+        score = self._font.render("SCORE", True, "white")
+        quit = self._font.render("QUIT", True, "white")
+        welcome = self._font.render("WELCOME TO ARG", True, "white")
 
         for button in buttons:
             button.blit(window)
 
         clicked_buttons = []
+
+        window.blit(start, (155, 325))
+        window.blit(score, (380, 325))
+        window.blit(quit, (620, 325))
+        window.blit(welcome, (((window.get_width() / 2) - (welcome.get_width() / 2)), 75))
 
         # Dispatch all events to all buttons
         for event in context.get_events():
@@ -104,7 +110,7 @@ class MainMenuHandler(game_state.StateHandler):
             if button == quit_button:
                 return game_state.GameState.GAME_QUIT
             elif button == start_button:
-                return game_state.GameState.LEVEL_PLAY
+                return game_state.GameState.DIFFICULTY
             elif button == score_button:
                 # TODO: Handle score button click
                 pass

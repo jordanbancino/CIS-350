@@ -37,6 +37,10 @@ class GameState:
     """The current game has ended, either because the user hit an obstacle,
     or because a question was incorrectly answered."""
 
+    DIFFICULTY = 5
+    """The game is displaying the Difficulty meters for the MATH mode and 
+    waiting for the user to make a choice"""
+
 
 class StateHandlerContext:
     """
