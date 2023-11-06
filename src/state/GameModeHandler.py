@@ -10,7 +10,8 @@ class GameModeHandler(game_state.StateHandler):
 
         self._image_border = load_asset('menu_border.png')
         self.button = load_asset('button.png')
-        self._font = pygame.font.SysFont("consolas", 50)
+        self.button_font = pygame.font.SysFont("consolas", 50)
+        self.title_font = pygame.font.SysFont("consolas", 80)
 
         window = context.get_window()
         width = window.get_width()
@@ -36,9 +37,9 @@ class GameModeHandler(game_state.StateHandler):
         for button in buttons:
             button.blit(window)
 
-        math = self._font.render("MATH", True, "white")
-        flashcard = self._font.render("CARD", True, "white")
-        gamemode = self._font.render("GAME MODE", True, "white")
+        math = self.button_font.render("MATH", True, "white")
+        flashcard = self.button_font.render("CARD", True, "white")
+        gamemode = self.title_font.render("GAME MODE", True, "white")
 
         window.blit(math, (270, 325))
         window.blit(flashcard, (520, 325))

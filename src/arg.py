@@ -64,7 +64,7 @@ def main() -> None:
 
     # create window and set size
     window = pygame.display.set_mode((width, height))
-    pygame.display.set_caption("Arithman")  # set window title
+    pygame.display.set_caption("ARG")  # set window title
 
     prev_state = None
     state = GameState.MAIN_MENU  # Initial state

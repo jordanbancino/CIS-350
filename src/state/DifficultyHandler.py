@@ -11,7 +11,8 @@ class DifficultyHandler(game_state.StateHandler):
         self._image_border = load_asset('menu_border.png')
         self.button = load_asset('button.png')
         self.infinity = load_asset("infinity.png")
-        self._font = pygame.font.SysFont("consolas", 50)
+        self.button_font = pygame.font.SysFont("consolas", 50)
+        self.title_font = pygame.font.SysFont("consolas", 80)
 
         window = context.get_window()
         width = window.get_width()
@@ -41,10 +42,10 @@ class DifficultyHandler(game_state.StateHandler):
         for button in buttons:
             button.blit(window)
 
-        easy = self._font.render("EASY", True, "white")
-        medium = self._font.render("MEDIUM", True, "white")
-        hard = self._font.render("HARD", True, "white")
-        difficulty = self._font.render("DIFFICULTY", True, "white")
+        easy = self.button_font.render("EASY", True, "white")
+        medium = self.button_font.render("MEDIUM", True, "white")
+        hard = self.button_font.render("HARD", True, "white")
+        difficulty = self.title_font.render("DIFFICULTY", True, "white")
 
         window.blit(easy, (170, 325))
         window.blit(medium, (368, 325))
