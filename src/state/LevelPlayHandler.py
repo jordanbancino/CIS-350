@@ -27,9 +27,12 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_image = load_asset("calculator1.png")
         self._obstacle_width = 50
         self._obstacle_height = 125
+        self._clock = pygame.time.Clock()
+        self._time = 0  # start stopwatch at 0
+        self._countdown_time = 120  # 2 minutes
         self._font = pygame.font.SysFont("consolas", self._font_size)
 
-        self._speed = 2
+        self._speed = 3
         self._jumping = False
 
         self._window = context.get_window()
@@ -70,7 +73,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._user_input = None
 
         self._ground = 330
-        self._gravity = 980
+        self._gravity = 970.2
         self._jump = -150
         self._stickman = pygame.Rect(0, self._ground,
                                      self._image_character.get_width(),
@@ -83,7 +86,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_hitbox = pygame.Rect(950, self._obstacle_y,
                                             self._obstacle_width,
                                             self._obstacle_height)
-
+        print("t, s =", self._stickman.right - self._stickman.left, self._stickman.top - self._stickman.bottom)
     def on_enter(self, context: game_state.StateHandlerContext) -> None:
         super().on_enter(context)
         window = context.get_window()
@@ -156,6 +159,13 @@ class LevelPlayHandler(game_state.StateHandler):
                                          self._obstacle_width,
                                          self._obstacle_height)
 
+        if self._countdown_time == 120 and self._time == 0:
+            tick_reset = self._clock.tick(60) / 1000  # resets the tick
+        # stopwatch
+        self._time += self._clock.tick(60) / 1000
+        # countdown
+        # self._countdown_time -= self._clock.tick(60) / 1000
+
     def draw_ui(self, context):
         window = context.get_window()
         # antialias makes text look better
@@ -163,11 +173,19 @@ class LevelPlayHandler(game_state.StateHandler):
             "Press SPACEBAR To Pause", True, "white")
         score_info = self._font.render(
             "SCORE: " + str(self._score), True, "white")
+        # stopwatch
+        time_info = self._font.render(f"Time in game: {self._time:.2f}s", True, "white")
+        # countdown
+        # countdown_info = self._font.render(f"Time remaining: {self._countdown_time:.2f}s", True, "white")
 
         # set pause_info text on top right with 5x5 px padding
         window.blit(pause_info,
                     (window.get_width() - pause_info.get_width() - 5, 5))
         window.blit(score_info, (350, 5))
+        # stopwatch
+        window.blit(time_info, (5, 5))
+        # countdown
+        # window.blit(countdown_info, (5, 105))
 
         equation = self._font.render(self._equation[0] + ' = ', True, "white")
         window.blit(equation,
@@ -203,11 +221,14 @@ class LevelPlayHandler(game_state.StateHandler):
         next_state = game_state.GameState.LEVEL_PLAY
         window = context.get_window()
 
-        self._distance_covered += self._speed
+        # game ends when countdown hits 0
+        if self._countdown_time <= 0:
+            next_state = game_state.GameState.LEVEL_END
 
-        if (self._jumping and self._stickman.right >= self._obstacle_hitbox.left - 30
+        self._distance_covered += self._speed
+        if (self._jumping and self._stickman.right >= self._obstacle_hitbox.left - 50
                 and not self._stickman.left > self._obstacle_hitbox.right):
-            self._jump = -650
+            self._jump = -490
             self._score += 1
             if self._score >= 10:
                 self._equation = arithmetic.generate_arithmetic("hard")
