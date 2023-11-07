@@ -34,6 +34,7 @@ class LevelPlayHandler(game_state.StateHandler):
 
         self._speed = 3
         self._jumping = False
+        self._scored = False
 
         self._window = context.get_window()
         self._width = self._window.get_width()
@@ -73,8 +74,10 @@ class LevelPlayHandler(game_state.StateHandler):
         self._user_input = None
 
         self._ground = 330
-        self._gravity = 970.2
-        self._jump = -150
+        self._jump = 0
+        self._next_jump = self._speed * 10 / 3 - 500
+        self._gravity = self._next_jump * self._next_jump / 500 - self._next_jump
+
         self._stickman = pygame.Rect(0, self._ground,
                                      self._image_character.get_width(),
                                      self._image_character.get_height())
@@ -86,7 +89,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_hitbox = pygame.Rect(950, self._obstacle_y,
                                             self._obstacle_width,
                                             self._obstacle_height)
-        print("t, s =", self._stickman.right - self._stickman.left, self._stickman.top - self._stickman.bottom)
+        #print("t, s =", self._stickman.right - self._stickman.left, self._stickman.top - self._stickman.bottom)
     def on_enter(self, context: game_state.StateHandlerContext) -> None:
         super().on_enter(context)
         window = context.get_window()
@@ -226,10 +229,10 @@ class LevelPlayHandler(game_state.StateHandler):
             next_state = game_state.GameState.LEVEL_END
 
         self._distance_covered += self._speed
+
         if (self._jumping and self._stickman.right >= self._obstacle_hitbox.left - 50
                 and not self._stickman.left > self._obstacle_hitbox.right):
-            self._jump = -490
-            self._score += 1
+            self._jump = self._next_jump
             if self._score >= 10:
                 self._equation = arithmetic.generate_arithmetic("hard")
             elif self._score >= 5:
@@ -237,6 +240,15 @@ class LevelPlayHandler(game_state.StateHandler):
             else:
                 self._equation = arithmetic.generate_arithmetic("easy")
             self._jumping = False
+            self._scored = False
+
+        if not self._scored and self._stickman.right >= self._obstacle_hitbox.right + 50:
+            self._score += 1
+            # self._speed += 1
+            self._next_jump = self._speed * 10/3 - 500
+            self._gravity = self._next_jump * self._next_jump / 500 - self._next_jump
+            print(self._next_jump, self._gravity)
+            self._scored = True
 
         # check if player presses enter in text box
         for event in context.get_events():
