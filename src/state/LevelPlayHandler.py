@@ -32,7 +32,9 @@ class LevelPlayHandler(game_state.StateHandler):
         self._countdown_time = 120  # 2 minutes
         self._font = pygame.font.SysFont("consolas", self._font_size)
 
-        self._speed = 3
+        self._speed = 2
+        self._temp_speed = self._speed
+        self._jump_speed = 3
         self._jumping = False
         self._scored = False
 
@@ -75,9 +77,8 @@ class LevelPlayHandler(game_state.StateHandler):
 
         self._ground = 330
         self._jump = 0
-        self._next_jump = self._speed * 10 / 3 - 500
-        self._gravity = self._next_jump * self._next_jump / 500 - self._next_jump
-
+        self._next_jump = -490
+        self._gravity = 970
         self._stickman = pygame.Rect(0, self._ground,
                                      self._image_character.get_width(),
                                      self._image_character.get_height())
@@ -232,22 +233,21 @@ class LevelPlayHandler(game_state.StateHandler):
 
         if (self._jumping and self._stickman.right >= self._obstacle_hitbox.left - 50
                 and not self._stickman.left > self._obstacle_hitbox.right):
+            self._temp_speed = self._speed
+            self._speed = self._jump_speed
             self._jump = self._next_jump
+            self._jumping = False
+            self._scored = False
+
+        if not self._scored and self._stickman.right >= self._obstacle_hitbox.right + 50:
+            self._score += 1
+            self._speed = self._temp_speed + 1
             if self._score >= 10:
                 self._equation = arithmetic.generate_arithmetic("hard")
             elif self._score >= 5:
                 self._equation = arithmetic.generate_arithmetic("medium")
             else:
                 self._equation = arithmetic.generate_arithmetic("easy")
-            self._jumping = False
-            self._scored = False
-
-        if not self._scored and self._stickman.right >= self._obstacle_hitbox.right + 50:
-            self._score += 1
-            # self._speed += 1
-            self._next_jump = self._speed * 10/3 - 500
-            self._gravity = self._next_jump * self._next_jump / 500 - self._next_jump
-            print(self._next_jump, self._gravity)
             self._scored = True
 
         # check if player presses enter in text box
