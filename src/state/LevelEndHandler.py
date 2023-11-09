@@ -12,7 +12,9 @@ import pygame
 
 from pygame import mixer
 import game_state
+import user_data
 from arg import load_asset
+from game_state import StateHandlerContext
 from state.MainMenuHandler import Button
 
 
@@ -53,6 +55,9 @@ class LevelEndHandler(game_state.StateHandler):
         quit = self.button_font.render("QUIT", True, "white")
         gameover = self.title_font.render("GAME OVER", True,"white")
 
+        score = self.button_font.render("Score: " + str(context.get_storage()['last_score']), True, "white")
+        time = self.button_font.render("Time: " + str(round(context.get_storage()['last_play_time'], 2)) + "s", True, "white")
+
         for button in buttons:
             button.blit(window)
 
@@ -63,6 +68,9 @@ class LevelEndHandler(game_state.StateHandler):
         window.blit(quit, (620, 325))
         window.blit(gameover, (((window.get_width() / 2) -
                                 (gameover.get_width() / 2)), 75))
+
+        window.blit(score, ((window.get_width() - score.get_width()) / 2, 175))
+        window.blit(time, ((window.get_width() - time.get_width()) / 2, 225))
 
         # Dispatch all events to all buttons
         for event in context.get_events():

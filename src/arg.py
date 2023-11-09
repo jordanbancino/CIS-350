@@ -69,15 +69,17 @@ def main() -> None:
     prev_state = None
     state = GameState.MAIN_MENU  # Initial state
 
-    init_context = StateHandlerContext(state, None, window, gui_manager, -1)
+    # Initial context
+    context = StateHandlerContext(state, None, window, gui_manager, -1, {})
+
     handlers = {
-        GameState.GAME_QUIT: QuitHandler(init_context),
-        GameState.MAIN_MENU: MainMenuHandler(init_context),
-        GameState.LEVEL_PLAY: LevelPlayHandler(init_context),
-        GameState.LEVEL_PAUSE: LevelPauseHandler(init_context),
-        GameState.LEVEL_END: LevelEndHandler(init_context),
-        GameState.DIFFICULTY: DifficultyHandler(init_context),
-        GameState.GAME_MODE: GameModeHandler(init_context)
+        GameState.GAME_QUIT: QuitHandler(context),
+        GameState.MAIN_MENU: MainMenuHandler(context),
+        GameState.LEVEL_PLAY: LevelPlayHandler(context),
+        GameState.LEVEL_PAUSE: LevelPauseHandler(context),
+        GameState.LEVEL_END: LevelEndHandler(context),
+        GameState.DIFFICULTY: DifficultyHandler(context),
+        GameState.GAME_MODE: GameModeHandler(context)
     }
 
     while state != GameState.GAME_QUIT:
@@ -98,11 +100,16 @@ def main() -> None:
             state = GameState.GAME_QUIT
 
         handler = handlers[state]
+
+        # Generate a new context with the current state, events, timing, and
+        # GUI components. We also copy over the previous context's storage so
+        # that state handlers can share data amongst themselves.
         context = StateHandlerContext(state,
                                       events,
                                       window,
                                       gui_manager,
-                                      time_delta)
+                                      time_delta,
+                                      context.get_storage())
 
         if state != prev_state:
             log.msg(log.DEBUG, f"Entering state {state}.")

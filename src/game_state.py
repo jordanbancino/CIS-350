@@ -44,6 +44,7 @@ class GameState:
     GAME_MODE = 6
     """The game is displaying the two game modes called Math and Flashcard"""
 
+
 class StateHandlerContext:
     """
     The state handler context is populated by the main state machine event
@@ -57,16 +58,18 @@ class StateHandlerContext:
     the context so that handlers can handle any events that may have passed
     since the handler function was last executed.
     """
+
     def __init__(self,
                  state: GameState, events: list[pygame.event.Event] | None,
                  window: pygame.Surface,
                  gui: pygame_gui.UIManager,
-                 delta: float):
+                 delta: float, storage: dict):
         self._state = state
         self._events = events
         self._window = window
         self._gui = gui
         self._delta = delta
+        self._storage = storage
 
     def get_state(self) -> GameState:
         """
@@ -128,6 +131,19 @@ class StateHandlerContext:
         """
         return self._delta
 
+    def get_storage(self) -> dict:
+        """
+        Get a dictionary that is accessible to all state handlers. This storage
+        dictionary can be in any format agreed upon by the state handlers, and
+        is used to pass data between them. State handlers can process the
+        storage in their `on_enter()` and `on_exit()` functions.
+
+        State handlers should make an effort to refrain from storing internal
+        data in the context storage. This storage should be reserved only for
+        exporting data to other state handlers.
+        """
+        return self._storage
+
 
 class StateHandler:
     """
@@ -140,6 +156,7 @@ class StateHandler:
     limitations as to what a state handler can do at any point during its
     lifetime.
     """
+
     def __init__(self, context: StateHandlerContext):
         """
         Construct a new `StateHandler`.

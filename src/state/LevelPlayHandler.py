@@ -283,6 +283,9 @@ class LevelPlayHandler(game_state.StateHandler):
 
         self._jump = -150
 
+        context.get_storage()['last_play_time'] = self._time
+        context.get_storage()['last_score'] = self._score
+
         if context.get_state() == game_state.GameState.LEVEL_END:
             # The game has ended; reset all state so that when we are
             # re-started, we start from the beginning and not where we left
