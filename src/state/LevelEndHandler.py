@@ -22,6 +22,7 @@ class LevelEndHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
         self.title_font = pygame.font.SysFont("consolas", 80)
+        self._font = pygame.font.SysFont("consolas", 50)
         self._border_image = load_asset('menu_border.png')
         self.button = load_asset('button.png')
 
@@ -51,8 +52,8 @@ class LevelEndHandler(game_state.StateHandler):
 
         gameover = self.title_font.render("GAME OVER", True,"white")
 
-        score = self.button_font.render("Score: " + str(context.get_storage()['last_score']), True, "white")
-        time = self.button_font.render("Time: " + str(round(context.get_storage()['last_play_time'], 2)) + "s", True, "white")
+        score = self._font.render("Score: " + str(context.get_storage()['last_score']), True, "white")
+        time = self._font.render("Time: " + str(round(context.get_storage()['last_play_time'], 2)) + "s", True, "white")
 
         for button in buttons:
             button.blit(window)
