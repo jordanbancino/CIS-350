@@ -41,8 +41,8 @@ class GameState:
     """The game is displaying the Difficulty meters for the MATH mode and 
     waiting for the user to make a choice"""
 
-    GAME_MODE = 6
-    """The game is displaying the two game modes called Math and Flashcard"""
+    SCORE = 6
+    """The game is displaying the recent scores"""
 
 
 class StateHandlerContext:

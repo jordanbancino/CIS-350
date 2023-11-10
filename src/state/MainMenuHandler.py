@@ -58,7 +58,6 @@ class MainMenuHandler(game_state.StateHandler):
 
         self._image_border = load_asset('menu_border.png')
         self.button = load_asset('button.png')
-        self.button_font = pygame.font.SysFont("consolas", 50)
         self.title_font = pygame.font.SysFont("consolas", 80)
 
         window = context.get_window()
@@ -107,9 +106,8 @@ class MainMenuHandler(game_state.StateHandler):
             if button == quit_button:
                 return game_state.GameState.GAME_QUIT
             elif button == start_button:
-                return game_state.GameState.GAME_MODE
+                return game_state.GameState.DIFFICULTY
             elif button == score_button:
-                # TODO: Handle score button click
-                pass
+                return game_state.GameState.SCORE
 
         return game_state.GameState.MAIN_MENU

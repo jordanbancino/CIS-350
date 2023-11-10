@@ -11,7 +11,6 @@ class DifficultyHandler(game_state.StateHandler):
         self._image_border = load_asset('menu_border.png')
         self.button = load_asset('button.png')
         self.infinity = load_asset("infinity.png")
-        self.button_font = pygame.font.SysFont("consolas", 50)
         self.title_font = pygame.font.SysFont("consolas", 80)
 
         window = context.get_window()

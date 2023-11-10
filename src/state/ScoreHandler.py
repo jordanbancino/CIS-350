@@ -4,14 +4,14 @@ import game_state
 from arg import load_asset
 
 
-class GameModeHandler(game_state.StateHandler):
+class ScoreHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
 
         self._image_border = load_asset('menu_border.png')
         self.button = load_asset('button.png')
-        self.button_font = pygame.font.SysFont("consolas", 50)
         self.title_font = pygame.font.SysFont("consolas", 80)
+        self._font = pygame.font.SysFont("consolas", 50)
 
         window = context.get_window()
         width = window.get_width()
@@ -27,9 +27,8 @@ class GameModeHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        math_button = Button(225, 300, self.button, "MATH")
-        flashcard_button = Button(475, 300, self.button, "CARD")
-        buttons = [math_button, flashcard_button]
+        back_button = Button(350, 300, self.button, "BACK")
+        buttons = [back_button]
 
         window.fill((100, 100, 100))  # Gray
         window.blit(self._image_border, (0, 0))
@@ -37,9 +36,19 @@ class GameModeHandler(game_state.StateHandler):
         for button in buttons:
             button.blit(window)
 
-        gamemode = self.title_font.render("GAME MODE", True, "white")
+        score_info = self.title_font.render("RECENT SCORES", True, "white")
+        score1 = self._font.render("1: ", True, "white")
+        score2 = self._font.render("2: ", True, "white")
+        score3 = self._font.render("3: ", True, "white")
+        score4 = self._font.render("4: ", True, "white")
+        score5 = self._font.render("5: ", True, "white")
 
-        window.blit(gamemode, (((window.get_width() / 2) - (gamemode.get_width() / 2)), 75))
+        window.blit(score_info, (((window.get_width() / 2) - (score_info.get_width() / 2)), 75))
+        window.blit(score1, (300, 150))
+        window.blit(score2, (550, 150))
+        window.blit(score3, (300, 200))
+        window.blit(score4, (550, 200))
+        window.blit(score5, (375, 250))
 
         clicked_buttons = []
 
@@ -51,10 +60,7 @@ class GameModeHandler(game_state.StateHandler):
 
         # Handle buttons that were clicked
         for button in clicked_buttons:
-            if button == math_button:
-                return game_state.GameState.DIFFICULTY
-            elif button == flashcard_button:
-                "TO DO: Make flashcard mode"
-                pass
+            if button == back_button:
+                return game_state.GameState.MAIN_MENU
 
-        return game_state.GameState.GAME_MODE
+        return game_state.GameState.SCORE

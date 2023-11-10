@@ -21,7 +21,6 @@ from state.MainMenuHandler import Button
 class LevelEndHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
-        self.button_font = pygame.font.SysFont("consolas", 50)
         self.title_font = pygame.font.SysFont("consolas", 80)
         self._border_image = load_asset('menu_border.png')
         self.button = load_asset('button.png')
