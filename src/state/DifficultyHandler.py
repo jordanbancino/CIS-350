@@ -30,10 +30,10 @@ class DifficultyHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        easy_button = Button(125, 300, self.button)
-        medium_button = Button(350, 300, self.button)
-        hard_button = Button(575, 300, self.button)
-        infinite_button = Button(350, 175, self.button)
+        easy_button = Button(125, 300, self.button, "EASY")
+        medium_button = Button(350, 300, self.button, "MEDIUM")
+        hard_button = Button(575, 300, self.button, "HARD")
+        infinite_button = Button(350, 175, self.button, "")
         buttons = [easy_button, medium_button, hard_button, infinite_button]
 
         window.fill((100, 100, 100))  # Gray
@@ -42,14 +42,8 @@ class DifficultyHandler(game_state.StateHandler):
         for button in buttons:
             button.blit(window)
 
-        easy = self.button_font.render("EASY", True, "white")
-        medium = self.button_font.render("MEDIUM", True, "white")
-        hard = self.button_font.render("HARD", True, "white")
         difficulty = self.title_font.render("DIFFICULTY", True, "white")
 
-        window.blit(easy, (170, 325))
-        window.blit(medium, (368, 325))
-        window.blit(hard, (620, 325))
         window.blit(self.infinity_image, (400, 200))
         window.blit(difficulty, (((window.get_width() / 2) - (difficulty.get_width() / 2)), 75))
 

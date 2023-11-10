@@ -27,8 +27,8 @@ class GameModeHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        math_button = Button(225, 300, self.button)
-        flashcard_button = Button(475, 300, self.button)
+        math_button = Button(225, 300, self.button, "MATH")
+        flashcard_button = Button(475, 300, self.button, "CARD")
         buttons = [math_button, flashcard_button]
 
         window.fill((100, 100, 100))  # Gray
@@ -37,12 +37,8 @@ class GameModeHandler(game_state.StateHandler):
         for button in buttons:
             button.blit(window)
 
-        math = self.button_font.render("MATH", True, "white")
-        flashcard = self.button_font.render("CARD", True, "white")
         gamemode = self.title_font.render("GAME MODE", True, "white")
 
-        window.blit(math, (270, 325))
-        window.blit(flashcard, (520, 325))
         window.blit(gamemode, (((window.get_width() / 2) - (gamemode.get_width() / 2)), 75))
 
         clicked_buttons = []

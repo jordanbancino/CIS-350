@@ -16,17 +16,20 @@ class Button:
     the future, this class may be a proper button class that takes button text
     and color instead of an image.
     """
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, image, text):
         self._image = pygame.transform.scale(image, (200, 100))
         self._rect = self._image.get_rect()
         self._rect.topleft = (x, y)
         self._clicked = False
+        self.button_font = pygame.font.SysFont("consolas", 50)
+        self.text = self.button_font.render(text, True, "white")
 
     def blit(self, window):
         """
         Draw the button image on the screen.
         """
         window.blit(self._image, (self._rect.x, self._rect.y))
+        window.blit(self.text, ((self._rect.x + 100 - (self.text.get_width() / 2), self._rect.y + 55 - (self.text.get_height() / 2))))
 
     def dispatch_event(self, event) -> bool:
         """
@@ -77,17 +80,13 @@ class MainMenuHandler(game_state.StateHandler):
         mixer.music.play()"""
 
         # create button instances
-        start_button = Button(125, 300, self.button)
-        score_button = Button(350, 300, self.button)
-        quit_button = Button(575, 300, self.button)
+        start_button = Button(125, 300, self.button, "START")
+        score_button = Button(350, 300, self.button, "SCORE")
+        quit_button = Button(575, 300, self.button, "QUIT")
         buttons = [start_button, score_button, quit_button]
 
         window.fill((100, 100, 100))  # Gray
         window.blit(self._image_border, (0, 0))
-
-        start = self.button_font.render("START", True, "white")
-        score = self.button_font.render("SCORE", True, "white")
-        quit = self.button_font.render("QUIT", True, "white")
         welcome = self.title_font.render("ARG", True, "white")
 
         for button in buttons:
@@ -95,9 +94,6 @@ class MainMenuHandler(game_state.StateHandler):
 
         clicked_buttons = []
 
-        window.blit(start, (155, 325))
-        window.blit(score, (380, 325))
-        window.blit(quit, (620, 325))
         window.blit(welcome, (((window.get_width() / 2) - (welcome.get_width() / 2)), 75))
 
         # Dispatch all events to all buttons

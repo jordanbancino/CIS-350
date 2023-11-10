@@ -44,15 +44,12 @@ class LevelEndHandler(game_state.StateHandler):
 
         window.blit(self._border_image, (0, 0))
 
-        reset_button = Button(125, 300, self.button)
-        back_button = Button(350, 300, self.button)
-        quit_button = Button(575, 300, self.button)
+        reset_button = Button(125, 300, self.button, "RESET")
+        back_button = Button(350, 300, self.button, "BACK")
+        quit_button = Button(575, 300, self.button, "QUIT")
 
         buttons = [reset_button, back_button, quit_button]
 
-        reset = self.button_font.render("RESET", True, "white")
-        back = self.button_font.render("BACK", True, "white")
-        quit = self.button_font.render("QUIT", True, "white")
         gameover = self.title_font.render("GAME OVER", True,"white")
 
         score = self.button_font.render("Score: " + str(context.get_storage()['last_score']), True, "white")
@@ -63,9 +60,6 @@ class LevelEndHandler(game_state.StateHandler):
 
         clicked_buttons = []
 
-        window.blit(reset, (155, 325))
-        window.blit(back, (395, 325))
-        window.blit(quit, (620, 325))
         window.blit(gameover, (((window.get_width() / 2) -
                                 (gameover.get_width() / 2)), 75))
 
