@@ -52,8 +52,14 @@ class LevelEndHandler(game_state.StateHandler):
 
         gameover = self.title_font.render("GAME OVER", True,"white")
 
-        score = self._font.render("Score: " + str(context.get_storage()['last_score']), True, "white")
-        time = self._font.render("Time: " + str(round(context.get_storage()['last_play_time'], 2)) + "s", True, "white")
+        end_message = self._font.render(str(context.get_storage()['end_game']), True, "white")
+        if context.get_storage()['difficulty'] == "infinite":
+            time = self._font.render("Time: " + str(round(context.get_storage()['last_play_time'], 2)) +
+                                     "s", True, "white")
+            score = self._font.render("Score: " + str(context.get_storage()['last_score']), True, "white")
+        else:
+            time = self._font.render("Time remaining: " + str(round(context.get_storage()['last_play_time'], 2)) +
+                                     "s", True, "white")
 
         for button in buttons:
             button.blit(window)
@@ -63,8 +69,10 @@ class LevelEndHandler(game_state.StateHandler):
         window.blit(gameover, (((window.get_width() / 2) -
                                 (gameover.get_width() / 2)), 75))
 
-        window.blit(score, ((window.get_width() - score.get_width()) / 2, 175))
-        window.blit(time, ((window.get_width() - time.get_width()) / 2, 225))
+        window.blit(end_message, ((window.get_width() - end_message.get_width()) / 2, 150))
+        if context.get_storage()['difficulty'] == "infinite":
+            window.blit(score, ((window.get_width() - score.get_width()) / 2, 200))
+        window.blit(time, ((window.get_width() - time.get_width()) / 2, 250))
 
         # Dispatch all events to all buttons
         for event in context.get_events():

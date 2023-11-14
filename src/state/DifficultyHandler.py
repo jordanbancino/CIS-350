@@ -57,12 +57,16 @@ class DifficultyHandler(game_state.StateHandler):
         # Handle buttons that were clicked
         for button in clicked_buttons:
             if button == easy_button:
+                context.get_storage()['difficulty'] = "easy"
                 return game_state.GameState.LEVEL_PLAY
             elif button == medium_button:
+                context.get_storage()['difficulty'] = "medium"
                 return game_state.GameState.LEVEL_PLAY
             elif button == hard_button:
+                context.get_storage()['difficulty'] = "hard"
                 return game_state.GameState.LEVEL_PLAY
             elif button == infinite_button:
+                context.get_storage()['difficulty'] = "infinite"
                 return game_state.GameState.LEVEL_PLAY
 
         return game_state.GameState.DIFFICULTY
