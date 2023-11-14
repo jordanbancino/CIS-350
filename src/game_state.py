@@ -44,6 +44,8 @@ class GameState:
     SCORE = 6
     """The game is displaying the recent scores"""
 
+    GAME_MODE = 7
+
 
 class StateHandlerContext:
     """

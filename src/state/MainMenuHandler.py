@@ -106,7 +106,7 @@ class MainMenuHandler(game_state.StateHandler):
             if button == quit_button:
                 return game_state.GameState.GAME_QUIT
             elif button == start_button:
-                return game_state.GameState.DIFFICULTY
+                return game_state.GameState.GAME_MODE
             elif button == score_button:
                 return game_state.GameState.SCORE
 
