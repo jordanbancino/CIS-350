@@ -291,6 +291,8 @@ class LevelPlayHandler(game_state.StateHandler):
                     # checks if answer is correct
                     if float(event.text) == self._equation[1] and not self._jumping:
                         self._jumping = True
+                    else:
+                        self._jumping = False
 
                 except ValueError:
                     # If the user inputs an invalid number, just clear the box.
@@ -351,4 +353,6 @@ class LevelPlayHandler(game_state.StateHandler):
         else:
             # The game was just paused, don't reset the state.
             context.get_storage()['last_play_time'] = self._time
+            # makes sure that the character doesn't jump when player resumes the game
+            self._jumping = False
             pass
