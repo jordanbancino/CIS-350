@@ -82,7 +82,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._ground = 330
         self._jump = 0
         self._next_jump = -490
-        self._gravity = 970
+        self._gravity = 900
         self._stickman = pygame.Rect(0, self._ground,
                                      self._image_character.get_width(),
                                      self._image_character.get_height())
@@ -270,6 +270,7 @@ class LevelPlayHandler(game_state.StateHandler):
             self._scored = False
             path = os.path.join("music", "jump.mp3")
             jump_sound = pygame.mixer.Sound(path)
+            jump_sound.set_volume(0.5)
             jump_sound.play()
 
         if not self._scored and self._stickman.right >= self._obstacle_hitbox.right + 50:
@@ -311,6 +312,7 @@ class LevelPlayHandler(game_state.StateHandler):
             if self._obstacle_hitbox.top <= self._stickman.bottom:
                 path = os.path.join("music", "game_over.mp3")
                 game_over_sound = pygame.mixer.Sound(path)
+                game_over_sound.set_volume(0.5)
                 game_over_sound.play()
 
                 next_state = game_state.GameState.LEVEL_END

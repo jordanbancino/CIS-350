@@ -57,7 +57,7 @@ def main() -> None:
     pygame.font.init()
     path = os.path.join("music", "background_music.mp3")
     pygame.mixer.music.load(path)
-    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(-1)
 
     clock = pygame.time.Clock()  # keep track of time
