@@ -8,7 +8,9 @@ import random
 
 import pygame
 import pygame_gui
+import os
 
+from pygame import mixer
 from src import arithmetic
 from src import game_state
 from arg import load_asset
@@ -266,6 +268,9 @@ class LevelPlayHandler(game_state.StateHandler):
             self._jump = self._next_jump
             self._jumping = False
             self._scored = False
+            path = os.path.join("music", "jump.mp3")
+            jump_sound = pygame.mixer.Sound(path)
+            jump_sound.play()
 
         if not self._scored and self._stickman.right >= self._obstacle_hitbox.right + 50:
             self._score += 1
@@ -302,6 +307,10 @@ class LevelPlayHandler(game_state.StateHandler):
         if (self._stickman.right > self._obstacle_hitbox.left and
                 self._stickman.left < self._obstacle_hitbox.right):
             if self._obstacle_hitbox.top <= self._stickman.bottom:
+                path = os.path.join("music", "game_over.mp3")
+                game_over_sound = pygame.mixer.Sound(path)
+                game_over_sound.play()
+
                 next_state = game_state.GameState.LEVEL_END
                 if context.get_storage()['difficulty'] == "infinite":
                     context.get_storage()['end_game'] = "Nice Run!"

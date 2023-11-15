@@ -11,6 +11,7 @@ import pygame
 import pygame_gui
 import os
 import sys
+from pygame import mixer
 
 
 def load_asset(asset: str) -> pygame.Surface | pygame.SurfaceType:
@@ -54,6 +55,10 @@ def main() -> None:
 
     pygame.init()
     pygame.font.init()
+    path = os.path.join("music", "background_music.mp3")
+    pygame.mixer.music.load(path)
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
 
     clock = pygame.time.Clock()  # keep track of time
 

@@ -2,7 +2,6 @@ import pygame
 
 import game_state
 from arg import load_asset
-from game_state import StateHandlerContext
 from state.MainMenuHandler import Button
 
 
