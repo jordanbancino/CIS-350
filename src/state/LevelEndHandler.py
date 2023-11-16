@@ -37,7 +37,7 @@ class LevelEndHandler(game_state.StateHandler):
         difficulty = storage['difficulty']
 
         if difficulty == 'infinite':
-            mode = storage['live_mode']
+            mode = storage['live_game']
             score = storage['last_score']
             time = storage['last_play_time']
 
