@@ -25,7 +25,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._score = 0
         self._image_background_night = load_asset('night.jpg')
         self._image_background_day = load_asset("day.jpg")
-        self._image_character = load_asset('stickman.png')
+        self._image_character = load_asset('Arithman.png')
         self._obstacle_image = load_asset("calculator1.png")
         self._obstacle_width = 50
         self._obstacle_height = 125
@@ -71,10 +71,8 @@ class LevelPlayHandler(game_state.StateHandler):
 
         # Scale character, then crop it so that the bounding box doesn't extend
         # out into space, thus creating ghost hits.
-        self._image_character = pygame.transform.scale(self._image_character,
-                                                       (100, 100))
-        self._image_character = self._image_character.subsurface((20, 5,
-                                                                  60, 80))
+        self._image_character = pygame.transform.scale_by(self._image_character,
+                                                          0.4)
 
         self._distance_covered = 0
         self._user_input = None
@@ -82,7 +80,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._ground = 330
         self._jump = 0
         self._next_jump = -490
-        self._gravity = 900
+        self._gravity = 750
         self._stickman = pygame.Rect(0, self._ground,
                                      self._image_character.get_width(),
                                      self._image_character.get_height())
