@@ -46,6 +46,8 @@ class GameState:
 
     GAME_MODE = 7
 
+    CARD = 8
+
 
 class StateHandlerContext:
     """

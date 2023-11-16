@@ -86,7 +86,9 @@ class LevelEndHandler(game_state.StateHandler):
             elif button == back_button:
                 return game_state.GameState.MAIN_MENU
             elif button == reset_button:
-                return game_state.GameState.LEVEL_PLAY
+                if context.get_storage()['live_game'] == "math":
+                    return game_state.GameState.LEVEL_PLAY
+                return game_state.GameState.CARD
 
         next_state = game_state.GameState.LEVEL_END
 

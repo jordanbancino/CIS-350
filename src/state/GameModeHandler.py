@@ -52,8 +52,7 @@ class GameModeHandler(game_state.StateHandler):
         for button in clicked_buttons:
             if button == math_button:
                 return game_state.GameState.DIFFICULTY
-            elif button == card_button:
-                # TODO MAKE FLASHCARD HANDLER
-                pass
+            if button == card_button:
+                return game_state.GameState.CARD
 
         return game_state.GameState.GAME_MODE

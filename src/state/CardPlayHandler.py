@@ -14,13 +14,25 @@ from pygame import mixer
 from src import arithmetic
 from src import game_state
 from arg import load_asset
+from datetime import datetime
 
-
-class LevelPlayHandler(game_state.StateHandler):
+class CardPlayHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
 
-        self._equation = None
+        self._qa = {"Strongest Avenger": "thor",
+                    "Who wins? Batman v. Ironman": "ironman", "Who won? Fury or Ngannou": "ngannou",
+                    "Who wins in a rematch? Jiri or Pereira": "jiri", "Whose party's sicker? Joker or Riddler": "joker"
+                    , "Diving or Climbing": "depends", "Who wins? Magneto v. Ironman": "magneto",
+                    "Tom or Jerry": "jerry"}
+        self._order = []
+        self._qa_cnt = len(self._qa.keys())  # total count of QAs
+        self._qa_num = 0  # number of current QA
+        for _ in range(len(self._qa.keys())):
+            i = random.randrange(self._qa_cnt)
+            while i in self._order:
+                i = random.randrange(len(self._qa.keys()))
+            self._order.append(i)
         self._font_size = 20
         self._score = 0
         self._image_background_night = load_asset('night.jpg')
@@ -30,8 +42,6 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_width = 50
         self._obstacle_height = 125
         self._clock = pygame.time.Clock()
-        self._time = 0  # start stopwatch at 0
-        self._countdown_time = 60  # 1 minute
         self._font = pygame.font.SysFont("consolas", self._font_size)
 
         self._speed = 2
@@ -75,7 +85,9 @@ class LevelPlayHandler(game_state.StateHandler):
                                                        (100, 100))
         self._image_character = self._image_character.subsurface((20, 5,
                                                                   60, 80))
-
+        self._start_time = datetime.now()
+        self._pause_time = datetime.now()
+        self._time_elapsed = datetime.now()
         self._distance_covered = 0
         self._user_input = None
 
@@ -94,14 +106,16 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_hitbox = pygame.Rect(950, self._obstacle_y,
                                             self._obstacle_width,
                                             self._obstacle_height)
-        #print("t, s =", self._stickman.right - self._stickman.left, self._stickman.top - self._stickman.bottom)
+
     def on_enter(self, context: game_state.StateHandlerContext) -> None:
         super().on_enter(context)
+        context.get_storage()['difficulty'] = "infinite"  # prevents crashing
+        context.get_storage()['live_game'] = "card"
         window = context.get_window()
-        context.get_storage()['live_game'] = "math"
+
         input_width = 100
         input_height = 50
-        input_left = (window.get_width() - input_width) / 2
+        input_left = (window.get_width()) / 2
         # 10px padding from bottom
         input_top = window.get_height() - input_height - 10
         input_rect = pygame.Rect((input_left, input_top),
@@ -112,24 +126,11 @@ class LevelPlayHandler(game_state.StateHandler):
             object_id="answer_input_box")
         self._user_input.placeholder_text = ""
         self._user_input.focus()
-
-        if context.get_storage()['difficulty'] == "easy":
-            self._equation = arithmetic.generate_arithmetic("easy")
-        elif context.get_storage()['difficulty'] == "medium":
-            self._equation = arithmetic.generate_arithmetic("medium")
-        elif context.get_storage()['difficulty'] == "hard":
-            self._equation = arithmetic.generate_arithmetic("hard")
-        elif context.get_storage()['difficulty'] == "infinite":
-            self._scored = False
-            if self._score >= 10:
-                self._equation = arithmetic.generate_arithmetic("hard")
-            elif self._score >= 5:
-                self._equation = arithmetic.generate_arithmetic("medium")
-            else:
-                self._equation = arithmetic.generate_arithmetic("easy")
-
-        if self._time > 0:
-            self._time = context.get_storage()['last_play_time']
+        if self._time_elapsed:  # if it's not zero
+            # self._start_time = datetime.now() - self._pause_time + self._time_elapsed
+            self._start_time = datetime.now() - self._pause_time + self._time_elapsed
+        else:
+            self._start_time = datetime.now()
         self._clock.tick(60) / 1000  # resets the tick
 
     def draw_scene(self, context):
@@ -144,11 +145,6 @@ class LevelPlayHandler(game_state.StateHandler):
         d2 -= self._speed
         n1 -= self._speed
         n2 -= self._speed
-
-        if context.get_storage()['difficulty'] == "easy" or \
-                context.get_storage()['difficulty'] == "medium" or \
-                context.get_storage()['difficulty'] == "hard":
-            self._end -= self._speed
 
         if n2 <= 0:
             d1 = n2 + self._width
@@ -184,19 +180,11 @@ class LevelPlayHandler(game_state.StateHandler):
         if obstacle < -51:
             # makes the obstacle have a random position off-screen that the
             # player has to overcome
-            self._obstacle_hitbox.update(random.randint(905, 1800),
+            self._obstacle_hitbox.update(random.randint(1700, 2400),
                                          self._obstacle_y,
                                          self._obstacle_width,
                                          self._obstacle_height)
 
-        if self._countdown_time == 120 and self._time == 0:
-            self._clock.tick(60) / 1000  # resets the tick
-        # stopwatch
-        if context.get_storage()['difficulty'] == "infinite":
-            self._time += self._clock.tick(60) / 1000
-        else:
-            # countdown
-            self._countdown_time -= self._clock.tick(60) / 1000
 
     def draw_ui(self, context):
         window = context.get_window()
@@ -206,24 +194,17 @@ class LevelPlayHandler(game_state.StateHandler):
         score_info = self._font.render(
             "SCORE: " + str(self._score), True, "white")
         # stopwatch
-        time_info = self._font.render(f"Time in game: {self._time:.2f}s", True, "white")
-        # countdown
-        countdown_info = self._font.render(f"Time remaining: {self._countdown_time:.2f}s", True, "white")
-
+        time_info = self._font.render(f"Time in game: {(datetime.now() - self._start_time).total_seconds():.2f}s", True, "white")
         # set pause_info text on top right with 5x5 px padding
         window.blit(pause_info,
                     (window.get_width() - pause_info.get_width() - 5, 5))
-        if context.get_storage()['difficulty'] == "infinite":
-            window.blit(score_info, (350, 5))
-            # stopwatch
-            window.blit(time_info, (5, 5))
-        else:
-            # countdown
-            window.blit(countdown_info, (5, 5))
+        window.blit(score_info, (350, 5))
+        window.blit(time_info, (5, 5))
 
-        equation = self._font.render(self._equation[0] + ' = ', True, "white")
-        window.blit(equation,
-                    ((window.get_width() - equation.get_width()) / 3, 450))
+        question = self._font.render(list(self._qa)[self._order[self._qa_num]] + " ->", True, "white")
+        # num_chars = len(list(self._qa)[self._order[self._qa_num]])
+        window.blit(question,
+                    ((window.get_width() - question.get_width() * 2) / 3, 450))
 
     def draw_character(self, context):
         window = context.get_window()
@@ -252,12 +233,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self.draw_character(context)
         self.draw_ui(context)
 
-        next_state = game_state.GameState.LEVEL_PLAY
-        window = context.get_window()
-
-        # game ends when countdown hits 0
-        if self._countdown_time <= 0:
-            next_state = game_state.GameState.LEVEL_END
+        next_state = game_state.GameState.CARD
 
         self._distance_covered += self._speed
 
@@ -276,13 +252,17 @@ class LevelPlayHandler(game_state.StateHandler):
         if not self._scored and self._stickman.right >= self._obstacle_hitbox.right + 50:
             self._score += 1
             self._speed = self._temp_speed + 1
-            if self._score >= 10 or context.get_storage()['difficulty'] == "hard":
-                self._equation = arithmetic.generate_arithmetic("hard")
-            elif self._score >= 5 or context.get_storage()['difficulty'] == "medium":
-                self._equation = arithmetic.generate_arithmetic("medium")
-            else:
-                self._equation = arithmetic.generate_arithmetic("easy")
             self._scored = True
+            if self._qa_num < self._qa_cnt - 1:
+                self._qa_num += 1
+            else:
+                self._qa_num = 0
+                del self._order[:]  # reset question order
+                for _ in range(len(self._qa.keys())):  # re-shuffle questions
+                    i = random.randrange(self._qa_cnt)
+                    while i in self._order:
+                        i = random.randrange(len(self._qa.keys()))
+                    self._order.append(i)
 
         # check if player presses enter in text box
         for event in context.get_events():
@@ -290,7 +270,8 @@ class LevelPlayHandler(game_state.StateHandler):
                     event.ui_object_id == "answer_input_box"):
                 try:
                     # checks if answer is correct
-                    if float(event.text) == self._equation[1] and not self._jumping:
+                    if (str(event.text).lower() == list(self._qa.values())[self._order[self._qa_num]]
+                            and not self._jumping):
                         self._jumping = True
                     else:
                         self._jumping = False
@@ -303,6 +284,10 @@ class LevelPlayHandler(game_state.StateHandler):
             elif ((event.type == pygame.KEYUP and
                   event.__dict__['key'] == pygame.K_SPACE) or
                   event.type == pygame.WINDOWLEAVE):
+
+                # self._time_elapsed = datetime.now() - self._start_time
+                self._time_elapsed = datetime.now() - self._start_time
+                self._pause_time = datetime.now()
                 # If user pressed the space key or left the game window,
                 # go to the pause state.
                 next_state = game_state.GameState.LEVEL_PAUSE
@@ -316,10 +301,7 @@ class LevelPlayHandler(game_state.StateHandler):
                 game_over_sound.play()
 
                 next_state = game_state.GameState.LEVEL_END
-                if context.get_storage()['difficulty'] == "infinite":
-                    context.get_storage()['end_game'] = "Nice Run!"
-                else:
-                    context.get_storage()['end_game'] = "You Lose."
+                context.get_storage()['end_game'] = "Nice Run!"
 
         if self._end <= self._stickman.right:
             next_state = game_state.GameState.LEVEL_END
@@ -331,12 +313,8 @@ class LevelPlayHandler(game_state.StateHandler):
         super().on_exit(context)
 
         self._jump = -150
-
-        if context.get_storage()['difficulty'] == "infinite":
-            context.get_storage()['last_play_time'] = self._time
-            context.get_storage()['last_score'] = self._score
-        else:
-            context.get_storage()['last_play_time'] = self._countdown_time
+        context.get_storage()['last_play_time'] = (datetime.now() - self._start_time).total_seconds()
+        context.get_storage()['last_score'] = self._score
 
         if context.get_state() == game_state.GameState.LEVEL_END:
             # The game has ended; reset all state so that when we are
@@ -351,10 +329,8 @@ class LevelPlayHandler(game_state.StateHandler):
             # this feels like a hack so it would be nice to know if there are
             # any unintended side effects of this.
             self.__init__(context)
-            pass
         else:
             # The game was just paused, don't reset the state.
-            context.get_storage()['last_play_time'] = self._time
+            context.get_storage()['last_play_time'] = (datetime.now() - self._start_time).total_seconds()
             # makes sure that the character doesn't jump when player resumes the game
             self._jumping = False
-            pass
