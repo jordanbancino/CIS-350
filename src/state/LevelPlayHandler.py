@@ -328,8 +328,6 @@ class LevelPlayHandler(game_state.StateHandler):
     def on_exit(self, context):
         super().on_exit(context)
 
-        self._jump = -150
-
         if context.get_storage()['difficulty'] == "infinite":
             context.get_storage()['last_play_time'] = self._time
             context.get_storage()['last_score'] = self._score
