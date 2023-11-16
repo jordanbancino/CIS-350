@@ -13,6 +13,8 @@ import os
 import sys
 from pygame import mixer
 
+import user_data
+
 
 def load_asset(asset: str) -> pygame.Surface | pygame.SurfaceType:
     """
@@ -155,6 +157,7 @@ def main() -> None:
         pygame.display.update()  # updates screen
 
     pygame.quit()
+    user_data.get().close()
 
 
 if __name__ == "__main__":

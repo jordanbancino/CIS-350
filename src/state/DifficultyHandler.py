@@ -54,6 +54,7 @@ class DifficultyHandler(game_state.StateHandler):
                 if button.dispatch_event(event):
                     clicked_buttons.append(button)
 
+        context.get_storage()['live_mode'] = 'math'
         # Handle buttons that were clicked
         for button in clicked_buttons:
             if button == easy_button:

@@ -5,8 +5,6 @@ the user answered the equation incorrectly.
 
 This handler is responsible for displaying the end game menu, which prompts the
 player with a few buttons similar to the main menu.
-
-TODO: This screen should display the time and the score.
 """
 import pygame
 
@@ -14,6 +12,7 @@ from pygame import mixer
 import game_state
 import user_data
 from arg import load_asset
+from game_state import StateHandlerContext
 from state.MainMenuHandler import Button
 
 
@@ -31,6 +30,44 @@ class LevelEndHandler(game_state.StateHandler):
 
         self._border_image = pygame.transform.scale(self._border_image,
                                                     (width, height))
+
+    def on_enter(self, context: StateHandlerContext) -> None:
+        # Save scores
+        storage = context.get_storage()
+        difficulty = storage['difficulty']
+
+        if difficulty == 'infinite':
+            mode = storage['live_mode']
+            score = storage['last_score']
+            time = storage['last_play_time']
+
+            data = user_data.get()
+
+            if not data['scores']:
+                data['scores'] = {
+                    'math': {
+                        'top': [],
+                        'recent': []
+                    },
+                    'card': {
+                        'top': [],
+                        'recent': []
+                    }
+                }
+
+            score_obj = {'score': score, 'time': time}
+
+            data['scores'][mode]['recent'].insert(0, score_obj)
+            data['scores'][mode]['top'].insert(0, score_obj)
+
+            # Truncate recent scores to 5 most recent.
+            del data['scores'][mode]['recent'][5:]
+
+            # Sort scores so that the highest score floats to top
+            data['scores'][mode]['top'] = list(reversed(sorted(data['scores'][mode]['top'], key = lambda x: x['score'])))
+
+            # Truncate top scores to 5 highest.
+            del data['scores'][mode]['top'][5:]
 
     def process(self,
                 context: game_state.StateHandlerContext) \

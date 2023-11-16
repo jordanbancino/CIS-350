@@ -126,6 +126,9 @@ class UserData:
             log.msg(log.DEBUG,
                     f"Removed store {self._store} from __open_handles.")
             self._closed = True
+
+            json_str = json.dumps(self._cache)
+            self._store.write_text(json_str)
         else:
             raise AssertionError(
                 'Failed to remove handle. Double-close() on UserData?')
