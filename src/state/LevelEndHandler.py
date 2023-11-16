@@ -94,8 +94,11 @@ class LevelEndHandler(game_state.StateHandler):
                                      "s", True, "white")
             score = self._font.render("Score: " + str(context.get_storage()['last_score']), True, "white")
         else:
-            time = self._font.render("Time remaining: " + str(round(context.get_storage()['last_play_time'], 2)) +
-                                     "s", True, "white")
+            if context.get_storage()['last_play_time'] > 0:
+                time = self._font.render("Time remaining: " + str(round(context.get_storage()['last_play_time'], 2)) +
+                                         "s", True, "white")
+            else:
+                time = self._font.render("Time remaining: " + str(round(0, 2)) + "s", True, "white")
 
         for button in buttons:
             button.blit(window)

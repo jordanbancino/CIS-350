@@ -31,7 +31,7 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_height = 125
         self._clock = pygame.time.Clock()
         self._time = 0  # start stopwatch at 0
-        self._countdown_time = 60  # 1 minute
+        self._countdown_time = 45  # 45 seconds
         self._font = pygame.font.SysFont("consolas", self._font_size)
 
         self._speed = 2
@@ -67,7 +67,7 @@ class LevelPlayHandler(game_state.StateHandler):
                                                       self._width,
                                                       self._height)
         # position of end of level for easy, medium, and hard difficulties
-        self._end = 9000
+        self._end = 12000
 
         # Scale character, then crop it so that the bounding box doesn't extend
         # out into space, thus creating ghost hits.
@@ -93,6 +93,7 @@ class LevelPlayHandler(game_state.StateHandler):
                                             self._obstacle_width,
                                             self._obstacle_height)
         #print("t, s =", self._stickman.right - self._stickman.left, self._stickman.top - self._stickman.bottom)
+
     def on_enter(self, context: game_state.StateHandlerContext) -> None:
         super().on_enter(context)
         window = context.get_window()
@@ -272,8 +273,11 @@ class LevelPlayHandler(game_state.StateHandler):
             jump_sound.play()
 
         if not self._scored and self._stickman.right >= self._obstacle_hitbox.right + 50:
-            self._score += 1
-            self._speed = self._temp_speed + 1
+            if context.get_storage()['difficulty'] != "infinite":
+                self._speed = self._temp_speed + 2
+            else:
+                self._score += 1
+                self._speed = self._temp_speed + 1
             if self._score >= 10 or context.get_storage()['difficulty'] == "hard":
                 self._equation = arithmetic.generate_arithmetic("hard")
             elif self._score >= 5 or context.get_storage()['difficulty'] == "medium":
@@ -292,9 +296,16 @@ class LevelPlayHandler(game_state.StateHandler):
                         self._jumping = True
                     else:
                         self._jumping = False
+                        if context.get_storage()["live_game"] == "math" and \
+                                context.get_storage()["difficulty"] != "infinite":
+                            self._speed = 2
 
                 except ValueError:
-                    # If the user inputs an invalid number, just clear the box.
+                    # In infinite mode, if the user inputs an invalid number, just clear the box.
+                    # In easy, medium, and hard modes the speed is set to 2 if number is inputted wrong.
+                    if context.get_storage()["live_game"] == "math" and \
+                                context.get_storage()["difficulty"] != "infinite":
+                        self._speed = 2
                     pass
 
                 self._user_input.set_text("")  # reset textbox
@@ -319,9 +330,16 @@ class LevelPlayHandler(game_state.StateHandler):
                 else:
                     context.get_storage()['end_game'] = "You Lose."
 
-        if self._end <= self._stickman.right:
-            next_state = game_state.GameState.LEVEL_END
-            context.get_storage()['end_game'] = "You Win!"
+        if context.get_storage()["live_game"] == "math":
+            if self._end <= self._stickman.right:
+                next_state = game_state.GameState.LEVEL_END
+                context.get_storage()['end_game'] = "You Win!"
+            elif context.get_storage()['difficulty'] != "infinite" and self._countdown_time <= 0:
+                path = os.path.join("music", "game_over.mp3")
+                game_over_sound = pygame.mixer.Sound(path)
+                game_over_sound.set_volume(0.5)
+                game_over_sound.play()
+                context.get_storage()['end_game'] = "You Lose."
 
         return next_state
 
