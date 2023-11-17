@@ -15,15 +15,26 @@ from src import arithmetic
 from src import game_state
 from arg import load_asset
 
+def get_cards():
+    path = os.path.join("assets", "flashcards.txt")
+    file = open(path, "r")
+    cards = {}
+    lines = file.readlines()
+    i = 1
+    for line in lines:
+        if i % 2:
+            answer = line.strip()
+        else:
+            question = line.strip()
+            cards[question] = answer
+        i += 1
+    file.close()
+    return cards
 
 class LevelPlayHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
-        self._qa = {"Strongest Avenger": "thor",
-                    "Who wins? Batman v. Ironman": "ironman", "Who won? Fury or Ngannou": "ngannou",
-                    "Who wins in a rematch? Jiri or Pereira": "jiri", "Whose party's sicker? Joker or Riddler": "joker"
-            , "Diving or Climbing": "depends", "Who wins? Magneto v. Ironman": "magneto",
-                    "Tom or Jerry": "jerry"}
+        self._qa = get_cards()
         self._order = []
         self._qa_cnt = len(self._qa.keys())  # total count of QAs
         self._qa_num = 0  # number of current QA
