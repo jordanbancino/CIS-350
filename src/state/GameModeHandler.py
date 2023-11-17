@@ -51,8 +51,10 @@ class GameModeHandler(game_state.StateHandler):
         # Handle buttons that were clicked
         for button in clicked_buttons:
             if button == math_button:
+                context.get_storage()['live_mode'] = "math"
                 return game_state.GameState.DIFFICULTY
             if button == card_button:
-                return game_state.GameState.CARD
+                context.get_storage()['live_mode'] = "card"
+                return game_state.GameState.LEVEL_PLAY
 
         return game_state.GameState.GAME_MODE

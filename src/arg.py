@@ -50,7 +50,6 @@ def main() -> None:
     from state.DifficultyHandler import DifficultyHandler
     from state.ScoreHandler import ScoreHandler
     from state.GameModeHandler import GameModeHandler
-    from state.CardPlayHandler import CardPlayHandler
 
     log.get_logger().set_level(log.DEBUG)
 
@@ -90,7 +89,6 @@ def main() -> None:
         GameState.DIFFICULTY: DifficultyHandler(context),
         GameState.SCORE: ScoreHandler(context),
         GameState.GAME_MODE: GameModeHandler(context),
-        GameState.CARD: CardPlayHandler(context)
     }
 
     while state != GameState.GAME_QUIT:

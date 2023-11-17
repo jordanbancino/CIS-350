@@ -19,7 +19,19 @@ from arg import load_asset
 class LevelPlayHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
-
+        self._qa = {"Strongest Avenger": "thor",
+                    "Who wins? Batman v. Ironman": "ironman", "Who won? Fury or Ngannou": "ngannou",
+                    "Who wins in a rematch? Jiri or Pereira": "jiri", "Whose party's sicker? Joker or Riddler": "joker"
+            , "Diving or Climbing": "depends", "Who wins? Magneto v. Ironman": "magneto",
+                    "Tom or Jerry": "jerry"}
+        self._order = []
+        self._qa_cnt = len(self._qa.keys())  # total count of QAs
+        self._qa_num = 0  # number of current QA
+        for _ in range(len(self._qa.keys())):
+            i = random.randrange(self._qa_cnt)
+            while i in self._order:
+                i = random.randrange(len(self._qa.keys()))
+            self._order.append(i)
         self._equation = None
         self._font_size = 20
         self._score = 0
@@ -97,10 +109,12 @@ class LevelPlayHandler(game_state.StateHandler):
     def on_enter(self, context: game_state.StateHandlerContext) -> None:
         super().on_enter(context)
         window = context.get_window()
-        context.get_storage()['live_game'] = "math"
         input_width = 100
         input_height = 50
-        input_left = (window.get_width() - input_width) / 2
+        if context.get_storage()['live_mode'] == "card":
+            input_left = (window.get_width() - input_width) - 350
+        else:
+            input_left = (window.get_width() - input_width) / 2
         # 10px padding from bottom
         input_top = window.get_height() - input_height - 10
         input_rect = pygame.Rect((input_left, input_top),
@@ -111,21 +125,23 @@ class LevelPlayHandler(game_state.StateHandler):
             object_id="answer_input_box")
         self._user_input.placeholder_text = ""
         self._user_input.focus()
-
-        if context.get_storage()['difficulty'] == "easy":
-            self._equation = arithmetic.generate_arithmetic("easy")
-        elif context.get_storage()['difficulty'] == "medium":
-            self._equation = arithmetic.generate_arithmetic("medium")
-        elif context.get_storage()['difficulty'] == "hard":
-            self._equation = arithmetic.generate_arithmetic("hard")
-        elif context.get_storage()['difficulty'] == "infinite":
-            self._scored = False
-            if self._score >= 10:
-                self._equation = arithmetic.generate_arithmetic("hard")
-            elif self._score >= 5:
-                self._equation = arithmetic.generate_arithmetic("medium")
-            else:
+        if context.get_storage()['live_mode'] == "math":
+            if context.get_storage()['difficulty'] == "easy":
                 self._equation = arithmetic.generate_arithmetic("easy")
+            elif context.get_storage()['difficulty'] == "medium":
+                self._equation = arithmetic.generate_arithmetic("medium")
+            elif context.get_storage()['difficulty'] == "hard":
+                self._equation = arithmetic.generate_arithmetic("hard")
+            elif context.get_storage()['difficulty'] == "infinite":
+                self._scored = False
+                if self._score >= 10:
+                    self._equation = arithmetic.generate_arithmetic("hard")
+                elif self._score >= 5:
+                    self._equation = arithmetic.generate_arithmetic("medium")
+                else:
+                    self._equation = arithmetic.generate_arithmetic("easy")
+        else:
+            context.get_storage()['difficulty'] = "infinite"
 
         if self._time > 0:
             self._time = context.get_storage()['last_play_time']
@@ -183,10 +199,16 @@ class LevelPlayHandler(game_state.StateHandler):
         if obstacle < -51:
             # makes the obstacle have a random position off-screen that the
             # player has to overcome
-            self._obstacle_hitbox.update(random.randint(905, 1800),
-                                         self._obstacle_y,
-                                         self._obstacle_width,
-                                         self._obstacle_height)
+            if context.get_storage()['live_mode'] == "math":
+                self._obstacle_hitbox.update(random.randint(905, 1800),
+                                             self._obstacle_y,
+                                             self._obstacle_width,
+                                             self._obstacle_height)
+            else:
+                self._obstacle_hitbox.update(random.randint(1700, 2100),
+                                             self._obstacle_y,
+                                             self._obstacle_width,
+                                             self._obstacle_height)
 
         if self._countdown_time == 120 and self._time == 0:
             self._clock.tick(60) / 1000  # resets the tick
@@ -219,10 +241,15 @@ class LevelPlayHandler(game_state.StateHandler):
         else:
             # countdown
             window.blit(countdown_info, (5, 5))
-
-        equation = self._font.render(self._equation[0] + ' = ', True, "white")
-        window.blit(equation,
-                    ((window.get_width() - equation.get_width()) / 3, 450))
+        if context.get_storage()['live_mode'] == "math":
+            equation = self._font.render(self._equation[0] + ' = ', True, "white")
+            window.blit(equation,
+                        ((window.get_width() - equation.get_width()) / 3, 450))
+        else:
+            question = self._font.render(list(self._qa)[self._order[self._qa_num]] + " ->", True, "white")
+            # num_chars = len(list(self._qa)[self._order[self._qa_num]])
+            window.blit(question,
+                        ((window.get_width() - question.get_width() * 2) / 3, 450))
 
     def draw_character(self, context):
         window = context.get_window()
@@ -278,35 +305,57 @@ class LevelPlayHandler(game_state.StateHandler):
             else:
                 self._score += 1
                 self._speed = self._temp_speed + 1
-            if self._score >= 10 or context.get_storage()['difficulty'] == "hard":
-                self._equation = arithmetic.generate_arithmetic("hard")
-            elif self._score >= 5 or context.get_storage()['difficulty'] == "medium":
-                self._equation = arithmetic.generate_arithmetic("medium")
+            if context.get_storage()['live_mode'] == "math":
+                if self._score >= 10 or context.get_storage()['difficulty'] == "hard":
+                    self._equation = arithmetic.generate_arithmetic("hard")
+                elif self._score >= 5 or context.get_storage()['difficulty'] == "medium":
+                    self._equation = arithmetic.generate_arithmetic("medium")
+                else:
+                    self._equation = arithmetic.generate_arithmetic("easy")
             else:
-                self._equation = arithmetic.generate_arithmetic("easy")
+                if self._qa_num < self._qa_cnt - 1:
+                    self._qa_num += 1
+                else:
+                    self._qa_num = 0
+                    del self._order[:]  # reset question order
+                    for _ in range(len(self._qa.keys())):  # re-shuffle questions
+                        i = random.randrange(self._qa_cnt)
+                        while i in self._order:
+                            i = random.randrange(len(self._qa.keys()))
+                        self._order.append(i)
             self._scored = True
 
         # check if player presses enter in text box
         for event in context.get_events():
             if (event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and
                     event.ui_object_id == "answer_input_box"):
-                try:
-                    # checks if answer is correct
-                    if float(event.text) == self._equation[1] and not self._jumping:
-                        self._jumping = True
-                    else:
-                        self._jumping = False
-                        if context.get_storage()["live_game"] == "math" and \
-                                context.get_storage()["difficulty"] != "infinite":
-                            self._speed = 2
+                if context.get_storage()['live_mode'] == "math":
+                    try:
+                        # checks if answer is correct
+                        if float(event.text) == self._equation[1] and not self._jumping:
+                            self._jumping = True
+                        else:
+                            self._jumping = False
+                            if context.get_storage()["difficulty"] != "infinite":
+                                self._speed = 2
 
-                except ValueError:
-                    # In infinite mode, if the user inputs an invalid number, just clear the box.
-                    # In easy, medium, and hard modes the speed is set to 2 if number is inputted wrong.
-                    if context.get_storage()["live_game"] == "math" and \
-                                context.get_storage()["difficulty"] != "infinite":
-                        self._speed = 2
-                    pass
+                    except ValueError:
+                        # In infinite mode, if the user inputs an invalid number, just clear the box.
+                        # In easy, medium, and hard modes the speed is set to 2 if number is inputted wrong.
+                        if context.get_storage()["difficulty"] != "infinite":
+                            self._speed = 2
+                else:
+                    try:
+                        # checks if answer is correct
+                        if (str(event.text).lower() == list(self._qa.values())[self._order[self._qa_num]]
+                                and not self._jumping):
+                            self._jumping = True
+                        else:
+                            self._jumping = False
+
+                    except ValueError:
+                        # If the user inputs an invalid number, just clear the box.
+                        pass
 
                 self._user_input.set_text("")  # reset textbox
             elif ((event.type == pygame.KEYUP and
@@ -330,7 +379,7 @@ class LevelPlayHandler(game_state.StateHandler):
                 else:
                     context.get_storage()['end_game'] = "You Lose."
 
-        if context.get_storage()["live_game"] == "math":
+        if context.get_storage()["live_mode"] == "math":
             if self._end <= self._stickman.right:
                 next_state = game_state.GameState.LEVEL_END
                 context.get_storage()['end_game'] = "You Win!"

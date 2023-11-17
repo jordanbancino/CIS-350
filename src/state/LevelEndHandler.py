@@ -37,7 +37,7 @@ class LevelEndHandler(game_state.StateHandler):
         difficulty = storage['difficulty']
 
         if difficulty == 'infinite':
-            mode = storage['live_game']
+            mode = storage['live_mode']
             score = storage['last_score']
             time = storage['last_play_time']
 
@@ -126,9 +126,7 @@ class LevelEndHandler(game_state.StateHandler):
             elif button == back_button:
                 return game_state.GameState.MAIN_MENU
             elif button == reset_button:
-                if context.get_storage()['live_game'] == "math":
-                    return game_state.GameState.LEVEL_PLAY
-                return game_state.GameState.CARD
+                return game_state.GameState.LEVEL_PLAY
 
         next_state = game_state.GameState.LEVEL_END
 
