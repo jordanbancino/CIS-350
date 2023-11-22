@@ -88,8 +88,6 @@ class MainMenuHandler(game_state.StateHandler):
 
         clicked_buttons = []
 
-        window.blit(welcome, (((window.get_width() / 2) - (welcome.get_width() / 2)), 75))
-
         # Dispatch all events to all buttons
         for event in context.get_events():
             for button in buttons:
