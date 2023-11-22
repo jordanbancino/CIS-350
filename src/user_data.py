@@ -106,6 +106,15 @@ class UserData:
         self._store.write_text(json_str)
         log.msg(log.DEBUG, f"'{key}' = '{value}'")
 
+    def snapshot(self):
+        """
+        Take a snapshot of the currently cached dictionary, returning a new
+        dictionary that is totally independent of the user data, which means
+        that updates to the dictionary returned by this function do not affect
+        the actual user data.
+        """
+        return dict(self._cache)
+
     def get_path(self) -> pathlib.Path:
         """
         Get the name of the file backing this persistent user data store.
