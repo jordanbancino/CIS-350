@@ -57,7 +57,7 @@ class MainMenuHandler(game_state.StateHandler):
 
         self._image_border = load_asset('menu_border.png')
         self.button = load_asset('button.png')
-        self.title_font = pygame.font.SysFont("consolas", 80)
+        self.logo = load_asset('Arithman Logo.png')
 
         window = context.get_window()
         width = window.get_width()
@@ -81,7 +81,7 @@ class MainMenuHandler(game_state.StateHandler):
 
         window.fill((100, 100, 100))  # Gray
         window.blit(self._image_border, (0, 0))
-        welcome = self.title_font.render("ARG", True, "white")
+        window.blit(self.logo, (200, 100))
 
         for button in buttons:
             button.blit(window)
