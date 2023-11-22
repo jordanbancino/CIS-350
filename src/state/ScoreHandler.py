@@ -1,4 +1,8 @@
+import time
+
 import pygame
+
+import user_data
 from state.MainMenuHandler import Button
 import game_state
 from arg import load_asset
@@ -10,8 +14,7 @@ class ScoreHandler(game_state.StateHandler):
 
         self._image_border = load_asset('menu_border.png')
         self.button = load_asset('button.png')
-        self.title_font = pygame.font.SysFont("consolas", 80)
-        self._font = pygame.font.SysFont("consolas", 50)
+        self.button = load_asset('button.png')
 
         window = context.get_window()
         width = window.get_width()
@@ -20,6 +23,19 @@ class ScoreHandler(game_state.StateHandler):
         self._image_border = pygame.transform.scale(
             self._image_border, (width, height))
 
+        self._data = user_data.get().snapshot()
+
+    @staticmethod
+    def cell(tot_width, n_cols, width, col=1, off=0):
+        return ((tot_width / (n_cols * 2)) * col) - (width / 2) + off
+
+    @staticmethod
+    def center(w1, w2):
+        return ScoreHandler.cell(w1, 1, w2)
+
+    def make_closure(self, frame_wid, type_col, frame_off, row):
+        return lambda s: (self.cell(frame_wid, 4, s.get_width(), type_col, frame_off), row)
+
     def process(self, context: game_state.StateHandlerContext) \
             -> game_state.GameState:
         super().process(context)
@@ -27,7 +43,7 @@ class ScoreHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        back_button = Button(350, 300, self.button, "BACK")
+        back_button = Button(350, 345, self.button, "BACK")
         buttons = [back_button]
 
         window.fill((100, 100, 100))  # Gray
@@ -36,19 +52,56 @@ class ScoreHandler(game_state.StateHandler):
         for button in buttons:
             button.blit(window)
 
-        score_info = self.title_font.render("RECENT SCORES", True, "white")
-        score1 = self._font.render("1: ", True, "white")
-        score2 = self._font.render("2: ", True, "white")
-        score3 = self._font.render("3: ", True, "white")
-        score4 = self._font.render("4: ", True, "white")
-        score5 = self._font.render("5: ", True, "white")
+        frame_off = 75
+        frame_wid = window.get_width() - (2 * frame_off)
 
-        window.blit(score_info, (((window.get_width() / 2) - (score_info.get_width() / 2)), 75))
-        window.blit(score1, (300, 150))
-        window.blit(score2, (550, 150))
-        window.blit(score3, (300, 200))
-        window.blit(score4, (550, 200))
-        window.blit(score5, (375, 250))
+        strings = [
+            [55, "SCORES", (lambda s: (
+            self.center(window.get_width(), s.get_width()), 65))],
+            [50, "Math ∞", (lambda s: (
+            self.cell(frame_wid, 2, s.get_width(), 1, frame_off), 110))],
+            [50, "Flashcards", (lambda s: (
+            self.cell(frame_wid, 2, s.get_width(), 3, frame_off), 110))],
+            [30, "Top", (lambda s: (self.cell(frame_wid, 4, s.get_width(), 1, frame_off), 160))],
+            [30, "Recent", (lambda s: (
+            self.cell(frame_wid, 4, s.get_width(), 3, frame_off), 160))],
+            [30, "Top", (lambda s: (
+            self.cell(frame_wid, 4, s.get_width(), 5, frame_off), 160))],
+            [30, "Recent", (lambda s: (
+                self.cell(frame_wid, 4, s.get_width(), 7, frame_off), 160))]
+        ]
+
+        lines = [
+            [(100, 155), (window.get_width() - 100, 155)]
+        ]
+
+        if self._data['scores']:
+            lines.append([(window.get_width() / 2, 120), (window.get_width() / 2, 350)])
+
+            type_col = 1
+            for mode in ['math', 'card']:
+                for type in ['top', 'recent']:
+
+                    row = 200
+                    for score in self._data['scores'][mode][type]:
+                        string = [30, f"{score['score']} ({time.strftime('%M:%S', time.gmtime(score['time']))})",
+                                    self.make_closure(frame_wid, type_col, frame_off, row)]
+                        strings.append(string)
+                        row = row + 30
+
+                    type_col = type_col + 2
+            pass
+        else:
+            strings.append([50, "No scores yet.", (lambda s: (self.center(window.get_width(), s.get_width()), 220))])
+            strings.append([50, "Play the game first!", (lambda s: (self.center(window.get_width(), s.get_width()), 270))])
+
+        for string in strings:
+            font = pygame.font.SysFont('consolas', string[0])
+            rendered = font.render(string[1], True, 'white')
+            window.blit(rendered, string[2](rendered))
+
+        for line in lines:
+            pygame.draw.line(window, 'white', line[0], line[1])
 
         clicked_buttons = []
 
