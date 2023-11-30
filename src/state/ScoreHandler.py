@@ -34,7 +34,8 @@ class ScoreHandler(game_state.StateHandler):
         return ScoreHandler.cell(w1, 1, w2)
 
     def make_closure(self, frame_wid, type_col, frame_off, row):
-        return lambda s: (self.cell(frame_wid, 4, s.get_width(), type_col, frame_off), row)
+        return lambda s: \
+            (self.cell(frame_wid, 4, s.get_width(), type_col, frame_off), row)
 
     def process(self, context: game_state.StateHandlerContext) \
             -> game_state.GameState:
@@ -57,16 +58,17 @@ class ScoreHandler(game_state.StateHandler):
 
         strings = [
             [55, "SCORES", (lambda s: (
-            self.center(window.get_width(), s.get_width()), 65))],
+                self.center(window.get_width(), s.get_width()), 65))],
             [50, "Math ∞", (lambda s: (
-            self.cell(frame_wid, 2, s.get_width(), 1, frame_off), 110))],
+                self.cell(frame_wid, 2, s.get_width(), 1, frame_off), 110))],
             [50, "Flashcards", (lambda s: (
-            self.cell(frame_wid, 2, s.get_width(), 3, frame_off), 110))],
-            [30, "Top", (lambda s: (self.cell(frame_wid, 4, s.get_width(), 1, frame_off), 160))],
-            [30, "Recent", (lambda s: (
-            self.cell(frame_wid, 4, s.get_width(), 3, frame_off), 160))],
+                self.cell(frame_wid, 2, s.get_width(), 3, frame_off), 110))],
             [30, "Top", (lambda s: (
-            self.cell(frame_wid, 4, s.get_width(), 5, frame_off), 160))],
+                self.cell(frame_wid, 4, s.get_width(), 1, frame_off), 160))],
+            [30, "Recent", (lambda s: (
+                self.cell(frame_wid, 4, s.get_width(), 3, frame_off), 160))],
+            [30, "Top", (lambda s: (
+                self.cell(frame_wid, 4, s.get_width(), 5, frame_off), 160))],
             [30, "Recent", (lambda s: (
                 self.cell(frame_wid, 4, s.get_width(), 7, frame_off), 160))]
         ]
@@ -76,7 +78,8 @@ class ScoreHandler(game_state.StateHandler):
         ]
 
         if self._data['scores']:
-            lines.append([(window.get_width() / 2, 120), (window.get_width() / 2, 350)])
+            lines.append(
+                [(window.get_width() / 2, 120), (window.get_width() / 2, 350)])
 
             type_col = 1
             for mode in ['math', 'card']:
@@ -84,16 +87,26 @@ class ScoreHandler(game_state.StateHandler):
 
                     row = 200
                     for score in self._data['scores'][mode][type]:
-                        string = [30, f"{score['score']} ({time.strftime('%M:%S', time.gmtime(score['time']))})",
-                                    self.make_closure(frame_wid, type_col, frame_off, row)]
+                        time_str = time.strftime('%M:%S',
+                                                 time.gmtime(score['time']))
+                        string = [30,
+                                  f"{score['score']} ({time_str})",
+                                  self.make_closure(frame_wid, type_col,
+                                                    frame_off, row)]
                         strings.append(string)
                         row = row + 30
 
                     type_col = type_col + 2
             pass
         else:
-            strings.append([50, "No scores yet.", (lambda s: (self.center(window.get_width(), s.get_width()), 220))])
-            strings.append([50, "Play the game first!", (lambda s: (self.center(window.get_width(), s.get_width()), 270))])
+            strings.append(
+                [50, "No scores yet.",
+                 (lambda s:
+                  (self.center(window.get_width(), s.get_width()), 220))])
+            strings.append(
+                [50, "Play the game first!",
+                 (lambda s:
+                  (self.center(window.get_width(), s.get_width()), 270))])
 
         for string in strings:
             font = pygame.font.SysFont('consolas', string[0])

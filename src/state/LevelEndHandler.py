@@ -57,6 +57,12 @@ class LevelEndHandler(game_state.StateHandler):
 
             score_obj = {'score': score, 'time': time}
 
+            # Pylint is too dumb to know that data is subscriptable, so we
+            # just turn off that warning here. The reason for this is that
+            # data is actually a class, but it has __getitem__ and __setitem__
+            # methods, which is what makes this work.
+            #
+            # pylint: disable=unsubscriptable-object
             data['scores'][mode]['recent'].insert(0, score_obj)
             data['scores'][mode]['top'].insert(0, score_obj)
 
@@ -64,7 +70,9 @@ class LevelEndHandler(game_state.StateHandler):
             del data['scores'][mode]['recent'][5:]
 
             # Sort scores so that the highest score floats to top
-            data['scores'][mode]['top'] = list(reversed(sorted(data['scores'][mode]['top'], key = lambda x: x['score'])))
+            data['scores'][mode]['top'] = (
+                list(reversed(sorted(data['scores'][mode]['top'],
+                                     key=lambda x: x['score']))))
 
             # Truncate top scores to 5 highest.
             del data['scores'][mode]['top'][5:]
@@ -86,19 +94,25 @@ class LevelEndHandler(game_state.StateHandler):
 
         buttons = [reset_button, back_button, quit_button]
 
-        gameover = self.title_font.render("GAME OVER", True,"white")
+        gameover = self.title_font.render("GAME OVER", True, "white")
 
-        end_message = self._font.render(str(context.get_storage()['end_game']), True, "white")
+        end_message = self._font.render(str(context.get_storage()['end_game']),
+                                        True, "white")
         if context.get_storage()['difficulty'] == "infinite":
-            time = self._font.render("Time: " + str(round(context.get_storage()['last_play_time'], 2)) +
+            time = self._font.render("Time: " + str(
+                round(context.get_storage()['last_play_time'], 2)) +
                                      "s", True, "white")
-            score = self._font.render("Score: " + str(context.get_storage()['last_score']), True, "white")
+            score = self._font.render(
+                "Score: " + str(context.get_storage()['last_score']), True,
+                "white")
         else:
             if context.get_storage()['last_play_time'] > 0:
-                time = self._font.render("Time remaining: " + str(round(context.get_storage()['last_play_time'], 2)) +
+                time = self._font.render("Time remaining: " + str(
+                    round(context.get_storage()['last_play_time'], 2)) +
                                          "s", True, "white")
             else:
-                time = self._font.render("Time remaining: " + str(round(0, 2)) + "s", True, "white")
+                time = self._font.render(
+                    "Time remaining: " + str(round(0, 2)) + "s", True, "white")
 
         for button in buttons:
             button.blit(window)
@@ -108,9 +122,11 @@ class LevelEndHandler(game_state.StateHandler):
         window.blit(gameover, (((window.get_width() / 2) -
                                 (gameover.get_width() / 2)), 75))
 
-        window.blit(end_message, ((window.get_width() - end_message.get_width()) / 2, 150))
+        window.blit(end_message,
+                    ((window.get_width() - end_message.get_width()) / 2, 150))
         if context.get_storage()['difficulty'] == "infinite":
-            window.blit(score, ((window.get_width() - score.get_width()) / 2, 200))
+            window.blit(score,
+                        ((window.get_width() - score.get_width()) / 2, 200))
         window.blit(time, ((window.get_width() - time.get_width()) / 2, 250))
 
         # Dispatch all events to all buttons

@@ -15,6 +15,7 @@ class Button:
     the future, this class may be a proper button class that takes button text
     and color instead of an image.
     """
+
     def __init__(self, x, y, image, text):
         self._image = pygame.transform.scale(image, (200, 100))
         self._rect = self._image.get_rect()
@@ -28,7 +29,10 @@ class Button:
         Draw the button image on the screen.
         """
         window.blit(self._image, (self._rect.x, self._rect.y))
-        window.blit(self.text, ((self._rect.x + 100 - (self.text.get_width() / 2), self._rect.y + 55 - (self.text.get_height() / 2))))
+        window.blit(self.text, (
+            self._rect.x + 100 - (self.text.get_width() / 2),
+            self._rect.y + 55 -
+            (self.text.get_height() / 2)))
 
     def dispatch_event(self, event) -> bool:
         """
@@ -71,7 +75,6 @@ class MainMenuHandler(game_state.StateHandler):
         super().process(context)
 
         window = context.get_window()
-
 
         # create button instances
         start_button = Button(125, 300, self.button, "START")

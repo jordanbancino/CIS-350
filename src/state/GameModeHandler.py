@@ -39,7 +39,8 @@ class GameModeHandler(game_state.StateHandler):
 
         game_mode = self.title_font.render("GAME MODE", True, "white")
 
-        window.blit(game_mode, (((window.get_width() / 2) - (game_mode.get_width() / 2)), 75))
+        window.blit(game_mode, (((window.get_width() / 2) -
+                                 (game_mode.get_width() / 2)), 75))
         clicked_buttons = []
 
         # Dispatch all events to all buttons

@@ -5,7 +5,6 @@ from arg import load_asset
 from state.MainMenuHandler import Button
 
 
-
 class LevelPauseHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
@@ -43,7 +42,8 @@ class LevelPauseHandler(game_state.StateHandler):
             button.blit(window)
 
         clicked_buttons = []
-        window.blit(pause_info, ((window.get_width() - pause_info.get_width()) / 2, 75))
+        window.blit(pause_info,
+                    ((window.get_width() - pause_info.get_width()) / 2, 75))
 
         # Dispatch all events to all buttons
         for event in context.get_events():

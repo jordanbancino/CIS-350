@@ -44,7 +44,8 @@ class DifficultyHandler(game_state.StateHandler):
         difficulty = self.title_font.render("DIFFICULTY", True, "white")
 
         window.blit(self.infinity_image, (400, 200))
-        window.blit(difficulty, (((window.get_width() / 2) - (difficulty.get_width() / 2)), 75))
+        window.blit(difficulty, (((window.get_width() / 2) -
+                                  (difficulty.get_width() / 2)), 75))
 
         clicked_buttons = []
 
