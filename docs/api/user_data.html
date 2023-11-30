@@ -42,6 +42,9 @@
                                 <a class="function" href="#UserData.get_data_dir">get_data_dir</a>
                         </li>
                         <li>
+                                <a class="function" href="#UserData.snapshot">snapshot</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#UserData.get_path">get_path</a>
                         </li>
                         <li>
@@ -190,43 +193,55 @@ may wish to instantiate a new UserData with a different store location.</p>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; = &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        Get the name of the file backing this persistent user data store.</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        When a UserData store is no longer in use, this function should be</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        called on it to notify the system that the handle can be closed.</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        This flushes the cache and allows the user to create new UserData</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        stores in the future that are backed by the same file as this one was.</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">        Note that closed stores can no longer be used; they must be re-created.</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="ow">in</span> <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="p">:</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>            <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>            <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>                    <span class="sa">f</span><span class="s2">&quot;Removed store </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="si">}</span><span class="s2"> from __open_handles.&quot;</span><span class="p">)</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>                <span class="s1">&#39;Failed to remove handle. Double-close() on UserData?&#39;</span><span class="p">)</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="c1">#  Construct a global, default user data store.</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="n">_data</span> <span class="o">=</span> <span class="n">UserData</span><span class="p">(</span><span class="n">UserData</span><span class="o">.</span><span class="n">get_data_dir</span><span class="p">()</span> <span class="o">/</span> <span class="s1">&#39;arg.json&#39;</span><span class="p">)</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="k">def</span> <span class="nf">get</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">UserData</span><span class="p">:</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">    Get the global, default UserData store. This is the one that should be</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">    used for most purposes; it is unlikely that you will have to manually</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">    create new UserData stores. Note that this store should be closed before</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">    the program exits.</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="k">return</span> <span class="n">_data</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        Take a snapshot of the currently cached dictionary, returning a new</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        dictionary that is totally independent of the user data, which means</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        that updates to the dictionary returned by this function do not affect</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        the actual user data.</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        Get the name of the file backing this persistent user data store.</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        When a UserData store is no longer in use, this function should be</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">        called on it to notify the system that the handle can be closed.</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        This flushes the cache and allows the user to create new UserData</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        stores in the future that are backed by the same file as this one was.</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        Note that closed stores can no longer be used; they must be re-created.</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="ow">in</span> <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="p">:</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>            <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>            <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>                    <span class="sa">f</span><span class="s2">&quot;Removed store </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="si">}</span><span class="s2"> from __open_handles.&quot;</span><span class="p">)</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>            <span class="n">json_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>                <span class="s1">&#39;Failed to remove handle. Double-close() on UserData?&#39;</span><span class="p">)</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="c1">#  Construct a global, default user data store.</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="n">_data</span> <span class="o">=</span> <span class="n">UserData</span><span class="p">(</span><span class="n">UserData</span><span class="o">.</span><span class="n">get_data_dir</span><span class="p">()</span> <span class="o">/</span> <span class="s1">&#39;arg.json&#39;</span><span class="p">)</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="k">def</span> <span class="nf">get</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">UserData</span><span class="p">:</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">    Get the global, default UserData store. This is the one that should be</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">    used for most purposes; it is unlikely that you will have to manually</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">    create new UserData stores. Note that this store should be closed before</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">    the program exits.</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="k">return</span> <span class="n">_data</span>
 </span></pre></div>
 
 
@@ -335,29 +350,41 @@ may wish to instantiate a new UserData with a different store location.</p>
 </span><span id="UserData-107"><a href="#UserData-107"><span class="linenos">107</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
 </span><span id="UserData-108"><a href="#UserData-108"><span class="linenos">108</span></a>        <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; = &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 </span><span id="UserData-109"><a href="#UserData-109"><span class="linenos">109</span></a>
-</span><span id="UserData-110"><a href="#UserData-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
+</span><span id="UserData-110"><a href="#UserData-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="UserData-111"><a href="#UserData-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserData-112"><a href="#UserData-112"><span class="linenos">112</span></a><span class="sd">        Get the name of the file backing this persistent user data store.</span>
-</span><span id="UserData-113"><a href="#UserData-113"><span class="linenos">113</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="UserData-114"><a href="#UserData-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span>
-</span><span id="UserData-115"><a href="#UserData-115"><span class="linenos">115</span></a>
-</span><span id="UserData-116"><a href="#UserData-116"><span class="linenos">116</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="UserData-117"><a href="#UserData-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserData-118"><a href="#UserData-118"><span class="linenos">118</span></a><span class="sd">        When a UserData store is no longer in use, this function should be</span>
-</span><span id="UserData-119"><a href="#UserData-119"><span class="linenos">119</span></a><span class="sd">        called on it to notify the system that the handle can be closed.</span>
-</span><span id="UserData-120"><a href="#UserData-120"><span class="linenos">120</span></a><span class="sd">        This flushes the cache and allows the user to create new UserData</span>
-</span><span id="UserData-121"><a href="#UserData-121"><span class="linenos">121</span></a><span class="sd">        stores in the future that are backed by the same file as this one was.</span>
-</span><span id="UserData-122"><a href="#UserData-122"><span class="linenos">122</span></a>
-</span><span id="UserData-123"><a href="#UserData-123"><span class="linenos">123</span></a><span class="sd">        Note that closed stores can no longer be used; they must be re-created.</span>
-</span><span id="UserData-124"><a href="#UserData-124"><span class="linenos">124</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="UserData-125"><a href="#UserData-125"><span class="linenos">125</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="ow">in</span> <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="p">:</span>
-</span><span id="UserData-126"><a href="#UserData-126"><span class="linenos">126</span></a>            <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
-</span><span id="UserData-127"><a href="#UserData-127"><span class="linenos">127</span></a>            <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-</span><span id="UserData-128"><a href="#UserData-128"><span class="linenos">128</span></a>                    <span class="sa">f</span><span class="s2">&quot;Removed store </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="si">}</span><span class="s2"> from __open_handles.&quot;</span><span class="p">)</span>
-</span><span id="UserData-129"><a href="#UserData-129"><span class="linenos">129</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="UserData-130"><a href="#UserData-130"><span class="linenos">130</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="UserData-131"><a href="#UserData-131"><span class="linenos">131</span></a>            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-</span><span id="UserData-132"><a href="#UserData-132"><span class="linenos">132</span></a>                <span class="s1">&#39;Failed to remove handle. Double-close() on UserData?&#39;</span><span class="p">)</span>
+</span><span id="UserData-112"><a href="#UserData-112"><span class="linenos">112</span></a><span class="sd">        Take a snapshot of the currently cached dictionary, returning a new</span>
+</span><span id="UserData-113"><a href="#UserData-113"><span class="linenos">113</span></a><span class="sd">        dictionary that is totally independent of the user data, which means</span>
+</span><span id="UserData-114"><a href="#UserData-114"><span class="linenos">114</span></a><span class="sd">        that updates to the dictionary returned by this function do not affect</span>
+</span><span id="UserData-115"><a href="#UserData-115"><span class="linenos">115</span></a><span class="sd">        the actual user data.</span>
+</span><span id="UserData-116"><a href="#UserData-116"><span class="linenos">116</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserData-117"><a href="#UserData-117"><span class="linenos">117</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
+</span><span id="UserData-118"><a href="#UserData-118"><span class="linenos">118</span></a>
+</span><span id="UserData-119"><a href="#UserData-119"><span class="linenos">119</span></a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
+</span><span id="UserData-120"><a href="#UserData-120"><span class="linenos">120</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="UserData-121"><a href="#UserData-121"><span class="linenos">121</span></a><span class="sd">        Get the name of the file backing this persistent user data store.</span>
+</span><span id="UserData-122"><a href="#UserData-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserData-123"><a href="#UserData-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span>
+</span><span id="UserData-124"><a href="#UserData-124"><span class="linenos">124</span></a>
+</span><span id="UserData-125"><a href="#UserData-125"><span class="linenos">125</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="UserData-126"><a href="#UserData-126"><span class="linenos">126</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="UserData-127"><a href="#UserData-127"><span class="linenos">127</span></a><span class="sd">        When a UserData store is no longer in use, this function should be</span>
+</span><span id="UserData-128"><a href="#UserData-128"><span class="linenos">128</span></a><span class="sd">        called on it to notify the system that the handle can be closed.</span>
+</span><span id="UserData-129"><a href="#UserData-129"><span class="linenos">129</span></a><span class="sd">        This flushes the cache and allows the user to create new UserData</span>
+</span><span id="UserData-130"><a href="#UserData-130"><span class="linenos">130</span></a><span class="sd">        stores in the future that are backed by the same file as this one was.</span>
+</span><span id="UserData-131"><a href="#UserData-131"><span class="linenos">131</span></a>
+</span><span id="UserData-132"><a href="#UserData-132"><span class="linenos">132</span></a><span class="sd">        Note that closed stores can no longer be used; they must be re-created.</span>
+</span><span id="UserData-133"><a href="#UserData-133"><span class="linenos">133</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserData-134"><a href="#UserData-134"><span class="linenos">134</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="ow">in</span> <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="p">:</span>
+</span><span id="UserData-135"><a href="#UserData-135"><span class="linenos">135</span></a>            <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
+</span><span id="UserData-136"><a href="#UserData-136"><span class="linenos">136</span></a>            <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+</span><span id="UserData-137"><a href="#UserData-137"><span class="linenos">137</span></a>                    <span class="sa">f</span><span class="s2">&quot;Removed store </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="si">}</span><span class="s2"> from __open_handles.&quot;</span><span class="p">)</span>
+</span><span id="UserData-138"><a href="#UserData-138"><span class="linenos">138</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="UserData-139"><a href="#UserData-139"><span class="linenos">139</span></a>
+</span><span id="UserData-140"><a href="#UserData-140"><span class="linenos">140</span></a>            <span class="n">json_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
+</span><span id="UserData-141"><a href="#UserData-141"><span class="linenos">141</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
+</span><span id="UserData-142"><a href="#UserData-142"><span class="linenos">142</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="UserData-143"><a href="#UserData-143"><span class="linenos">143</span></a>            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+</span><span id="UserData-144"><a href="#UserData-144"><span class="linenos">144</span></a>                <span class="s1">&#39;Failed to remove handle. Double-close() on UserData?&#39;</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -467,6 +494,36 @@ unfamiliar with MacOS so I don't know if I got the directory correct.</p>
 
 
                             </div>
+                            <div id="UserData.snapshot" class="classattr">
+                                        <input id="UserData.snapshot-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">snapshot</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="UserData.snapshot-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#UserData.snapshot"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserData.snapshot-110"><a href="#UserData.snapshot-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="UserData.snapshot-111"><a href="#UserData.snapshot-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="UserData.snapshot-112"><a href="#UserData.snapshot-112"><span class="linenos">112</span></a><span class="sd">        Take a snapshot of the currently cached dictionary, returning a new</span>
+</span><span id="UserData.snapshot-113"><a href="#UserData.snapshot-113"><span class="linenos">113</span></a><span class="sd">        dictionary that is totally independent of the user data, which means</span>
+</span><span id="UserData.snapshot-114"><a href="#UserData.snapshot-114"><span class="linenos">114</span></a><span class="sd">        that updates to the dictionary returned by this function do not affect</span>
+</span><span id="UserData.snapshot-115"><a href="#UserData.snapshot-115"><span class="linenos">115</span></a><span class="sd">        the actual user data.</span>
+</span><span id="UserData.snapshot-116"><a href="#UserData.snapshot-116"><span class="linenos">116</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserData.snapshot-117"><a href="#UserData.snapshot-117"><span class="linenos">117</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Take a snapshot of the currently cached dictionary, returning a new
+dictionary that is totally independent of the user data, which means
+that updates to the dictionary returned by this function do not affect
+the actual user data.</p>
+</div>
+
+
+                            </div>
                             <div id="UserData.get_path" class="classattr">
                                         <input id="UserData.get_path-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -478,11 +535,11 @@ unfamiliar with MacOS so I don't know if I got the directory correct.</p>
 
     </div>
     <a class="headerlink" href="#UserData.get_path"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserData.get_path-110"><a href="#UserData.get_path-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
-</span><span id="UserData.get_path-111"><a href="#UserData.get_path-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserData.get_path-112"><a href="#UserData.get_path-112"><span class="linenos">112</span></a><span class="sd">        Get the name of the file backing this persistent user data store.</span>
-</span><span id="UserData.get_path-113"><a href="#UserData.get_path-113"><span class="linenos">113</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="UserData.get_path-114"><a href="#UserData.get_path-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserData.get_path-119"><a href="#UserData.get_path-119"><span class="linenos">119</span></a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
+</span><span id="UserData.get_path-120"><a href="#UserData.get_path-120"><span class="linenos">120</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="UserData.get_path-121"><a href="#UserData.get_path-121"><span class="linenos">121</span></a><span class="sd">        Get the name of the file backing this persistent user data store.</span>
+</span><span id="UserData.get_path-122"><a href="#UserData.get_path-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserData.get_path-123"><a href="#UserData.get_path-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span>
 </span></pre></div>
 
 
@@ -502,23 +559,26 @@ unfamiliar with MacOS so I don't know if I got the directory correct.</p>
 
     </div>
     <a class="headerlink" href="#UserData.close"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserData.close-116"><a href="#UserData.close-116"><span class="linenos">116</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="UserData.close-117"><a href="#UserData.close-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserData.close-118"><a href="#UserData.close-118"><span class="linenos">118</span></a><span class="sd">        When a UserData store is no longer in use, this function should be</span>
-</span><span id="UserData.close-119"><a href="#UserData.close-119"><span class="linenos">119</span></a><span class="sd">        called on it to notify the system that the handle can be closed.</span>
-</span><span id="UserData.close-120"><a href="#UserData.close-120"><span class="linenos">120</span></a><span class="sd">        This flushes the cache and allows the user to create new UserData</span>
-</span><span id="UserData.close-121"><a href="#UserData.close-121"><span class="linenos">121</span></a><span class="sd">        stores in the future that are backed by the same file as this one was.</span>
-</span><span id="UserData.close-122"><a href="#UserData.close-122"><span class="linenos">122</span></a>
-</span><span id="UserData.close-123"><a href="#UserData.close-123"><span class="linenos">123</span></a><span class="sd">        Note that closed stores can no longer be used; they must be re-created.</span>
-</span><span id="UserData.close-124"><a href="#UserData.close-124"><span class="linenos">124</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="UserData.close-125"><a href="#UserData.close-125"><span class="linenos">125</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="ow">in</span> <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="p">:</span>
-</span><span id="UserData.close-126"><a href="#UserData.close-126"><span class="linenos">126</span></a>            <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
-</span><span id="UserData.close-127"><a href="#UserData.close-127"><span class="linenos">127</span></a>            <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-</span><span id="UserData.close-128"><a href="#UserData.close-128"><span class="linenos">128</span></a>                    <span class="sa">f</span><span class="s2">&quot;Removed store </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="si">}</span><span class="s2"> from __open_handles.&quot;</span><span class="p">)</span>
-</span><span id="UserData.close-129"><a href="#UserData.close-129"><span class="linenos">129</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="UserData.close-130"><a href="#UserData.close-130"><span class="linenos">130</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="UserData.close-131"><a href="#UserData.close-131"><span class="linenos">131</span></a>            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-</span><span id="UserData.close-132"><a href="#UserData.close-132"><span class="linenos">132</span></a>                <span class="s1">&#39;Failed to remove handle. Double-close() on UserData?&#39;</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserData.close-125"><a href="#UserData.close-125"><span class="linenos">125</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="UserData.close-126"><a href="#UserData.close-126"><span class="linenos">126</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="UserData.close-127"><a href="#UserData.close-127"><span class="linenos">127</span></a><span class="sd">        When a UserData store is no longer in use, this function should be</span>
+</span><span id="UserData.close-128"><a href="#UserData.close-128"><span class="linenos">128</span></a><span class="sd">        called on it to notify the system that the handle can be closed.</span>
+</span><span id="UserData.close-129"><a href="#UserData.close-129"><span class="linenos">129</span></a><span class="sd">        This flushes the cache and allows the user to create new UserData</span>
+</span><span id="UserData.close-130"><a href="#UserData.close-130"><span class="linenos">130</span></a><span class="sd">        stores in the future that are backed by the same file as this one was.</span>
+</span><span id="UserData.close-131"><a href="#UserData.close-131"><span class="linenos">131</span></a>
+</span><span id="UserData.close-132"><a href="#UserData.close-132"><span class="linenos">132</span></a><span class="sd">        Note that closed stores can no longer be used; they must be re-created.</span>
+</span><span id="UserData.close-133"><a href="#UserData.close-133"><span class="linenos">133</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserData.close-134"><a href="#UserData.close-134"><span class="linenos">134</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_store</span> <span class="ow">in</span> <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="p">:</span>
+</span><span id="UserData.close-135"><a href="#UserData.close-135"><span class="linenos">135</span></a>            <span class="n">UserData</span><span class="o">.</span><span class="n">__open_handles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="p">)</span>
+</span><span id="UserData.close-136"><a href="#UserData.close-136"><span class="linenos">136</span></a>            <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+</span><span id="UserData.close-137"><a href="#UserData.close-137"><span class="linenos">137</span></a>                    <span class="sa">f</span><span class="s2">&quot;Removed store </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="si">}</span><span class="s2"> from __open_handles.&quot;</span><span class="p">)</span>
+</span><span id="UserData.close-138"><a href="#UserData.close-138"><span class="linenos">138</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="UserData.close-139"><a href="#UserData.close-139"><span class="linenos">139</span></a>
+</span><span id="UserData.close-140"><a href="#UserData.close-140"><span class="linenos">140</span></a>            <span class="n">json_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
+</span><span id="UserData.close-141"><a href="#UserData.close-141"><span class="linenos">141</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_store</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
+</span><span id="UserData.close-142"><a href="#UserData.close-142"><span class="linenos">142</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="UserData.close-143"><a href="#UserData.close-143"><span class="linenos">143</span></a>            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+</span><span id="UserData.close-144"><a href="#UserData.close-144"><span class="linenos">144</span></a>                <span class="s1">&#39;Failed to remove handle. Double-close() on UserData?&#39;</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -544,14 +604,14 @@ stores in the future that are backed by the same file as this one was.</p>
 
     </div>
     <a class="headerlink" href="#get"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get-139"><a href="#get-139"><span class="linenos">139</span></a><span class="k">def</span> <span class="nf">get</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">UserData</span><span class="p">:</span>
-</span><span id="get-140"><a href="#get-140"><span class="linenos">140</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="get-141"><a href="#get-141"><span class="linenos">141</span></a><span class="sd">    Get the global, default UserData store. This is the one that should be</span>
-</span><span id="get-142"><a href="#get-142"><span class="linenos">142</span></a><span class="sd">    used for most purposes; it is unlikely that you will have to manually</span>
-</span><span id="get-143"><a href="#get-143"><span class="linenos">143</span></a><span class="sd">    create new UserData stores. Note that this store should be closed before</span>
-</span><span id="get-144"><a href="#get-144"><span class="linenos">144</span></a><span class="sd">    the program exits.</span>
-</span><span id="get-145"><a href="#get-145"><span class="linenos">145</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get-146"><a href="#get-146"><span class="linenos">146</span></a>    <span class="k">return</span> <span class="n">_data</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get-151"><a href="#get-151"><span class="linenos">151</span></a><span class="k">def</span> <span class="nf">get</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">UserData</span><span class="p">:</span>
+</span><span id="get-152"><a href="#get-152"><span class="linenos">152</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get-153"><a href="#get-153"><span class="linenos">153</span></a><span class="sd">    Get the global, default UserData store. This is the one that should be</span>
+</span><span id="get-154"><a href="#get-154"><span class="linenos">154</span></a><span class="sd">    used for most purposes; it is unlikely that you will have to manually</span>
+</span><span id="get-155"><a href="#get-155"><span class="linenos">155</span></a><span class="sd">    create new UserData stores. Note that this store should be closed before</span>
+</span><span id="get-156"><a href="#get-156"><span class="linenos">156</span></a><span class="sd">    the program exits.</span>
+</span><span id="get-157"><a href="#get-157"><span class="linenos">157</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get-158"><a href="#get-158"><span class="linenos">158</span></a>    <span class="k">return</span> <span class="n">_data</span>
 </span></pre></div>
 
 

@@ -50,6 +50,15 @@
                         <li>
                                 <a class="variable" href="#GameState.LEVEL_END">LEVEL_END</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#GameState.DIFFICULTY">DIFFICULTY</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GameState.SCORE">SCORE</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#GameState.GAME_MODE">GAME_MODE</a>
+                        </li>
                 </ul>
 
             </li>
@@ -73,6 +82,9 @@
                         </li>
                         <li>
                                 <a class="function" href="#StateHandlerContext.get_delta">get_delta</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#StateHandlerContext.get_storage">get_storage</a>
                         </li>
                 </ul>
 
@@ -169,159 +181,186 @@ in the interface, because these parent functions perform useful logic.</li>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The current game has ended, either because the user hit an obstacle,</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    or because a question was incorrectly answered.&quot;&quot;&quot;</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="k">class</span> <span class="nc">StateHandlerContext</span><span class="p">:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    The state handler context is populated by the main state machine event</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    loop, and is provided to state handlers so that they have easy access to</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    everything necessary to draw to the screen, process user input, and update</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">    the game state.</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">    The state machine is run iteratively at a fixed frame rate. A</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    `StateHandlerContext` gets generated for each and every frame that is</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">    rendered. During each iteration, all events are collected and passed into</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    the context so that handlers can handle any events that may have passed</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">    since the handler function was last executed.</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>                 <span class="n">state</span><span class="p">:</span> <span class="n">GameState</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>                 <span class="n">window</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">,</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>                 <span class="n">gui</span><span class="p">:</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">,</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>                 <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">events</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="n">window</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span> <span class="o">=</span> <span class="n">gui</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">        Get the current game state. Note that this is not always the state</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        that the currently running state handler was registered to handle. See</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">        `StateHandler` for more details.</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="k">def</span> <span class="nf">get_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">        Get a list of Pygame events that have taken place since the last</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">        iteration. Each fired event only shows up in this list exactly once,</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">        so it is recommended to iterate over it during each function call and</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        process the events that need to be dealt with as soon as they are</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">        fired.</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">:</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">        Get the Pygame drawing surface onto which all game components are</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        blitted. This surface represents the entire screen area, so each state</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        handler can draw anywhere on the screen and update the entire screen</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        as necessary. Note that individual handlers don&#39;t have to update the</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        display by calling out to pygame explicitly; this is all handled by the</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        state machine event loop. State handlers must only blit everything onto</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        this surface.</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        Note that the window is not preserved across frames; each state handler</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        will have to re-draw the entire frame on every iteration of the state</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        machine. By default, each frame is filled in solid black, so if there</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        are black parts on the window that a state handler did not draw, it is</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">        simply because the state handler did not blit anything over the empty</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        frame in that location.</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="k">def</span> <span class="nf">get_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">:</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        This game utilizes Pygame GUI for some user inputs. If a state handler</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        must register components, it should do so with this `UIManager`, which</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">        is automatically managed and updated by the state machine loop.</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        If a state handler is going to register GUI components, it should do so</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        only once when the state is entered&amp;mdash;not iteratively. Note that</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        by default, the `UIManager` is cleared automatically on every state</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        change.</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="n">DIFFICULTY</span> <span class="o">=</span> <span class="mi">5</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The game is displaying the Difficulty meters for the MATH mode and</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">    waiting for the user to make a choice&quot;&quot;&quot;</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">SCORE</span> <span class="o">=</span> <span class="mi">6</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The game is displaying the recent scores&quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">GAME_MODE</span> <span class="o">=</span> <span class="mi">7</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The game is displaying the mode select screen, which allows users to</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    select between math and flashcard mode.&quot;&quot;&quot;</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="k">class</span> <span class="nc">StateHandlerContext</span><span class="p">:</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">    The state handler context is populated by the main state machine event</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">    loop, and is provided to state handlers so that they have easy access to</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">    everything necessary to draw to the screen, process user input, and update</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">    the game state.</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    The state machine is run iteratively at a fixed frame rate. A</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    `StateHandlerContext` gets generated for each and every frame that is</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    rendered. During each iteration, all events are collected and passed into</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    the context so that handlers can handle any events that may have passed</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">    since the handler function was last executed.</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>                 <span class="n">state</span><span class="p">:</span> <span class="n">GameState</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>                 <span class="n">window</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">,</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>                 <span class="n">gui</span><span class="p">:</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">,</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>                 <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">storage</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">events</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="n">window</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span> <span class="o">=</span> <span class="n">gui</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span> <span class="o">=</span> <span class="n">storage</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        Get the current game state. Note that this is not always the state</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">        that the currently running state handler was registered to handle. See</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        `StateHandler` for more details.</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="k">def</span> <span class="nf">get_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        Get a list of Pygame events that have taken place since the last</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        iteration. Each fired event only shows up in this list exactly once,</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        so it is recommended to iterate over it during each function call and</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        process the events that need to be dealt with as soon as they are</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        fired.</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        Get the Pygame drawing surface onto which all game components are</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        blitted. This surface represents the entire screen area, so each state</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">        handler can draw anywhere on the screen and update the entire screen</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        as necessary. Note that individual handlers don&#39;t have to update the</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">        display by calling out to pygame explicitly; this is all handled by the</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        state machine event loop. State handlers must only blit everything onto</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        this surface.</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">        Note that the window is not preserved across frames; each state handler</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">        will have to re-draw the entire frame on every iteration of the state</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        machine. By default, each frame is filled in solid black, so if there</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        are black parts on the window that a state handler did not draw, it is</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        simply because the state handler did not blit anything over the empty</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        frame in that location.</span>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="k">def</span> <span class="nf">get_delta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="k">def</span> <span class="nf">get_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">:</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        Get the amount of time that has passed (in *seconds*) since the last</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        invocation of a state handler. This is effectively the time since the</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        last frame was rendered, and should be used to compute object motion in</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        a frame rate-independent manner, because the frame rate may not always</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        be steady on all platforms.</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="k">class</span> <span class="nc">StateHandler</span><span class="p">:</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">    A `StateHandler` defines functions that are invoked at certain periods</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">    during the lifetime of the state machine. State handlers are registered</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">    with the main state machine loop so that they are executed when the game</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">    enters a given state.</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">    Each function takes a `StateHandlerContext` so that there are no</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">    limitations as to what a state handler can do at any point during its</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">    lifetime.</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">):</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">        Construct a new `StateHandler`.</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>        <span class="k">pass</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="k">def</span> <span class="nf">on_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">        This function is invoked at the rising edge of a state transition. A</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">        state transition occurs either when the main loop begins, or after a</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">        previous state yielded its control of the state machine. It is invoked</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">        *before* `process()` exactly once per state transition.</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        For our application, this function is primarily used to draw Pygame</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">        GUI components onto the screen for the current state, since they only</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        need to be registered with the `UIManager` once.</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>        <span class="k">pass</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">        This function is invoked iteratively at a fixed frame</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">        rate&amp;mdash;though this rate should be assumed to be</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">        unknown&amp;mdash;for the entire duration that the state machine remains</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">        in the current state. It is always invoked after `on_enter()` and</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">        before `on_exit()`, although it may be executed many times between each</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">        of those invocations.</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">        For our application, this function is primarily used to draw the game</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">        scene and process user input.</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">        This function should return the next state that the state machine</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">        should enter. If the state machine should remain in the same state, it</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">        should return `context.get_state()`.</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="k">pass</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="k">def</span> <span class="nf">on_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">        This function is invoked at the falling edge of a state transition. It</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        operates just like `on_enter()`, except it is executed when the current</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">        state indicates that it would like to transition to another state. This</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">        allows the state handler to clean up anything as necessary.</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">        For our application, this function is primarily used to reset</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">        Pygame GUI for each screen, as well as any state that should not carry</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">        over the next time this state is entered.</span>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">        By default, `on_exit()` will clear the Pygame GUI, so individual state</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">        handlers need only register their components on enter; they don&#39;t have</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">        to worry about de-registering them on exit. Note, of course, that this</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        function may be overridden and thus not execute if the child function</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        does not make a call to `super().on_exit()`.</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>        <span class="n">gui_manager</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_gui</span><span class="p">()</span>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>        <span class="n">gui_manager</span><span class="o">.</span><span class="n">clear_and_reset</span><span class="p">()</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        This game utilizes Pygame GUI for some user inputs. If a state handler</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        must register components, it should do so with this `UIManager`, which</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        is automatically managed and updated by the state machine loop.</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        If a state handler is going to register GUI components, it should do so</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">        only once when the state is entered&amp;mdash;not iteratively. Note that</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        by default, the `UIManager` is cleared automatically on every state</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        change.</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="k">def</span> <span class="nf">get_delta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">        Get the amount of time that has passed (in *seconds*) since the last</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        invocation of a state handler. This is effectively the time since the</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        last frame was rendered, and should be used to compute object motion in</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">        a frame rate-independent manner, because the frame rate may not always</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">        be steady on all platforms.</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="nf">get_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">        Get a dictionary that is accessible to all state handlers. This storage</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">        dictionary can be in any format agreed upon by the state handlers, and</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">        is used to pass data between them. State handlers can process the</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">        storage in their `on_enter()` and `on_exit()` functions.</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">        State handlers should make an effort to refrain from storing internal</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">        data in the context storage. This storage should be reserved only for</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">        exporting data to other state handlers.</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="k">class</span> <span class="nc">StateHandler</span><span class="p">:</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">    A `StateHandler` defines functions that are invoked at certain periods</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">    during the lifetime of the state machine. State handlers are registered</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">    with the main state machine loop so that they are executed when the game</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">    enters a given state.</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">    Each function takes a `StateHandlerContext` so that there are no</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">    limitations as to what a state handler can do at any point during its</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">    lifetime.</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">):</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">        Construct a new `StateHandler`.</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="k">pass</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>    <span class="k">def</span> <span class="nf">on_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">        This function is invoked at the rising edge of a state transition. A</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">        state transition occurs either when the main loop begins, or after a</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        previous state yielded its control of the state machine. It is invoked</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">        *before* `process()` exactly once per state transition.</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        For our application, this function is primarily used to draw Pygame</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">        GUI components onto the screen for the current state, since they only</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">        need to be registered with the `UIManager` once.</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>        <span class="k">pass</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">        This function is invoked iteratively at a fixed frame</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">        rate&amp;mdash;though this rate should be assumed to be</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">        unknown&amp;mdash;for the entire duration that the state machine remains</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        in the current state. It is always invoked after `on_enter()` and</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        before `on_exit()`, although it may be executed many times between each</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a><span class="sd">        of those invocations.</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">        For our application, this function is primarily used to draw the game</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">        scene and process user input.</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">        This function should return the next state that the state machine</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">        should enter. If the state machine should remain in the same state, it</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a><span class="sd">        should return `context.get_state()`.</span>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>        <span class="k">pass</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>    <span class="k">def</span> <span class="nf">on_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">        This function is invoked at the falling edge of a state transition. It</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">        operates just like `on_enter()`, except it is executed when the current</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="sd">        state indicates that it would like to transition to another state. This</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="sd">        allows the state handler to clean up anything as necessary.</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">        For our application, this function is primarily used to reset</span>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">        Pygame GUI for each screen, as well as any state that should not carry</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">        over the next time this state is entered.</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">        By default, `on_exit()` will clear the Pygame GUI, so individual state</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">        handlers need only register their components on enter; they don&#39;t have</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">        to worry about de-registering them on exit. Note, of course, that this</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="sd">        function may be overridden and thus not execute if the child function</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="sd">        does not make a call to `super().on_exit()`.</span>
+</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>        <span class="n">gui_manager</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_gui</span><span class="p">()</span>
+</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>        <span class="n">gui_manager</span><span class="o">.</span><span class="n">clear_and_reset</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -358,6 +397,17 @@ in the interface, because these parent functions perform useful logic.</li>
 </span><span id="GameState-37"><a href="#GameState-37"><span class="linenos">37</span></a>    <span class="n">LEVEL_END</span> <span class="o">=</span> <span class="mi">4</span>
 </span><span id="GameState-38"><a href="#GameState-38"><span class="linenos">38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The current game has ended, either because the user hit an obstacle,</span>
 </span><span id="GameState-39"><a href="#GameState-39"><span class="linenos">39</span></a><span class="sd">    or because a question was incorrectly answered.&quot;&quot;&quot;</span>
+</span><span id="GameState-40"><a href="#GameState-40"><span class="linenos">40</span></a>
+</span><span id="GameState-41"><a href="#GameState-41"><span class="linenos">41</span></a>    <span class="n">DIFFICULTY</span> <span class="o">=</span> <span class="mi">5</span>
+</span><span id="GameState-42"><a href="#GameState-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The game is displaying the Difficulty meters for the MATH mode and</span>
+</span><span id="GameState-43"><a href="#GameState-43"><span class="linenos">43</span></a><span class="sd">    waiting for the user to make a choice&quot;&quot;&quot;</span>
+</span><span id="GameState-44"><a href="#GameState-44"><span class="linenos">44</span></a>
+</span><span id="GameState-45"><a href="#GameState-45"><span class="linenos">45</span></a>    <span class="n">SCORE</span> <span class="o">=</span> <span class="mi">6</span>
+</span><span id="GameState-46"><a href="#GameState-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The game is displaying the recent scores&quot;&quot;&quot;</span>
+</span><span id="GameState-47"><a href="#GameState-47"><span class="linenos">47</span></a>
+</span><span id="GameState-48"><a href="#GameState-48"><span class="linenos">48</span></a>    <span class="n">GAME_MODE</span> <span class="o">=</span> <span class="mi">7</span>
+</span><span id="GameState-49"><a href="#GameState-49"><span class="linenos">49</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The game is displaying the mode select screen, which allows users to</span>
+</span><span id="GameState-50"><a href="#GameState-50"><span class="linenos">50</span></a><span class="sd">    select between math and flashcard mode.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -437,6 +487,50 @@ or because a question was incorrectly answered.</p>
 
 
                             </div>
+                            <div id="GameState.DIFFICULTY" class="classattr">
+                                <div class="attr variable">
+            <span class="name">DIFFICULTY</span>        =
+<span class="default_value">5</span>
+
+        
+    </div>
+    <a class="headerlink" href="#GameState.DIFFICULTY"></a>
+    
+            <div class="docstring"><p>The game is displaying the Difficulty meters for the MATH mode and
+waiting for the user to make a choice</p>
+</div>
+
+
+                            </div>
+                            <div id="GameState.SCORE" class="classattr">
+                                <div class="attr variable">
+            <span class="name">SCORE</span>        =
+<span class="default_value">6</span>
+
+        
+    </div>
+    <a class="headerlink" href="#GameState.SCORE"></a>
+    
+            <div class="docstring"><p>The game is displaying the recent scores</p>
+</div>
+
+
+                            </div>
+                            <div id="GameState.GAME_MODE" class="classattr">
+                                <div class="attr variable">
+            <span class="name">GAME_MODE</span>        =
+<span class="default_value">7</span>
+
+        
+    </div>
+    <a class="headerlink" href="#GameState.GAME_MODE"></a>
+    
+            <div class="docstring"><p>The game is displaying the mode select screen, which allows users to
+select between math and flashcard mode.</p>
+</div>
+
+
+                            </div>
                 </section>
                 <section id="StateHandlerContext">
                             <input id="StateHandlerContext-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -449,89 +543,104 @@ or because a question was incorrectly answered.</p>
 
     </div>
     <a class="headerlink" href="#StateHandlerContext"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext-42"><a href="#StateHandlerContext-42"><span class="linenos"> 42</span></a><span class="k">class</span> <span class="nc">StateHandlerContext</span><span class="p">:</span>
-</span><span id="StateHandlerContext-43"><a href="#StateHandlerContext-43"><span class="linenos"> 43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-44"><a href="#StateHandlerContext-44"><span class="linenos"> 44</span></a><span class="sd">    The state handler context is populated by the main state machine event</span>
-</span><span id="StateHandlerContext-45"><a href="#StateHandlerContext-45"><span class="linenos"> 45</span></a><span class="sd">    loop, and is provided to state handlers so that they have easy access to</span>
-</span><span id="StateHandlerContext-46"><a href="#StateHandlerContext-46"><span class="linenos"> 46</span></a><span class="sd">    everything necessary to draw to the screen, process user input, and update</span>
-</span><span id="StateHandlerContext-47"><a href="#StateHandlerContext-47"><span class="linenos"> 47</span></a><span class="sd">    the game state.</span>
-</span><span id="StateHandlerContext-48"><a href="#StateHandlerContext-48"><span class="linenos"> 48</span></a>
-</span><span id="StateHandlerContext-49"><a href="#StateHandlerContext-49"><span class="linenos"> 49</span></a><span class="sd">    The state machine is run iteratively at a fixed frame rate. A</span>
-</span><span id="StateHandlerContext-50"><a href="#StateHandlerContext-50"><span class="linenos"> 50</span></a><span class="sd">    `StateHandlerContext` gets generated for each and every frame that is</span>
-</span><span id="StateHandlerContext-51"><a href="#StateHandlerContext-51"><span class="linenos"> 51</span></a><span class="sd">    rendered. During each iteration, all events are collected and passed into</span>
-</span><span id="StateHandlerContext-52"><a href="#StateHandlerContext-52"><span class="linenos"> 52</span></a><span class="sd">    the context so that handlers can handle any events that may have passed</span>
-</span><span id="StateHandlerContext-53"><a href="#StateHandlerContext-53"><span class="linenos"> 53</span></a><span class="sd">    since the handler function was last executed.</span>
-</span><span id="StateHandlerContext-54"><a href="#StateHandlerContext-54"><span class="linenos"> 54</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-55"><a href="#StateHandlerContext-55"><span class="linenos"> 55</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="StateHandlerContext-56"><a href="#StateHandlerContext-56"><span class="linenos"> 56</span></a>                 <span class="n">state</span><span class="p">:</span> <span class="n">GameState</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="StateHandlerContext-57"><a href="#StateHandlerContext-57"><span class="linenos"> 57</span></a>                 <span class="n">window</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">,</span>
-</span><span id="StateHandlerContext-58"><a href="#StateHandlerContext-58"><span class="linenos"> 58</span></a>                 <span class="n">gui</span><span class="p">:</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">,</span>
-</span><span id="StateHandlerContext-59"><a href="#StateHandlerContext-59"><span class="linenos"> 59</span></a>                 <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-</span><span id="StateHandlerContext-60"><a href="#StateHandlerContext-60"><span class="linenos"> 60</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
-</span><span id="StateHandlerContext-61"><a href="#StateHandlerContext-61"><span class="linenos"> 61</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">events</span>
-</span><span id="StateHandlerContext-62"><a href="#StateHandlerContext-62"><span class="linenos"> 62</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="n">window</span>
-</span><span id="StateHandlerContext-63"><a href="#StateHandlerContext-63"><span class="linenos"> 63</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span> <span class="o">=</span> <span class="n">gui</span>
-</span><span id="StateHandlerContext-64"><a href="#StateHandlerContext-64"><span class="linenos"> 64</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
-</span><span id="StateHandlerContext-65"><a href="#StateHandlerContext-65"><span class="linenos"> 65</span></a>
-</span><span id="StateHandlerContext-66"><a href="#StateHandlerContext-66"><span class="linenos"> 66</span></a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
-</span><span id="StateHandlerContext-67"><a href="#StateHandlerContext-67"><span class="linenos"> 67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-68"><a href="#StateHandlerContext-68"><span class="linenos"> 68</span></a><span class="sd">        Get the current game state. Note that this is not always the state</span>
-</span><span id="StateHandlerContext-69"><a href="#StateHandlerContext-69"><span class="linenos"> 69</span></a><span class="sd">        that the currently running state handler was registered to handle. See</span>
-</span><span id="StateHandlerContext-70"><a href="#StateHandlerContext-70"><span class="linenos"> 70</span></a><span class="sd">        `StateHandler` for more details.</span>
-</span><span id="StateHandlerContext-71"><a href="#StateHandlerContext-71"><span class="linenos"> 71</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-72"><a href="#StateHandlerContext-72"><span class="linenos"> 72</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
-</span><span id="StateHandlerContext-73"><a href="#StateHandlerContext-73"><span class="linenos"> 73</span></a>
-</span><span id="StateHandlerContext-74"><a href="#StateHandlerContext-74"><span class="linenos"> 74</span></a>    <span class="k">def</span> <span class="nf">get_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="StateHandlerContext-75"><a href="#StateHandlerContext-75"><span class="linenos"> 75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-76"><a href="#StateHandlerContext-76"><span class="linenos"> 76</span></a><span class="sd">        Get a list of Pygame events that have taken place since the last</span>
-</span><span id="StateHandlerContext-77"><a href="#StateHandlerContext-77"><span class="linenos"> 77</span></a><span class="sd">        iteration. Each fired event only shows up in this list exactly once,</span>
-</span><span id="StateHandlerContext-78"><a href="#StateHandlerContext-78"><span class="linenos"> 78</span></a><span class="sd">        so it is recommended to iterate over it during each function call and</span>
-</span><span id="StateHandlerContext-79"><a href="#StateHandlerContext-79"><span class="linenos"> 79</span></a><span class="sd">        process the events that need to be dealt with as soon as they are</span>
-</span><span id="StateHandlerContext-80"><a href="#StateHandlerContext-80"><span class="linenos"> 80</span></a><span class="sd">        fired.</span>
-</span><span id="StateHandlerContext-81"><a href="#StateHandlerContext-81"><span class="linenos"> 81</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-82"><a href="#StateHandlerContext-82"><span class="linenos"> 82</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span>
-</span><span id="StateHandlerContext-83"><a href="#StateHandlerContext-83"><span class="linenos"> 83</span></a>
-</span><span id="StateHandlerContext-84"><a href="#StateHandlerContext-84"><span class="linenos"> 84</span></a>    <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">:</span>
-</span><span id="StateHandlerContext-85"><a href="#StateHandlerContext-85"><span class="linenos"> 85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-86"><a href="#StateHandlerContext-86"><span class="linenos"> 86</span></a><span class="sd">        Get the Pygame drawing surface onto which all game components are</span>
-</span><span id="StateHandlerContext-87"><a href="#StateHandlerContext-87"><span class="linenos"> 87</span></a><span class="sd">        blitted. This surface represents the entire screen area, so each state</span>
-</span><span id="StateHandlerContext-88"><a href="#StateHandlerContext-88"><span class="linenos"> 88</span></a><span class="sd">        handler can draw anywhere on the screen and update the entire screen</span>
-</span><span id="StateHandlerContext-89"><a href="#StateHandlerContext-89"><span class="linenos"> 89</span></a><span class="sd">        as necessary. Note that individual handlers don&#39;t have to update the</span>
-</span><span id="StateHandlerContext-90"><a href="#StateHandlerContext-90"><span class="linenos"> 90</span></a><span class="sd">        display by calling out to pygame explicitly; this is all handled by the</span>
-</span><span id="StateHandlerContext-91"><a href="#StateHandlerContext-91"><span class="linenos"> 91</span></a><span class="sd">        state machine event loop. State handlers must only blit everything onto</span>
-</span><span id="StateHandlerContext-92"><a href="#StateHandlerContext-92"><span class="linenos"> 92</span></a><span class="sd">        this surface.</span>
-</span><span id="StateHandlerContext-93"><a href="#StateHandlerContext-93"><span class="linenos"> 93</span></a>
-</span><span id="StateHandlerContext-94"><a href="#StateHandlerContext-94"><span class="linenos"> 94</span></a><span class="sd">        Note that the window is not preserved across frames; each state handler</span>
-</span><span id="StateHandlerContext-95"><a href="#StateHandlerContext-95"><span class="linenos"> 95</span></a><span class="sd">        will have to re-draw the entire frame on every iteration of the state</span>
-</span><span id="StateHandlerContext-96"><a href="#StateHandlerContext-96"><span class="linenos"> 96</span></a><span class="sd">        machine. By default, each frame is filled in solid black, so if there</span>
-</span><span id="StateHandlerContext-97"><a href="#StateHandlerContext-97"><span class="linenos"> 97</span></a><span class="sd">        are black parts on the window that a state handler did not draw, it is</span>
-</span><span id="StateHandlerContext-98"><a href="#StateHandlerContext-98"><span class="linenos"> 98</span></a><span class="sd">        simply because the state handler did not blit anything over the empty</span>
-</span><span id="StateHandlerContext-99"><a href="#StateHandlerContext-99"><span class="linenos"> 99</span></a><span class="sd">        frame in that location.</span>
-</span><span id="StateHandlerContext-100"><a href="#StateHandlerContext-100"><span class="linenos">100</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-101"><a href="#StateHandlerContext-101"><span class="linenos">101</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span>
-</span><span id="StateHandlerContext-102"><a href="#StateHandlerContext-102"><span class="linenos">102</span></a>
-</span><span id="StateHandlerContext-103"><a href="#StateHandlerContext-103"><span class="linenos">103</span></a>    <span class="k">def</span> <span class="nf">get_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">:</span>
-</span><span id="StateHandlerContext-104"><a href="#StateHandlerContext-104"><span class="linenos">104</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-105"><a href="#StateHandlerContext-105"><span class="linenos">105</span></a><span class="sd">        This game utilizes Pygame GUI for some user inputs. If a state handler</span>
-</span><span id="StateHandlerContext-106"><a href="#StateHandlerContext-106"><span class="linenos">106</span></a><span class="sd">        must register components, it should do so with this `UIManager`, which</span>
-</span><span id="StateHandlerContext-107"><a href="#StateHandlerContext-107"><span class="linenos">107</span></a><span class="sd">        is automatically managed and updated by the state machine loop.</span>
-</span><span id="StateHandlerContext-108"><a href="#StateHandlerContext-108"><span class="linenos">108</span></a>
-</span><span id="StateHandlerContext-109"><a href="#StateHandlerContext-109"><span class="linenos">109</span></a><span class="sd">        If a state handler is going to register GUI components, it should do so</span>
-</span><span id="StateHandlerContext-110"><a href="#StateHandlerContext-110"><span class="linenos">110</span></a><span class="sd">        only once when the state is entered&amp;mdash;not iteratively. Note that</span>
-</span><span id="StateHandlerContext-111"><a href="#StateHandlerContext-111"><span class="linenos">111</span></a><span class="sd">        by default, the `UIManager` is cleared automatically on every state</span>
-</span><span id="StateHandlerContext-112"><a href="#StateHandlerContext-112"><span class="linenos">112</span></a><span class="sd">        change.</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext-53"><a href="#StateHandlerContext-53"><span class="linenos"> 53</span></a><span class="k">class</span> <span class="nc">StateHandlerContext</span><span class="p">:</span>
+</span><span id="StateHandlerContext-54"><a href="#StateHandlerContext-54"><span class="linenos"> 54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-55"><a href="#StateHandlerContext-55"><span class="linenos"> 55</span></a><span class="sd">    The state handler context is populated by the main state machine event</span>
+</span><span id="StateHandlerContext-56"><a href="#StateHandlerContext-56"><span class="linenos"> 56</span></a><span class="sd">    loop, and is provided to state handlers so that they have easy access to</span>
+</span><span id="StateHandlerContext-57"><a href="#StateHandlerContext-57"><span class="linenos"> 57</span></a><span class="sd">    everything necessary to draw to the screen, process user input, and update</span>
+</span><span id="StateHandlerContext-58"><a href="#StateHandlerContext-58"><span class="linenos"> 58</span></a><span class="sd">    the game state.</span>
+</span><span id="StateHandlerContext-59"><a href="#StateHandlerContext-59"><span class="linenos"> 59</span></a>
+</span><span id="StateHandlerContext-60"><a href="#StateHandlerContext-60"><span class="linenos"> 60</span></a><span class="sd">    The state machine is run iteratively at a fixed frame rate. A</span>
+</span><span id="StateHandlerContext-61"><a href="#StateHandlerContext-61"><span class="linenos"> 61</span></a><span class="sd">    `StateHandlerContext` gets generated for each and every frame that is</span>
+</span><span id="StateHandlerContext-62"><a href="#StateHandlerContext-62"><span class="linenos"> 62</span></a><span class="sd">    rendered. During each iteration, all events are collected and passed into</span>
+</span><span id="StateHandlerContext-63"><a href="#StateHandlerContext-63"><span class="linenos"> 63</span></a><span class="sd">    the context so that handlers can handle any events that may have passed</span>
+</span><span id="StateHandlerContext-64"><a href="#StateHandlerContext-64"><span class="linenos"> 64</span></a><span class="sd">    since the handler function was last executed.</span>
+</span><span id="StateHandlerContext-65"><a href="#StateHandlerContext-65"><span class="linenos"> 65</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-66"><a href="#StateHandlerContext-66"><span class="linenos"> 66</span></a>
+</span><span id="StateHandlerContext-67"><a href="#StateHandlerContext-67"><span class="linenos"> 67</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="StateHandlerContext-68"><a href="#StateHandlerContext-68"><span class="linenos"> 68</span></a>                 <span class="n">state</span><span class="p">:</span> <span class="n">GameState</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="StateHandlerContext-69"><a href="#StateHandlerContext-69"><span class="linenos"> 69</span></a>                 <span class="n">window</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">,</span>
+</span><span id="StateHandlerContext-70"><a href="#StateHandlerContext-70"><span class="linenos"> 70</span></a>                 <span class="n">gui</span><span class="p">:</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">,</span>
+</span><span id="StateHandlerContext-71"><a href="#StateHandlerContext-71"><span class="linenos"> 71</span></a>                 <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">storage</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="StateHandlerContext-72"><a href="#StateHandlerContext-72"><span class="linenos"> 72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+</span><span id="StateHandlerContext-73"><a href="#StateHandlerContext-73"><span class="linenos"> 73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">events</span>
+</span><span id="StateHandlerContext-74"><a href="#StateHandlerContext-74"><span class="linenos"> 74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="n">window</span>
+</span><span id="StateHandlerContext-75"><a href="#StateHandlerContext-75"><span class="linenos"> 75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span> <span class="o">=</span> <span class="n">gui</span>
+</span><span id="StateHandlerContext-76"><a href="#StateHandlerContext-76"><span class="linenos"> 76</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
+</span><span id="StateHandlerContext-77"><a href="#StateHandlerContext-77"><span class="linenos"> 77</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span> <span class="o">=</span> <span class="n">storage</span>
+</span><span id="StateHandlerContext-78"><a href="#StateHandlerContext-78"><span class="linenos"> 78</span></a>
+</span><span id="StateHandlerContext-79"><a href="#StateHandlerContext-79"><span class="linenos"> 79</span></a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
+</span><span id="StateHandlerContext-80"><a href="#StateHandlerContext-80"><span class="linenos"> 80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-81"><a href="#StateHandlerContext-81"><span class="linenos"> 81</span></a><span class="sd">        Get the current game state. Note that this is not always the state</span>
+</span><span id="StateHandlerContext-82"><a href="#StateHandlerContext-82"><span class="linenos"> 82</span></a><span class="sd">        that the currently running state handler was registered to handle. See</span>
+</span><span id="StateHandlerContext-83"><a href="#StateHandlerContext-83"><span class="linenos"> 83</span></a><span class="sd">        `StateHandler` for more details.</span>
+</span><span id="StateHandlerContext-84"><a href="#StateHandlerContext-84"><span class="linenos"> 84</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-85"><a href="#StateHandlerContext-85"><span class="linenos"> 85</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+</span><span id="StateHandlerContext-86"><a href="#StateHandlerContext-86"><span class="linenos"> 86</span></a>
+</span><span id="StateHandlerContext-87"><a href="#StateHandlerContext-87"><span class="linenos"> 87</span></a>    <span class="k">def</span> <span class="nf">get_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="StateHandlerContext-88"><a href="#StateHandlerContext-88"><span class="linenos"> 88</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-89"><a href="#StateHandlerContext-89"><span class="linenos"> 89</span></a><span class="sd">        Get a list of Pygame events that have taken place since the last</span>
+</span><span id="StateHandlerContext-90"><a href="#StateHandlerContext-90"><span class="linenos"> 90</span></a><span class="sd">        iteration. Each fired event only shows up in this list exactly once,</span>
+</span><span id="StateHandlerContext-91"><a href="#StateHandlerContext-91"><span class="linenos"> 91</span></a><span class="sd">        so it is recommended to iterate over it during each function call and</span>
+</span><span id="StateHandlerContext-92"><a href="#StateHandlerContext-92"><span class="linenos"> 92</span></a><span class="sd">        process the events that need to be dealt with as soon as they are</span>
+</span><span id="StateHandlerContext-93"><a href="#StateHandlerContext-93"><span class="linenos"> 93</span></a><span class="sd">        fired.</span>
+</span><span id="StateHandlerContext-94"><a href="#StateHandlerContext-94"><span class="linenos"> 94</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-95"><a href="#StateHandlerContext-95"><span class="linenos"> 95</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span>
+</span><span id="StateHandlerContext-96"><a href="#StateHandlerContext-96"><span class="linenos"> 96</span></a>
+</span><span id="StateHandlerContext-97"><a href="#StateHandlerContext-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">:</span>
+</span><span id="StateHandlerContext-98"><a href="#StateHandlerContext-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-99"><a href="#StateHandlerContext-99"><span class="linenos"> 99</span></a><span class="sd">        Get the Pygame drawing surface onto which all game components are</span>
+</span><span id="StateHandlerContext-100"><a href="#StateHandlerContext-100"><span class="linenos">100</span></a><span class="sd">        blitted. This surface represents the entire screen area, so each state</span>
+</span><span id="StateHandlerContext-101"><a href="#StateHandlerContext-101"><span class="linenos">101</span></a><span class="sd">        handler can draw anywhere on the screen and update the entire screen</span>
+</span><span id="StateHandlerContext-102"><a href="#StateHandlerContext-102"><span class="linenos">102</span></a><span class="sd">        as necessary. Note that individual handlers don&#39;t have to update the</span>
+</span><span id="StateHandlerContext-103"><a href="#StateHandlerContext-103"><span class="linenos">103</span></a><span class="sd">        display by calling out to pygame explicitly; this is all handled by the</span>
+</span><span id="StateHandlerContext-104"><a href="#StateHandlerContext-104"><span class="linenos">104</span></a><span class="sd">        state machine event loop. State handlers must only blit everything onto</span>
+</span><span id="StateHandlerContext-105"><a href="#StateHandlerContext-105"><span class="linenos">105</span></a><span class="sd">        this surface.</span>
+</span><span id="StateHandlerContext-106"><a href="#StateHandlerContext-106"><span class="linenos">106</span></a>
+</span><span id="StateHandlerContext-107"><a href="#StateHandlerContext-107"><span class="linenos">107</span></a><span class="sd">        Note that the window is not preserved across frames; each state handler</span>
+</span><span id="StateHandlerContext-108"><a href="#StateHandlerContext-108"><span class="linenos">108</span></a><span class="sd">        will have to re-draw the entire frame on every iteration of the state</span>
+</span><span id="StateHandlerContext-109"><a href="#StateHandlerContext-109"><span class="linenos">109</span></a><span class="sd">        machine. By default, each frame is filled in solid black, so if there</span>
+</span><span id="StateHandlerContext-110"><a href="#StateHandlerContext-110"><span class="linenos">110</span></a><span class="sd">        are black parts on the window that a state handler did not draw, it is</span>
+</span><span id="StateHandlerContext-111"><a href="#StateHandlerContext-111"><span class="linenos">111</span></a><span class="sd">        simply because the state handler did not blit anything over the empty</span>
+</span><span id="StateHandlerContext-112"><a href="#StateHandlerContext-112"><span class="linenos">112</span></a><span class="sd">        frame in that location.</span>
 </span><span id="StateHandlerContext-113"><a href="#StateHandlerContext-113"><span class="linenos">113</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-114"><a href="#StateHandlerContext-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span>
+</span><span id="StateHandlerContext-114"><a href="#StateHandlerContext-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span>
 </span><span id="StateHandlerContext-115"><a href="#StateHandlerContext-115"><span class="linenos">115</span></a>
-</span><span id="StateHandlerContext-116"><a href="#StateHandlerContext-116"><span class="linenos">116</span></a>    <span class="k">def</span> <span class="nf">get_delta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="StateHandlerContext-116"><a href="#StateHandlerContext-116"><span class="linenos">116</span></a>    <span class="k">def</span> <span class="nf">get_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">:</span>
 </span><span id="StateHandlerContext-117"><a href="#StateHandlerContext-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-118"><a href="#StateHandlerContext-118"><span class="linenos">118</span></a><span class="sd">        Get the amount of time that has passed (in *seconds*) since the last</span>
-</span><span id="StateHandlerContext-119"><a href="#StateHandlerContext-119"><span class="linenos">119</span></a><span class="sd">        invocation of a state handler. This is effectively the time since the</span>
-</span><span id="StateHandlerContext-120"><a href="#StateHandlerContext-120"><span class="linenos">120</span></a><span class="sd">        last frame was rendered, and should be used to compute object motion in</span>
-</span><span id="StateHandlerContext-121"><a href="#StateHandlerContext-121"><span class="linenos">121</span></a><span class="sd">        a frame rate-independent manner, because the frame rate may not always</span>
-</span><span id="StateHandlerContext-122"><a href="#StateHandlerContext-122"><span class="linenos">122</span></a><span class="sd">        be steady on all platforms.</span>
-</span><span id="StateHandlerContext-123"><a href="#StateHandlerContext-123"><span class="linenos">123</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext-124"><a href="#StateHandlerContext-124"><span class="linenos">124</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+</span><span id="StateHandlerContext-118"><a href="#StateHandlerContext-118"><span class="linenos">118</span></a><span class="sd">        This game utilizes Pygame GUI for some user inputs. If a state handler</span>
+</span><span id="StateHandlerContext-119"><a href="#StateHandlerContext-119"><span class="linenos">119</span></a><span class="sd">        must register components, it should do so with this `UIManager`, which</span>
+</span><span id="StateHandlerContext-120"><a href="#StateHandlerContext-120"><span class="linenos">120</span></a><span class="sd">        is automatically managed and updated by the state machine loop.</span>
+</span><span id="StateHandlerContext-121"><a href="#StateHandlerContext-121"><span class="linenos">121</span></a>
+</span><span id="StateHandlerContext-122"><a href="#StateHandlerContext-122"><span class="linenos">122</span></a><span class="sd">        If a state handler is going to register GUI components, it should do so</span>
+</span><span id="StateHandlerContext-123"><a href="#StateHandlerContext-123"><span class="linenos">123</span></a><span class="sd">        only once when the state is entered&amp;mdash;not iteratively. Note that</span>
+</span><span id="StateHandlerContext-124"><a href="#StateHandlerContext-124"><span class="linenos">124</span></a><span class="sd">        by default, the `UIManager` is cleared automatically on every state</span>
+</span><span id="StateHandlerContext-125"><a href="#StateHandlerContext-125"><span class="linenos">125</span></a><span class="sd">        change.</span>
+</span><span id="StateHandlerContext-126"><a href="#StateHandlerContext-126"><span class="linenos">126</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-127"><a href="#StateHandlerContext-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span>
+</span><span id="StateHandlerContext-128"><a href="#StateHandlerContext-128"><span class="linenos">128</span></a>
+</span><span id="StateHandlerContext-129"><a href="#StateHandlerContext-129"><span class="linenos">129</span></a>    <span class="k">def</span> <span class="nf">get_delta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="StateHandlerContext-130"><a href="#StateHandlerContext-130"><span class="linenos">130</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-131"><a href="#StateHandlerContext-131"><span class="linenos">131</span></a><span class="sd">        Get the amount of time that has passed (in *seconds*) since the last</span>
+</span><span id="StateHandlerContext-132"><a href="#StateHandlerContext-132"><span class="linenos">132</span></a><span class="sd">        invocation of a state handler. This is effectively the time since the</span>
+</span><span id="StateHandlerContext-133"><a href="#StateHandlerContext-133"><span class="linenos">133</span></a><span class="sd">        last frame was rendered, and should be used to compute object motion in</span>
+</span><span id="StateHandlerContext-134"><a href="#StateHandlerContext-134"><span class="linenos">134</span></a><span class="sd">        a frame rate-independent manner, because the frame rate may not always</span>
+</span><span id="StateHandlerContext-135"><a href="#StateHandlerContext-135"><span class="linenos">135</span></a><span class="sd">        be steady on all platforms.</span>
+</span><span id="StateHandlerContext-136"><a href="#StateHandlerContext-136"><span class="linenos">136</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-137"><a href="#StateHandlerContext-137"><span class="linenos">137</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+</span><span id="StateHandlerContext-138"><a href="#StateHandlerContext-138"><span class="linenos">138</span></a>
+</span><span id="StateHandlerContext-139"><a href="#StateHandlerContext-139"><span class="linenos">139</span></a>    <span class="k">def</span> <span class="nf">get_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="StateHandlerContext-140"><a href="#StateHandlerContext-140"><span class="linenos">140</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-141"><a href="#StateHandlerContext-141"><span class="linenos">141</span></a><span class="sd">        Get a dictionary that is accessible to all state handlers. This storage</span>
+</span><span id="StateHandlerContext-142"><a href="#StateHandlerContext-142"><span class="linenos">142</span></a><span class="sd">        dictionary can be in any format agreed upon by the state handlers, and</span>
+</span><span id="StateHandlerContext-143"><a href="#StateHandlerContext-143"><span class="linenos">143</span></a><span class="sd">        is used to pass data between them. State handlers can process the</span>
+</span><span id="StateHandlerContext-144"><a href="#StateHandlerContext-144"><span class="linenos">144</span></a><span class="sd">        storage in their `on_enter()` and `on_exit()` functions.</span>
+</span><span id="StateHandlerContext-145"><a href="#StateHandlerContext-145"><span class="linenos">145</span></a>
+</span><span id="StateHandlerContext-146"><a href="#StateHandlerContext-146"><span class="linenos">146</span></a><span class="sd">        State handlers should make an effort to refrain from storing internal</span>
+</span><span id="StateHandlerContext-147"><a href="#StateHandlerContext-147"><span class="linenos">147</span></a><span class="sd">        data in the context storage. This storage should be reserved only for</span>
+</span><span id="StateHandlerContext-148"><a href="#StateHandlerContext-148"><span class="linenos">148</span></a><span class="sd">        exporting data to other state handlers.</span>
+</span><span id="StateHandlerContext-149"><a href="#StateHandlerContext-149"><span class="linenos">149</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext-150"><a href="#StateHandlerContext-150"><span class="linenos">150</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span>
 </span></pre></div>
 
 
@@ -552,22 +661,23 @@ since the handler function was last executed.</p>
                                         <input id="StateHandlerContext.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">StateHandlerContext</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">state</span><span class="p">:</span> <span class="n"><a href="#GameState">GameState</a></span>,</span><span class="param">	<span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">window</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">Surface</span>,</span><span class="param">	<span class="n">gui</span><span class="p">:</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">ui_manager</span><span class="o">.</span><span class="n">UIManager</span>,</span><span class="param">	<span class="n">delta</span><span class="p">:</span> <span class="nb">float</span></span>)</span>
+        <span class="name">StateHandlerContext</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">state</span><span class="p">:</span> <span class="n"><a href="#GameState">GameState</a></span>,</span><span class="param">	<span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">window</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">Surface</span>,</span><span class="param">	<span class="n">gui</span><span class="p">:</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">ui_manager</span><span class="o">.</span><span class="n">UIManager</span>,</span><span class="param">	<span class="n">delta</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">storage</span><span class="p">:</span> <span class="nb">dict</span></span>)</span>
 
                 <label class="view-source-button" for="StateHandlerContext.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#StateHandlerContext.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.__init__-55"><a href="#StateHandlerContext.__init__-55"><span class="linenos">55</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="StateHandlerContext.__init__-56"><a href="#StateHandlerContext.__init__-56"><span class="linenos">56</span></a>                 <span class="n">state</span><span class="p">:</span> <span class="n">GameState</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="StateHandlerContext.__init__-57"><a href="#StateHandlerContext.__init__-57"><span class="linenos">57</span></a>                 <span class="n">window</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">,</span>
-</span><span id="StateHandlerContext.__init__-58"><a href="#StateHandlerContext.__init__-58"><span class="linenos">58</span></a>                 <span class="n">gui</span><span class="p">:</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">,</span>
-</span><span id="StateHandlerContext.__init__-59"><a href="#StateHandlerContext.__init__-59"><span class="linenos">59</span></a>                 <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-</span><span id="StateHandlerContext.__init__-60"><a href="#StateHandlerContext.__init__-60"><span class="linenos">60</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
-</span><span id="StateHandlerContext.__init__-61"><a href="#StateHandlerContext.__init__-61"><span class="linenos">61</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">events</span>
-</span><span id="StateHandlerContext.__init__-62"><a href="#StateHandlerContext.__init__-62"><span class="linenos">62</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="n">window</span>
-</span><span id="StateHandlerContext.__init__-63"><a href="#StateHandlerContext.__init__-63"><span class="linenos">63</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span> <span class="o">=</span> <span class="n">gui</span>
-</span><span id="StateHandlerContext.__init__-64"><a href="#StateHandlerContext.__init__-64"><span class="linenos">64</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.__init__-67"><a href="#StateHandlerContext.__init__-67"><span class="linenos">67</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="StateHandlerContext.__init__-68"><a href="#StateHandlerContext.__init__-68"><span class="linenos">68</span></a>                 <span class="n">state</span><span class="p">:</span> <span class="n">GameState</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="StateHandlerContext.__init__-69"><a href="#StateHandlerContext.__init__-69"><span class="linenos">69</span></a>                 <span class="n">window</span><span class="p">:</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">,</span>
+</span><span id="StateHandlerContext.__init__-70"><a href="#StateHandlerContext.__init__-70"><span class="linenos">70</span></a>                 <span class="n">gui</span><span class="p">:</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">,</span>
+</span><span id="StateHandlerContext.__init__-71"><a href="#StateHandlerContext.__init__-71"><span class="linenos">71</span></a>                 <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">storage</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="StateHandlerContext.__init__-72"><a href="#StateHandlerContext.__init__-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+</span><span id="StateHandlerContext.__init__-73"><a href="#StateHandlerContext.__init__-73"><span class="linenos">73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_events</span> <span class="o">=</span> <span class="n">events</span>
+</span><span id="StateHandlerContext.__init__-74"><a href="#StateHandlerContext.__init__-74"><span class="linenos">74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="n">window</span>
+</span><span id="StateHandlerContext.__init__-75"><a href="#StateHandlerContext.__init__-75"><span class="linenos">75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span> <span class="o">=</span> <span class="n">gui</span>
+</span><span id="StateHandlerContext.__init__-76"><a href="#StateHandlerContext.__init__-76"><span class="linenos">76</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
+</span><span id="StateHandlerContext.__init__-77"><a href="#StateHandlerContext.__init__-77"><span class="linenos">77</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span> <span class="o">=</span> <span class="n">storage</span>
 </span></pre></div>
 
 
@@ -585,13 +695,13 @@ since the handler function was last executed.</p>
 
     </div>
     <a class="headerlink" href="#StateHandlerContext.get_state"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_state-66"><a href="#StateHandlerContext.get_state-66"><span class="linenos">66</span></a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
-</span><span id="StateHandlerContext.get_state-67"><a href="#StateHandlerContext.get_state-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_state-68"><a href="#StateHandlerContext.get_state-68"><span class="linenos">68</span></a><span class="sd">        Get the current game state. Note that this is not always the state</span>
-</span><span id="StateHandlerContext.get_state-69"><a href="#StateHandlerContext.get_state-69"><span class="linenos">69</span></a><span class="sd">        that the currently running state handler was registered to handle. See</span>
-</span><span id="StateHandlerContext.get_state-70"><a href="#StateHandlerContext.get_state-70"><span class="linenos">70</span></a><span class="sd">        `StateHandler` for more details.</span>
-</span><span id="StateHandlerContext.get_state-71"><a href="#StateHandlerContext.get_state-71"><span class="linenos">71</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_state-72"><a href="#StateHandlerContext.get_state-72"><span class="linenos">72</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_state-79"><a href="#StateHandlerContext.get_state-79"><span class="linenos">79</span></a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
+</span><span id="StateHandlerContext.get_state-80"><a href="#StateHandlerContext.get_state-80"><span class="linenos">80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_state-81"><a href="#StateHandlerContext.get_state-81"><span class="linenos">81</span></a><span class="sd">        Get the current game state. Note that this is not always the state</span>
+</span><span id="StateHandlerContext.get_state-82"><a href="#StateHandlerContext.get_state-82"><span class="linenos">82</span></a><span class="sd">        that the currently running state handler was registered to handle. See</span>
+</span><span id="StateHandlerContext.get_state-83"><a href="#StateHandlerContext.get_state-83"><span class="linenos">83</span></a><span class="sd">        `StateHandler` for more details.</span>
+</span><span id="StateHandlerContext.get_state-84"><a href="#StateHandlerContext.get_state-84"><span class="linenos">84</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_state-85"><a href="#StateHandlerContext.get_state-85"><span class="linenos">85</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
 </span></pre></div>
 
 
@@ -613,15 +723,15 @@ that the currently running state handler was registered to handle. See
 
     </div>
     <a class="headerlink" href="#StateHandlerContext.get_events"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_events-74"><a href="#StateHandlerContext.get_events-74"><span class="linenos">74</span></a>    <span class="k">def</span> <span class="nf">get_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="StateHandlerContext.get_events-75"><a href="#StateHandlerContext.get_events-75"><span class="linenos">75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_events-76"><a href="#StateHandlerContext.get_events-76"><span class="linenos">76</span></a><span class="sd">        Get a list of Pygame events that have taken place since the last</span>
-</span><span id="StateHandlerContext.get_events-77"><a href="#StateHandlerContext.get_events-77"><span class="linenos">77</span></a><span class="sd">        iteration. Each fired event only shows up in this list exactly once,</span>
-</span><span id="StateHandlerContext.get_events-78"><a href="#StateHandlerContext.get_events-78"><span class="linenos">78</span></a><span class="sd">        so it is recommended to iterate over it during each function call and</span>
-</span><span id="StateHandlerContext.get_events-79"><a href="#StateHandlerContext.get_events-79"><span class="linenos">79</span></a><span class="sd">        process the events that need to be dealt with as soon as they are</span>
-</span><span id="StateHandlerContext.get_events-80"><a href="#StateHandlerContext.get_events-80"><span class="linenos">80</span></a><span class="sd">        fired.</span>
-</span><span id="StateHandlerContext.get_events-81"><a href="#StateHandlerContext.get_events-81"><span class="linenos">81</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_events-82"><a href="#StateHandlerContext.get_events-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_events-87"><a href="#StateHandlerContext.get_events-87"><span class="linenos">87</span></a>    <span class="k">def</span> <span class="nf">get_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="StateHandlerContext.get_events-88"><a href="#StateHandlerContext.get_events-88"><span class="linenos">88</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_events-89"><a href="#StateHandlerContext.get_events-89"><span class="linenos">89</span></a><span class="sd">        Get a list of Pygame events that have taken place since the last</span>
+</span><span id="StateHandlerContext.get_events-90"><a href="#StateHandlerContext.get_events-90"><span class="linenos">90</span></a><span class="sd">        iteration. Each fired event only shows up in this list exactly once,</span>
+</span><span id="StateHandlerContext.get_events-91"><a href="#StateHandlerContext.get_events-91"><span class="linenos">91</span></a><span class="sd">        so it is recommended to iterate over it during each function call and</span>
+</span><span id="StateHandlerContext.get_events-92"><a href="#StateHandlerContext.get_events-92"><span class="linenos">92</span></a><span class="sd">        process the events that need to be dealt with as soon as they are</span>
+</span><span id="StateHandlerContext.get_events-93"><a href="#StateHandlerContext.get_events-93"><span class="linenos">93</span></a><span class="sd">        fired.</span>
+</span><span id="StateHandlerContext.get_events-94"><a href="#StateHandlerContext.get_events-94"><span class="linenos">94</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_events-95"><a href="#StateHandlerContext.get_events-95"><span class="linenos">95</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_events</span>
 </span></pre></div>
 
 
@@ -645,24 +755,24 @@ fired.</p>
 
     </div>
     <a class="headerlink" href="#StateHandlerContext.get_window"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_window-84"><a href="#StateHandlerContext.get_window-84"><span class="linenos"> 84</span></a>    <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">:</span>
-</span><span id="StateHandlerContext.get_window-85"><a href="#StateHandlerContext.get_window-85"><span class="linenos"> 85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_window-86"><a href="#StateHandlerContext.get_window-86"><span class="linenos"> 86</span></a><span class="sd">        Get the Pygame drawing surface onto which all game components are</span>
-</span><span id="StateHandlerContext.get_window-87"><a href="#StateHandlerContext.get_window-87"><span class="linenos"> 87</span></a><span class="sd">        blitted. This surface represents the entire screen area, so each state</span>
-</span><span id="StateHandlerContext.get_window-88"><a href="#StateHandlerContext.get_window-88"><span class="linenos"> 88</span></a><span class="sd">        handler can draw anywhere on the screen and update the entire screen</span>
-</span><span id="StateHandlerContext.get_window-89"><a href="#StateHandlerContext.get_window-89"><span class="linenos"> 89</span></a><span class="sd">        as necessary. Note that individual handlers don&#39;t have to update the</span>
-</span><span id="StateHandlerContext.get_window-90"><a href="#StateHandlerContext.get_window-90"><span class="linenos"> 90</span></a><span class="sd">        display by calling out to pygame explicitly; this is all handled by the</span>
-</span><span id="StateHandlerContext.get_window-91"><a href="#StateHandlerContext.get_window-91"><span class="linenos"> 91</span></a><span class="sd">        state machine event loop. State handlers must only blit everything onto</span>
-</span><span id="StateHandlerContext.get_window-92"><a href="#StateHandlerContext.get_window-92"><span class="linenos"> 92</span></a><span class="sd">        this surface.</span>
-</span><span id="StateHandlerContext.get_window-93"><a href="#StateHandlerContext.get_window-93"><span class="linenos"> 93</span></a>
-</span><span id="StateHandlerContext.get_window-94"><a href="#StateHandlerContext.get_window-94"><span class="linenos"> 94</span></a><span class="sd">        Note that the window is not preserved across frames; each state handler</span>
-</span><span id="StateHandlerContext.get_window-95"><a href="#StateHandlerContext.get_window-95"><span class="linenos"> 95</span></a><span class="sd">        will have to re-draw the entire frame on every iteration of the state</span>
-</span><span id="StateHandlerContext.get_window-96"><a href="#StateHandlerContext.get_window-96"><span class="linenos"> 96</span></a><span class="sd">        machine. By default, each frame is filled in solid black, so if there</span>
-</span><span id="StateHandlerContext.get_window-97"><a href="#StateHandlerContext.get_window-97"><span class="linenos"> 97</span></a><span class="sd">        are black parts on the window that a state handler did not draw, it is</span>
-</span><span id="StateHandlerContext.get_window-98"><a href="#StateHandlerContext.get_window-98"><span class="linenos"> 98</span></a><span class="sd">        simply because the state handler did not blit anything over the empty</span>
-</span><span id="StateHandlerContext.get_window-99"><a href="#StateHandlerContext.get_window-99"><span class="linenos"> 99</span></a><span class="sd">        frame in that location.</span>
-</span><span id="StateHandlerContext.get_window-100"><a href="#StateHandlerContext.get_window-100"><span class="linenos">100</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_window-101"><a href="#StateHandlerContext.get_window-101"><span class="linenos">101</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_window-97"><a href="#StateHandlerContext.get_window-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">:</span>
+</span><span id="StateHandlerContext.get_window-98"><a href="#StateHandlerContext.get_window-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_window-99"><a href="#StateHandlerContext.get_window-99"><span class="linenos"> 99</span></a><span class="sd">        Get the Pygame drawing surface onto which all game components are</span>
+</span><span id="StateHandlerContext.get_window-100"><a href="#StateHandlerContext.get_window-100"><span class="linenos">100</span></a><span class="sd">        blitted. This surface represents the entire screen area, so each state</span>
+</span><span id="StateHandlerContext.get_window-101"><a href="#StateHandlerContext.get_window-101"><span class="linenos">101</span></a><span class="sd">        handler can draw anywhere on the screen and update the entire screen</span>
+</span><span id="StateHandlerContext.get_window-102"><a href="#StateHandlerContext.get_window-102"><span class="linenos">102</span></a><span class="sd">        as necessary. Note that individual handlers don&#39;t have to update the</span>
+</span><span id="StateHandlerContext.get_window-103"><a href="#StateHandlerContext.get_window-103"><span class="linenos">103</span></a><span class="sd">        display by calling out to pygame explicitly; this is all handled by the</span>
+</span><span id="StateHandlerContext.get_window-104"><a href="#StateHandlerContext.get_window-104"><span class="linenos">104</span></a><span class="sd">        state machine event loop. State handlers must only blit everything onto</span>
+</span><span id="StateHandlerContext.get_window-105"><a href="#StateHandlerContext.get_window-105"><span class="linenos">105</span></a><span class="sd">        this surface.</span>
+</span><span id="StateHandlerContext.get_window-106"><a href="#StateHandlerContext.get_window-106"><span class="linenos">106</span></a>
+</span><span id="StateHandlerContext.get_window-107"><a href="#StateHandlerContext.get_window-107"><span class="linenos">107</span></a><span class="sd">        Note that the window is not preserved across frames; each state handler</span>
+</span><span id="StateHandlerContext.get_window-108"><a href="#StateHandlerContext.get_window-108"><span class="linenos">108</span></a><span class="sd">        will have to re-draw the entire frame on every iteration of the state</span>
+</span><span id="StateHandlerContext.get_window-109"><a href="#StateHandlerContext.get_window-109"><span class="linenos">109</span></a><span class="sd">        machine. By default, each frame is filled in solid black, so if there</span>
+</span><span id="StateHandlerContext.get_window-110"><a href="#StateHandlerContext.get_window-110"><span class="linenos">110</span></a><span class="sd">        are black parts on the window that a state handler did not draw, it is</span>
+</span><span id="StateHandlerContext.get_window-111"><a href="#StateHandlerContext.get_window-111"><span class="linenos">111</span></a><span class="sd">        simply because the state handler did not blit anything over the empty</span>
+</span><span id="StateHandlerContext.get_window-112"><a href="#StateHandlerContext.get_window-112"><span class="linenos">112</span></a><span class="sd">        frame in that location.</span>
+</span><span id="StateHandlerContext.get_window-113"><a href="#StateHandlerContext.get_window-113"><span class="linenos">113</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_window-114"><a href="#StateHandlerContext.get_window-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_window</span>
 </span></pre></div>
 
 
@@ -695,18 +805,18 @@ frame in that location.</p>
 
     </div>
     <a class="headerlink" href="#StateHandlerContext.get_gui"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_gui-103"><a href="#StateHandlerContext.get_gui-103"><span class="linenos">103</span></a>    <span class="k">def</span> <span class="nf">get_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">:</span>
-</span><span id="StateHandlerContext.get_gui-104"><a href="#StateHandlerContext.get_gui-104"><span class="linenos">104</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_gui-105"><a href="#StateHandlerContext.get_gui-105"><span class="linenos">105</span></a><span class="sd">        This game utilizes Pygame GUI for some user inputs. If a state handler</span>
-</span><span id="StateHandlerContext.get_gui-106"><a href="#StateHandlerContext.get_gui-106"><span class="linenos">106</span></a><span class="sd">        must register components, it should do so with this `UIManager`, which</span>
-</span><span id="StateHandlerContext.get_gui-107"><a href="#StateHandlerContext.get_gui-107"><span class="linenos">107</span></a><span class="sd">        is automatically managed and updated by the state machine loop.</span>
-</span><span id="StateHandlerContext.get_gui-108"><a href="#StateHandlerContext.get_gui-108"><span class="linenos">108</span></a>
-</span><span id="StateHandlerContext.get_gui-109"><a href="#StateHandlerContext.get_gui-109"><span class="linenos">109</span></a><span class="sd">        If a state handler is going to register GUI components, it should do so</span>
-</span><span id="StateHandlerContext.get_gui-110"><a href="#StateHandlerContext.get_gui-110"><span class="linenos">110</span></a><span class="sd">        only once when the state is entered&amp;mdash;not iteratively. Note that</span>
-</span><span id="StateHandlerContext.get_gui-111"><a href="#StateHandlerContext.get_gui-111"><span class="linenos">111</span></a><span class="sd">        by default, the `UIManager` is cleared automatically on every state</span>
-</span><span id="StateHandlerContext.get_gui-112"><a href="#StateHandlerContext.get_gui-112"><span class="linenos">112</span></a><span class="sd">        change.</span>
-</span><span id="StateHandlerContext.get_gui-113"><a href="#StateHandlerContext.get_gui-113"><span class="linenos">113</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_gui-114"><a href="#StateHandlerContext.get_gui-114"><span class="linenos">114</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_gui-116"><a href="#StateHandlerContext.get_gui-116"><span class="linenos">116</span></a>    <span class="k">def</span> <span class="nf">get_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pygame_gui</span><span class="o">.</span><span class="n">UIManager</span><span class="p">:</span>
+</span><span id="StateHandlerContext.get_gui-117"><a href="#StateHandlerContext.get_gui-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_gui-118"><a href="#StateHandlerContext.get_gui-118"><span class="linenos">118</span></a><span class="sd">        This game utilizes Pygame GUI for some user inputs. If a state handler</span>
+</span><span id="StateHandlerContext.get_gui-119"><a href="#StateHandlerContext.get_gui-119"><span class="linenos">119</span></a><span class="sd">        must register components, it should do so with this `UIManager`, which</span>
+</span><span id="StateHandlerContext.get_gui-120"><a href="#StateHandlerContext.get_gui-120"><span class="linenos">120</span></a><span class="sd">        is automatically managed and updated by the state machine loop.</span>
+</span><span id="StateHandlerContext.get_gui-121"><a href="#StateHandlerContext.get_gui-121"><span class="linenos">121</span></a>
+</span><span id="StateHandlerContext.get_gui-122"><a href="#StateHandlerContext.get_gui-122"><span class="linenos">122</span></a><span class="sd">        If a state handler is going to register GUI components, it should do so</span>
+</span><span id="StateHandlerContext.get_gui-123"><a href="#StateHandlerContext.get_gui-123"><span class="linenos">123</span></a><span class="sd">        only once when the state is entered&amp;mdash;not iteratively. Note that</span>
+</span><span id="StateHandlerContext.get_gui-124"><a href="#StateHandlerContext.get_gui-124"><span class="linenos">124</span></a><span class="sd">        by default, the `UIManager` is cleared automatically on every state</span>
+</span><span id="StateHandlerContext.get_gui-125"><a href="#StateHandlerContext.get_gui-125"><span class="linenos">125</span></a><span class="sd">        change.</span>
+</span><span id="StateHandlerContext.get_gui-126"><a href="#StateHandlerContext.get_gui-126"><span class="linenos">126</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_gui-127"><a href="#StateHandlerContext.get_gui-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gui</span>
 </span></pre></div>
 
 
@@ -733,15 +843,15 @@ change.</p>
 
     </div>
     <a class="headerlink" href="#StateHandlerContext.get_delta"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_delta-116"><a href="#StateHandlerContext.get_delta-116"><span class="linenos">116</span></a>    <span class="k">def</span> <span class="nf">get_delta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="StateHandlerContext.get_delta-117"><a href="#StateHandlerContext.get_delta-117"><span class="linenos">117</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_delta-118"><a href="#StateHandlerContext.get_delta-118"><span class="linenos">118</span></a><span class="sd">        Get the amount of time that has passed (in *seconds*) since the last</span>
-</span><span id="StateHandlerContext.get_delta-119"><a href="#StateHandlerContext.get_delta-119"><span class="linenos">119</span></a><span class="sd">        invocation of a state handler. This is effectively the time since the</span>
-</span><span id="StateHandlerContext.get_delta-120"><a href="#StateHandlerContext.get_delta-120"><span class="linenos">120</span></a><span class="sd">        last frame was rendered, and should be used to compute object motion in</span>
-</span><span id="StateHandlerContext.get_delta-121"><a href="#StateHandlerContext.get_delta-121"><span class="linenos">121</span></a><span class="sd">        a frame rate-independent manner, because the frame rate may not always</span>
-</span><span id="StateHandlerContext.get_delta-122"><a href="#StateHandlerContext.get_delta-122"><span class="linenos">122</span></a><span class="sd">        be steady on all platforms.</span>
-</span><span id="StateHandlerContext.get_delta-123"><a href="#StateHandlerContext.get_delta-123"><span class="linenos">123</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandlerContext.get_delta-124"><a href="#StateHandlerContext.get_delta-124"><span class="linenos">124</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_delta-129"><a href="#StateHandlerContext.get_delta-129"><span class="linenos">129</span></a>    <span class="k">def</span> <span class="nf">get_delta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="StateHandlerContext.get_delta-130"><a href="#StateHandlerContext.get_delta-130"><span class="linenos">130</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_delta-131"><a href="#StateHandlerContext.get_delta-131"><span class="linenos">131</span></a><span class="sd">        Get the amount of time that has passed (in *seconds*) since the last</span>
+</span><span id="StateHandlerContext.get_delta-132"><a href="#StateHandlerContext.get_delta-132"><span class="linenos">132</span></a><span class="sd">        invocation of a state handler. This is effectively the time since the</span>
+</span><span id="StateHandlerContext.get_delta-133"><a href="#StateHandlerContext.get_delta-133"><span class="linenos">133</span></a><span class="sd">        last frame was rendered, and should be used to compute object motion in</span>
+</span><span id="StateHandlerContext.get_delta-134"><a href="#StateHandlerContext.get_delta-134"><span class="linenos">134</span></a><span class="sd">        a frame rate-independent manner, because the frame rate may not always</span>
+</span><span id="StateHandlerContext.get_delta-135"><a href="#StateHandlerContext.get_delta-135"><span class="linenos">135</span></a><span class="sd">        be steady on all platforms.</span>
+</span><span id="StateHandlerContext.get_delta-136"><a href="#StateHandlerContext.get_delta-136"><span class="linenos">136</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_delta-137"><a href="#StateHandlerContext.get_delta-137"><span class="linenos">137</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span>
 </span></pre></div>
 
 
@@ -750,6 +860,44 @@ invocation of a state handler. This is effectively the time since the
 last frame was rendered, and should be used to compute object motion in
 a frame rate-independent manner, because the frame rate may not always
 be steady on all platforms.</p>
+</div>
+
+
+                            </div>
+                            <div id="StateHandlerContext.get_storage" class="classattr">
+                                        <input id="StateHandlerContext.get_storage-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_storage</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+                <label class="view-source-button" for="StateHandlerContext.get_storage-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#StateHandlerContext.get_storage"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandlerContext.get_storage-139"><a href="#StateHandlerContext.get_storage-139"><span class="linenos">139</span></a>    <span class="k">def</span> <span class="nf">get_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="StateHandlerContext.get_storage-140"><a href="#StateHandlerContext.get_storage-140"><span class="linenos">140</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_storage-141"><a href="#StateHandlerContext.get_storage-141"><span class="linenos">141</span></a><span class="sd">        Get a dictionary that is accessible to all state handlers. This storage</span>
+</span><span id="StateHandlerContext.get_storage-142"><a href="#StateHandlerContext.get_storage-142"><span class="linenos">142</span></a><span class="sd">        dictionary can be in any format agreed upon by the state handlers, and</span>
+</span><span id="StateHandlerContext.get_storage-143"><a href="#StateHandlerContext.get_storage-143"><span class="linenos">143</span></a><span class="sd">        is used to pass data between them. State handlers can process the</span>
+</span><span id="StateHandlerContext.get_storage-144"><a href="#StateHandlerContext.get_storage-144"><span class="linenos">144</span></a><span class="sd">        storage in their `on_enter()` and `on_exit()` functions.</span>
+</span><span id="StateHandlerContext.get_storage-145"><a href="#StateHandlerContext.get_storage-145"><span class="linenos">145</span></a>
+</span><span id="StateHandlerContext.get_storage-146"><a href="#StateHandlerContext.get_storage-146"><span class="linenos">146</span></a><span class="sd">        State handlers should make an effort to refrain from storing internal</span>
+</span><span id="StateHandlerContext.get_storage-147"><a href="#StateHandlerContext.get_storage-147"><span class="linenos">147</span></a><span class="sd">        data in the context storage. This storage should be reserved only for</span>
+</span><span id="StateHandlerContext.get_storage-148"><a href="#StateHandlerContext.get_storage-148"><span class="linenos">148</span></a><span class="sd">        exporting data to other state handlers.</span>
+</span><span id="StateHandlerContext.get_storage-149"><a href="#StateHandlerContext.get_storage-149"><span class="linenos">149</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandlerContext.get_storage-150"><a href="#StateHandlerContext.get_storage-150"><span class="linenos">150</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Get a dictionary that is accessible to all state handlers. This storage
+dictionary can be in any format agreed upon by the state handlers, and
+is used to pass data between them. State handlers can process the
+storage in their <code>on_enter()</code> and <code>on_exit()</code> functions.</p>
+
+<p>State handlers should make an effort to refrain from storing internal
+data in the context storage. This storage should be reserved only for
+exporting data to other state handlers.</p>
 </div>
 
 
@@ -766,73 +914,74 @@ be steady on all platforms.</p>
 
     </div>
     <a class="headerlink" href="#StateHandler"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler-127"><a href="#StateHandler-127"><span class="linenos">127</span></a><span class="k">class</span> <span class="nc">StateHandler</span><span class="p">:</span>
-</span><span id="StateHandler-128"><a href="#StateHandler-128"><span class="linenos">128</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler-129"><a href="#StateHandler-129"><span class="linenos">129</span></a><span class="sd">    A `StateHandler` defines functions that are invoked at certain periods</span>
-</span><span id="StateHandler-130"><a href="#StateHandler-130"><span class="linenos">130</span></a><span class="sd">    during the lifetime of the state machine. State handlers are registered</span>
-</span><span id="StateHandler-131"><a href="#StateHandler-131"><span class="linenos">131</span></a><span class="sd">    with the main state machine loop so that they are executed when the game</span>
-</span><span id="StateHandler-132"><a href="#StateHandler-132"><span class="linenos">132</span></a><span class="sd">    enters a given state.</span>
-</span><span id="StateHandler-133"><a href="#StateHandler-133"><span class="linenos">133</span></a>
-</span><span id="StateHandler-134"><a href="#StateHandler-134"><span class="linenos">134</span></a><span class="sd">    Each function takes a `StateHandlerContext` so that there are no</span>
-</span><span id="StateHandler-135"><a href="#StateHandler-135"><span class="linenos">135</span></a><span class="sd">    limitations as to what a state handler can do at any point during its</span>
-</span><span id="StateHandler-136"><a href="#StateHandler-136"><span class="linenos">136</span></a><span class="sd">    lifetime.</span>
-</span><span id="StateHandler-137"><a href="#StateHandler-137"><span class="linenos">137</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="StateHandler-138"><a href="#StateHandler-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">):</span>
-</span><span id="StateHandler-139"><a href="#StateHandler-139"><span class="linenos">139</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler-140"><a href="#StateHandler-140"><span class="linenos">140</span></a><span class="sd">        Construct a new `StateHandler`.</span>
-</span><span id="StateHandler-141"><a href="#StateHandler-141"><span class="linenos">141</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandler-142"><a href="#StateHandler-142"><span class="linenos">142</span></a>        <span class="k">pass</span>
-</span><span id="StateHandler-143"><a href="#StateHandler-143"><span class="linenos">143</span></a>
-</span><span id="StateHandler-144"><a href="#StateHandler-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="nf">on_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="StateHandler-145"><a href="#StateHandler-145"><span class="linenos">145</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler-146"><a href="#StateHandler-146"><span class="linenos">146</span></a><span class="sd">        This function is invoked at the rising edge of a state transition. A</span>
-</span><span id="StateHandler-147"><a href="#StateHandler-147"><span class="linenos">147</span></a><span class="sd">        state transition occurs either when the main loop begins, or after a</span>
-</span><span id="StateHandler-148"><a href="#StateHandler-148"><span class="linenos">148</span></a><span class="sd">        previous state yielded its control of the state machine. It is invoked</span>
-</span><span id="StateHandler-149"><a href="#StateHandler-149"><span class="linenos">149</span></a><span class="sd">        *before* `process()` exactly once per state transition.</span>
-</span><span id="StateHandler-150"><a href="#StateHandler-150"><span class="linenos">150</span></a>
-</span><span id="StateHandler-151"><a href="#StateHandler-151"><span class="linenos">151</span></a><span class="sd">        For our application, this function is primarily used to draw Pygame</span>
-</span><span id="StateHandler-152"><a href="#StateHandler-152"><span class="linenos">152</span></a><span class="sd">        GUI components onto the screen for the current state, since they only</span>
-</span><span id="StateHandler-153"><a href="#StateHandler-153"><span class="linenos">153</span></a><span class="sd">        need to be registered with the `UIManager` once.</span>
-</span><span id="StateHandler-154"><a href="#StateHandler-154"><span class="linenos">154</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandler-155"><a href="#StateHandler-155"><span class="linenos">155</span></a>        <span class="k">pass</span>
-</span><span id="StateHandler-156"><a href="#StateHandler-156"><span class="linenos">156</span></a>
-</span><span id="StateHandler-157"><a href="#StateHandler-157"><span class="linenos">157</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
-</span><span id="StateHandler-158"><a href="#StateHandler-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler-159"><a href="#StateHandler-159"><span class="linenos">159</span></a><span class="sd">        This function is invoked iteratively at a fixed frame</span>
-</span><span id="StateHandler-160"><a href="#StateHandler-160"><span class="linenos">160</span></a><span class="sd">        rate&amp;mdash;though this rate should be assumed to be</span>
-</span><span id="StateHandler-161"><a href="#StateHandler-161"><span class="linenos">161</span></a><span class="sd">        unknown&amp;mdash;for the entire duration that the state machine remains</span>
-</span><span id="StateHandler-162"><a href="#StateHandler-162"><span class="linenos">162</span></a><span class="sd">        in the current state. It is always invoked after `on_enter()` and</span>
-</span><span id="StateHandler-163"><a href="#StateHandler-163"><span class="linenos">163</span></a><span class="sd">        before `on_exit()`, although it may be executed many times between each</span>
-</span><span id="StateHandler-164"><a href="#StateHandler-164"><span class="linenos">164</span></a><span class="sd">        of those invocations.</span>
-</span><span id="StateHandler-165"><a href="#StateHandler-165"><span class="linenos">165</span></a>
-</span><span id="StateHandler-166"><a href="#StateHandler-166"><span class="linenos">166</span></a><span class="sd">        For our application, this function is primarily used to draw the game</span>
-</span><span id="StateHandler-167"><a href="#StateHandler-167"><span class="linenos">167</span></a><span class="sd">        scene and process user input.</span>
-</span><span id="StateHandler-168"><a href="#StateHandler-168"><span class="linenos">168</span></a>
-</span><span id="StateHandler-169"><a href="#StateHandler-169"><span class="linenos">169</span></a><span class="sd">        This function should return the next state that the state machine</span>
-</span><span id="StateHandler-170"><a href="#StateHandler-170"><span class="linenos">170</span></a><span class="sd">        should enter. If the state machine should remain in the same state, it</span>
-</span><span id="StateHandler-171"><a href="#StateHandler-171"><span class="linenos">171</span></a><span class="sd">        should return `context.get_state()`.</span>
-</span><span id="StateHandler-172"><a href="#StateHandler-172"><span class="linenos">172</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandler-173"><a href="#StateHandler-173"><span class="linenos">173</span></a>        <span class="k">pass</span>
-</span><span id="StateHandler-174"><a href="#StateHandler-174"><span class="linenos">174</span></a>
-</span><span id="StateHandler-175"><a href="#StateHandler-175"><span class="linenos">175</span></a>    <span class="k">def</span> <span class="nf">on_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="StateHandler-176"><a href="#StateHandler-176"><span class="linenos">176</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler-177"><a href="#StateHandler-177"><span class="linenos">177</span></a><span class="sd">        This function is invoked at the falling edge of a state transition. It</span>
-</span><span id="StateHandler-178"><a href="#StateHandler-178"><span class="linenos">178</span></a><span class="sd">        operates just like `on_enter()`, except it is executed when the current</span>
-</span><span id="StateHandler-179"><a href="#StateHandler-179"><span class="linenos">179</span></a><span class="sd">        state indicates that it would like to transition to another state. This</span>
-</span><span id="StateHandler-180"><a href="#StateHandler-180"><span class="linenos">180</span></a><span class="sd">        allows the state handler to clean up anything as necessary.</span>
-</span><span id="StateHandler-181"><a href="#StateHandler-181"><span class="linenos">181</span></a>
-</span><span id="StateHandler-182"><a href="#StateHandler-182"><span class="linenos">182</span></a><span class="sd">        For our application, this function is primarily used to reset</span>
-</span><span id="StateHandler-183"><a href="#StateHandler-183"><span class="linenos">183</span></a><span class="sd">        Pygame GUI for each screen, as well as any state that should not carry</span>
-</span><span id="StateHandler-184"><a href="#StateHandler-184"><span class="linenos">184</span></a><span class="sd">        over the next time this state is entered.</span>
-</span><span id="StateHandler-185"><a href="#StateHandler-185"><span class="linenos">185</span></a>
-</span><span id="StateHandler-186"><a href="#StateHandler-186"><span class="linenos">186</span></a><span class="sd">        By default, `on_exit()` will clear the Pygame GUI, so individual state</span>
-</span><span id="StateHandler-187"><a href="#StateHandler-187"><span class="linenos">187</span></a><span class="sd">        handlers need only register their components on enter; they don&#39;t have</span>
-</span><span id="StateHandler-188"><a href="#StateHandler-188"><span class="linenos">188</span></a><span class="sd">        to worry about de-registering them on exit. Note, of course, that this</span>
-</span><span id="StateHandler-189"><a href="#StateHandler-189"><span class="linenos">189</span></a><span class="sd">        function may be overridden and thus not execute if the child function</span>
-</span><span id="StateHandler-190"><a href="#StateHandler-190"><span class="linenos">190</span></a><span class="sd">        does not make a call to `super().on_exit()`.</span>
-</span><span id="StateHandler-191"><a href="#StateHandler-191"><span class="linenos">191</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandler-192"><a href="#StateHandler-192"><span class="linenos">192</span></a>        <span class="n">gui_manager</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_gui</span><span class="p">()</span>
-</span><span id="StateHandler-193"><a href="#StateHandler-193"><span class="linenos">193</span></a>        <span class="n">gui_manager</span><span class="o">.</span><span class="n">clear_and_reset</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler-153"><a href="#StateHandler-153"><span class="linenos">153</span></a><span class="k">class</span> <span class="nc">StateHandler</span><span class="p">:</span>
+</span><span id="StateHandler-154"><a href="#StateHandler-154"><span class="linenos">154</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler-155"><a href="#StateHandler-155"><span class="linenos">155</span></a><span class="sd">    A `StateHandler` defines functions that are invoked at certain periods</span>
+</span><span id="StateHandler-156"><a href="#StateHandler-156"><span class="linenos">156</span></a><span class="sd">    during the lifetime of the state machine. State handlers are registered</span>
+</span><span id="StateHandler-157"><a href="#StateHandler-157"><span class="linenos">157</span></a><span class="sd">    with the main state machine loop so that they are executed when the game</span>
+</span><span id="StateHandler-158"><a href="#StateHandler-158"><span class="linenos">158</span></a><span class="sd">    enters a given state.</span>
+</span><span id="StateHandler-159"><a href="#StateHandler-159"><span class="linenos">159</span></a>
+</span><span id="StateHandler-160"><a href="#StateHandler-160"><span class="linenos">160</span></a><span class="sd">    Each function takes a `StateHandlerContext` so that there are no</span>
+</span><span id="StateHandler-161"><a href="#StateHandler-161"><span class="linenos">161</span></a><span class="sd">    limitations as to what a state handler can do at any point during its</span>
+</span><span id="StateHandler-162"><a href="#StateHandler-162"><span class="linenos">162</span></a><span class="sd">    lifetime.</span>
+</span><span id="StateHandler-163"><a href="#StateHandler-163"><span class="linenos">163</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="StateHandler-164"><a href="#StateHandler-164"><span class="linenos">164</span></a>
+</span><span id="StateHandler-165"><a href="#StateHandler-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">):</span>
+</span><span id="StateHandler-166"><a href="#StateHandler-166"><span class="linenos">166</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler-167"><a href="#StateHandler-167"><span class="linenos">167</span></a><span class="sd">        Construct a new `StateHandler`.</span>
+</span><span id="StateHandler-168"><a href="#StateHandler-168"><span class="linenos">168</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandler-169"><a href="#StateHandler-169"><span class="linenos">169</span></a>        <span class="k">pass</span>
+</span><span id="StateHandler-170"><a href="#StateHandler-170"><span class="linenos">170</span></a>
+</span><span id="StateHandler-171"><a href="#StateHandler-171"><span class="linenos">171</span></a>    <span class="k">def</span> <span class="nf">on_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="StateHandler-172"><a href="#StateHandler-172"><span class="linenos">172</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler-173"><a href="#StateHandler-173"><span class="linenos">173</span></a><span class="sd">        This function is invoked at the rising edge of a state transition. A</span>
+</span><span id="StateHandler-174"><a href="#StateHandler-174"><span class="linenos">174</span></a><span class="sd">        state transition occurs either when the main loop begins, or after a</span>
+</span><span id="StateHandler-175"><a href="#StateHandler-175"><span class="linenos">175</span></a><span class="sd">        previous state yielded its control of the state machine. It is invoked</span>
+</span><span id="StateHandler-176"><a href="#StateHandler-176"><span class="linenos">176</span></a><span class="sd">        *before* `process()` exactly once per state transition.</span>
+</span><span id="StateHandler-177"><a href="#StateHandler-177"><span class="linenos">177</span></a>
+</span><span id="StateHandler-178"><a href="#StateHandler-178"><span class="linenos">178</span></a><span class="sd">        For our application, this function is primarily used to draw Pygame</span>
+</span><span id="StateHandler-179"><a href="#StateHandler-179"><span class="linenos">179</span></a><span class="sd">        GUI components onto the screen for the current state, since they only</span>
+</span><span id="StateHandler-180"><a href="#StateHandler-180"><span class="linenos">180</span></a><span class="sd">        need to be registered with the `UIManager` once.</span>
+</span><span id="StateHandler-181"><a href="#StateHandler-181"><span class="linenos">181</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandler-182"><a href="#StateHandler-182"><span class="linenos">182</span></a>        <span class="k">pass</span>
+</span><span id="StateHandler-183"><a href="#StateHandler-183"><span class="linenos">183</span></a>
+</span><span id="StateHandler-184"><a href="#StateHandler-184"><span class="linenos">184</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
+</span><span id="StateHandler-185"><a href="#StateHandler-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler-186"><a href="#StateHandler-186"><span class="linenos">186</span></a><span class="sd">        This function is invoked iteratively at a fixed frame</span>
+</span><span id="StateHandler-187"><a href="#StateHandler-187"><span class="linenos">187</span></a><span class="sd">        rate&amp;mdash;though this rate should be assumed to be</span>
+</span><span id="StateHandler-188"><a href="#StateHandler-188"><span class="linenos">188</span></a><span class="sd">        unknown&amp;mdash;for the entire duration that the state machine remains</span>
+</span><span id="StateHandler-189"><a href="#StateHandler-189"><span class="linenos">189</span></a><span class="sd">        in the current state. It is always invoked after `on_enter()` and</span>
+</span><span id="StateHandler-190"><a href="#StateHandler-190"><span class="linenos">190</span></a><span class="sd">        before `on_exit()`, although it may be executed many times between each</span>
+</span><span id="StateHandler-191"><a href="#StateHandler-191"><span class="linenos">191</span></a><span class="sd">        of those invocations.</span>
+</span><span id="StateHandler-192"><a href="#StateHandler-192"><span class="linenos">192</span></a>
+</span><span id="StateHandler-193"><a href="#StateHandler-193"><span class="linenos">193</span></a><span class="sd">        For our application, this function is primarily used to draw the game</span>
+</span><span id="StateHandler-194"><a href="#StateHandler-194"><span class="linenos">194</span></a><span class="sd">        scene and process user input.</span>
+</span><span id="StateHandler-195"><a href="#StateHandler-195"><span class="linenos">195</span></a>
+</span><span id="StateHandler-196"><a href="#StateHandler-196"><span class="linenos">196</span></a><span class="sd">        This function should return the next state that the state machine</span>
+</span><span id="StateHandler-197"><a href="#StateHandler-197"><span class="linenos">197</span></a><span class="sd">        should enter. If the state machine should remain in the same state, it</span>
+</span><span id="StateHandler-198"><a href="#StateHandler-198"><span class="linenos">198</span></a><span class="sd">        should return `context.get_state()`.</span>
+</span><span id="StateHandler-199"><a href="#StateHandler-199"><span class="linenos">199</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandler-200"><a href="#StateHandler-200"><span class="linenos">200</span></a>        <span class="k">pass</span>
+</span><span id="StateHandler-201"><a href="#StateHandler-201"><span class="linenos">201</span></a>
+</span><span id="StateHandler-202"><a href="#StateHandler-202"><span class="linenos">202</span></a>    <span class="k">def</span> <span class="nf">on_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="StateHandler-203"><a href="#StateHandler-203"><span class="linenos">203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler-204"><a href="#StateHandler-204"><span class="linenos">204</span></a><span class="sd">        This function is invoked at the falling edge of a state transition. It</span>
+</span><span id="StateHandler-205"><a href="#StateHandler-205"><span class="linenos">205</span></a><span class="sd">        operates just like `on_enter()`, except it is executed when the current</span>
+</span><span id="StateHandler-206"><a href="#StateHandler-206"><span class="linenos">206</span></a><span class="sd">        state indicates that it would like to transition to another state. This</span>
+</span><span id="StateHandler-207"><a href="#StateHandler-207"><span class="linenos">207</span></a><span class="sd">        allows the state handler to clean up anything as necessary.</span>
+</span><span id="StateHandler-208"><a href="#StateHandler-208"><span class="linenos">208</span></a>
+</span><span id="StateHandler-209"><a href="#StateHandler-209"><span class="linenos">209</span></a><span class="sd">        For our application, this function is primarily used to reset</span>
+</span><span id="StateHandler-210"><a href="#StateHandler-210"><span class="linenos">210</span></a><span class="sd">        Pygame GUI for each screen, as well as any state that should not carry</span>
+</span><span id="StateHandler-211"><a href="#StateHandler-211"><span class="linenos">211</span></a><span class="sd">        over the next time this state is entered.</span>
+</span><span id="StateHandler-212"><a href="#StateHandler-212"><span class="linenos">212</span></a>
+</span><span id="StateHandler-213"><a href="#StateHandler-213"><span class="linenos">213</span></a><span class="sd">        By default, `on_exit()` will clear the Pygame GUI, so individual state</span>
+</span><span id="StateHandler-214"><a href="#StateHandler-214"><span class="linenos">214</span></a><span class="sd">        handlers need only register their components on enter; they don&#39;t have</span>
+</span><span id="StateHandler-215"><a href="#StateHandler-215"><span class="linenos">215</span></a><span class="sd">        to worry about de-registering them on exit. Note, of course, that this</span>
+</span><span id="StateHandler-216"><a href="#StateHandler-216"><span class="linenos">216</span></a><span class="sd">        function may be overridden and thus not execute if the child function</span>
+</span><span id="StateHandler-217"><a href="#StateHandler-217"><span class="linenos">217</span></a><span class="sd">        does not make a call to `super().on_exit()`.</span>
+</span><span id="StateHandler-218"><a href="#StateHandler-218"><span class="linenos">218</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandler-219"><a href="#StateHandler-219"><span class="linenos">219</span></a>        <span class="n">gui_manager</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_gui</span><span class="p">()</span>
+</span><span id="StateHandler-220"><a href="#StateHandler-220"><span class="linenos">220</span></a>        <span class="n">gui_manager</span><span class="o">.</span><span class="n">clear_and_reset</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -857,11 +1006,11 @@ lifetime.</p>
 
     </div>
     <a class="headerlink" href="#StateHandler.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler.__init__-138"><a href="#StateHandler.__init__-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">):</span>
-</span><span id="StateHandler.__init__-139"><a href="#StateHandler.__init__-139"><span class="linenos">139</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler.__init__-140"><a href="#StateHandler.__init__-140"><span class="linenos">140</span></a><span class="sd">        Construct a new `StateHandler`.</span>
-</span><span id="StateHandler.__init__-141"><a href="#StateHandler.__init__-141"><span class="linenos">141</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandler.__init__-142"><a href="#StateHandler.__init__-142"><span class="linenos">142</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler.__init__-165"><a href="#StateHandler.__init__-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">):</span>
+</span><span id="StateHandler.__init__-166"><a href="#StateHandler.__init__-166"><span class="linenos">166</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler.__init__-167"><a href="#StateHandler.__init__-167"><span class="linenos">167</span></a><span class="sd">        Construct a new `StateHandler`.</span>
+</span><span id="StateHandler.__init__-168"><a href="#StateHandler.__init__-168"><span class="linenos">168</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandler.__init__-169"><a href="#StateHandler.__init__-169"><span class="linenos">169</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -881,18 +1030,18 @@ lifetime.</p>
 
     </div>
     <a class="headerlink" href="#StateHandler.on_enter"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler.on_enter-144"><a href="#StateHandler.on_enter-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="nf">on_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="StateHandler.on_enter-145"><a href="#StateHandler.on_enter-145"><span class="linenos">145</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler.on_enter-146"><a href="#StateHandler.on_enter-146"><span class="linenos">146</span></a><span class="sd">        This function is invoked at the rising edge of a state transition. A</span>
-</span><span id="StateHandler.on_enter-147"><a href="#StateHandler.on_enter-147"><span class="linenos">147</span></a><span class="sd">        state transition occurs either when the main loop begins, or after a</span>
-</span><span id="StateHandler.on_enter-148"><a href="#StateHandler.on_enter-148"><span class="linenos">148</span></a><span class="sd">        previous state yielded its control of the state machine. It is invoked</span>
-</span><span id="StateHandler.on_enter-149"><a href="#StateHandler.on_enter-149"><span class="linenos">149</span></a><span class="sd">        *before* `process()` exactly once per state transition.</span>
-</span><span id="StateHandler.on_enter-150"><a href="#StateHandler.on_enter-150"><span class="linenos">150</span></a>
-</span><span id="StateHandler.on_enter-151"><a href="#StateHandler.on_enter-151"><span class="linenos">151</span></a><span class="sd">        For our application, this function is primarily used to draw Pygame</span>
-</span><span id="StateHandler.on_enter-152"><a href="#StateHandler.on_enter-152"><span class="linenos">152</span></a><span class="sd">        GUI components onto the screen for the current state, since they only</span>
-</span><span id="StateHandler.on_enter-153"><a href="#StateHandler.on_enter-153"><span class="linenos">153</span></a><span class="sd">        need to be registered with the `UIManager` once.</span>
-</span><span id="StateHandler.on_enter-154"><a href="#StateHandler.on_enter-154"><span class="linenos">154</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandler.on_enter-155"><a href="#StateHandler.on_enter-155"><span class="linenos">155</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler.on_enter-171"><a href="#StateHandler.on_enter-171"><span class="linenos">171</span></a>    <span class="k">def</span> <span class="nf">on_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="StateHandler.on_enter-172"><a href="#StateHandler.on_enter-172"><span class="linenos">172</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler.on_enter-173"><a href="#StateHandler.on_enter-173"><span class="linenos">173</span></a><span class="sd">        This function is invoked at the rising edge of a state transition. A</span>
+</span><span id="StateHandler.on_enter-174"><a href="#StateHandler.on_enter-174"><span class="linenos">174</span></a><span class="sd">        state transition occurs either when the main loop begins, or after a</span>
+</span><span id="StateHandler.on_enter-175"><a href="#StateHandler.on_enter-175"><span class="linenos">175</span></a><span class="sd">        previous state yielded its control of the state machine. It is invoked</span>
+</span><span id="StateHandler.on_enter-176"><a href="#StateHandler.on_enter-176"><span class="linenos">176</span></a><span class="sd">        *before* `process()` exactly once per state transition.</span>
+</span><span id="StateHandler.on_enter-177"><a href="#StateHandler.on_enter-177"><span class="linenos">177</span></a>
+</span><span id="StateHandler.on_enter-178"><a href="#StateHandler.on_enter-178"><span class="linenos">178</span></a><span class="sd">        For our application, this function is primarily used to draw Pygame</span>
+</span><span id="StateHandler.on_enter-179"><a href="#StateHandler.on_enter-179"><span class="linenos">179</span></a><span class="sd">        GUI components onto the screen for the current state, since they only</span>
+</span><span id="StateHandler.on_enter-180"><a href="#StateHandler.on_enter-180"><span class="linenos">180</span></a><span class="sd">        need to be registered with the `UIManager` once.</span>
+</span><span id="StateHandler.on_enter-181"><a href="#StateHandler.on_enter-181"><span class="linenos">181</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandler.on_enter-182"><a href="#StateHandler.on_enter-182"><span class="linenos">182</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -919,23 +1068,23 @@ need to be registered with the <code>UIManager</code> once.</p>
 
     </div>
     <a class="headerlink" href="#StateHandler.process"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler.process-157"><a href="#StateHandler.process-157"><span class="linenos">157</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
-</span><span id="StateHandler.process-158"><a href="#StateHandler.process-158"><span class="linenos">158</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler.process-159"><a href="#StateHandler.process-159"><span class="linenos">159</span></a><span class="sd">        This function is invoked iteratively at a fixed frame</span>
-</span><span id="StateHandler.process-160"><a href="#StateHandler.process-160"><span class="linenos">160</span></a><span class="sd">        rate&amp;mdash;though this rate should be assumed to be</span>
-</span><span id="StateHandler.process-161"><a href="#StateHandler.process-161"><span class="linenos">161</span></a><span class="sd">        unknown&amp;mdash;for the entire duration that the state machine remains</span>
-</span><span id="StateHandler.process-162"><a href="#StateHandler.process-162"><span class="linenos">162</span></a><span class="sd">        in the current state. It is always invoked after `on_enter()` and</span>
-</span><span id="StateHandler.process-163"><a href="#StateHandler.process-163"><span class="linenos">163</span></a><span class="sd">        before `on_exit()`, although it may be executed many times between each</span>
-</span><span id="StateHandler.process-164"><a href="#StateHandler.process-164"><span class="linenos">164</span></a><span class="sd">        of those invocations.</span>
-</span><span id="StateHandler.process-165"><a href="#StateHandler.process-165"><span class="linenos">165</span></a>
-</span><span id="StateHandler.process-166"><a href="#StateHandler.process-166"><span class="linenos">166</span></a><span class="sd">        For our application, this function is primarily used to draw the game</span>
-</span><span id="StateHandler.process-167"><a href="#StateHandler.process-167"><span class="linenos">167</span></a><span class="sd">        scene and process user input.</span>
-</span><span id="StateHandler.process-168"><a href="#StateHandler.process-168"><span class="linenos">168</span></a>
-</span><span id="StateHandler.process-169"><a href="#StateHandler.process-169"><span class="linenos">169</span></a><span class="sd">        This function should return the next state that the state machine</span>
-</span><span id="StateHandler.process-170"><a href="#StateHandler.process-170"><span class="linenos">170</span></a><span class="sd">        should enter. If the state machine should remain in the same state, it</span>
-</span><span id="StateHandler.process-171"><a href="#StateHandler.process-171"><span class="linenos">171</span></a><span class="sd">        should return `context.get_state()`.</span>
-</span><span id="StateHandler.process-172"><a href="#StateHandler.process-172"><span class="linenos">172</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandler.process-173"><a href="#StateHandler.process-173"><span class="linenos">173</span></a>        <span class="k">pass</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler.process-184"><a href="#StateHandler.process-184"><span class="linenos">184</span></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GameState</span><span class="p">:</span>
+</span><span id="StateHandler.process-185"><a href="#StateHandler.process-185"><span class="linenos">185</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler.process-186"><a href="#StateHandler.process-186"><span class="linenos">186</span></a><span class="sd">        This function is invoked iteratively at a fixed frame</span>
+</span><span id="StateHandler.process-187"><a href="#StateHandler.process-187"><span class="linenos">187</span></a><span class="sd">        rate&amp;mdash;though this rate should be assumed to be</span>
+</span><span id="StateHandler.process-188"><a href="#StateHandler.process-188"><span class="linenos">188</span></a><span class="sd">        unknown&amp;mdash;for the entire duration that the state machine remains</span>
+</span><span id="StateHandler.process-189"><a href="#StateHandler.process-189"><span class="linenos">189</span></a><span class="sd">        in the current state. It is always invoked after `on_enter()` and</span>
+</span><span id="StateHandler.process-190"><a href="#StateHandler.process-190"><span class="linenos">190</span></a><span class="sd">        before `on_exit()`, although it may be executed many times between each</span>
+</span><span id="StateHandler.process-191"><a href="#StateHandler.process-191"><span class="linenos">191</span></a><span class="sd">        of those invocations.</span>
+</span><span id="StateHandler.process-192"><a href="#StateHandler.process-192"><span class="linenos">192</span></a>
+</span><span id="StateHandler.process-193"><a href="#StateHandler.process-193"><span class="linenos">193</span></a><span class="sd">        For our application, this function is primarily used to draw the game</span>
+</span><span id="StateHandler.process-194"><a href="#StateHandler.process-194"><span class="linenos">194</span></a><span class="sd">        scene and process user input.</span>
+</span><span id="StateHandler.process-195"><a href="#StateHandler.process-195"><span class="linenos">195</span></a>
+</span><span id="StateHandler.process-196"><a href="#StateHandler.process-196"><span class="linenos">196</span></a><span class="sd">        This function should return the next state that the state machine</span>
+</span><span id="StateHandler.process-197"><a href="#StateHandler.process-197"><span class="linenos">197</span></a><span class="sd">        should enter. If the state machine should remain in the same state, it</span>
+</span><span id="StateHandler.process-198"><a href="#StateHandler.process-198"><span class="linenos">198</span></a><span class="sd">        should return `context.get_state()`.</span>
+</span><span id="StateHandler.process-199"><a href="#StateHandler.process-199"><span class="linenos">199</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandler.process-200"><a href="#StateHandler.process-200"><span class="linenos">200</span></a>        <span class="k">pass</span>
 </span></pre></div>
 
 
@@ -967,25 +1116,25 @@ should return <code>context.get_state()</code>.</p>
 
     </div>
     <a class="headerlink" href="#StateHandler.on_exit"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler.on_exit-175"><a href="#StateHandler.on_exit-175"><span class="linenos">175</span></a>    <span class="k">def</span> <span class="nf">on_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="StateHandler.on_exit-176"><a href="#StateHandler.on_exit-176"><span class="linenos">176</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="StateHandler.on_exit-177"><a href="#StateHandler.on_exit-177"><span class="linenos">177</span></a><span class="sd">        This function is invoked at the falling edge of a state transition. It</span>
-</span><span id="StateHandler.on_exit-178"><a href="#StateHandler.on_exit-178"><span class="linenos">178</span></a><span class="sd">        operates just like `on_enter()`, except it is executed when the current</span>
-</span><span id="StateHandler.on_exit-179"><a href="#StateHandler.on_exit-179"><span class="linenos">179</span></a><span class="sd">        state indicates that it would like to transition to another state. This</span>
-</span><span id="StateHandler.on_exit-180"><a href="#StateHandler.on_exit-180"><span class="linenos">180</span></a><span class="sd">        allows the state handler to clean up anything as necessary.</span>
-</span><span id="StateHandler.on_exit-181"><a href="#StateHandler.on_exit-181"><span class="linenos">181</span></a>
-</span><span id="StateHandler.on_exit-182"><a href="#StateHandler.on_exit-182"><span class="linenos">182</span></a><span class="sd">        For our application, this function is primarily used to reset</span>
-</span><span id="StateHandler.on_exit-183"><a href="#StateHandler.on_exit-183"><span class="linenos">183</span></a><span class="sd">        Pygame GUI for each screen, as well as any state that should not carry</span>
-</span><span id="StateHandler.on_exit-184"><a href="#StateHandler.on_exit-184"><span class="linenos">184</span></a><span class="sd">        over the next time this state is entered.</span>
-</span><span id="StateHandler.on_exit-185"><a href="#StateHandler.on_exit-185"><span class="linenos">185</span></a>
-</span><span id="StateHandler.on_exit-186"><a href="#StateHandler.on_exit-186"><span class="linenos">186</span></a><span class="sd">        By default, `on_exit()` will clear the Pygame GUI, so individual state</span>
-</span><span id="StateHandler.on_exit-187"><a href="#StateHandler.on_exit-187"><span class="linenos">187</span></a><span class="sd">        handlers need only register their components on enter; they don&#39;t have</span>
-</span><span id="StateHandler.on_exit-188"><a href="#StateHandler.on_exit-188"><span class="linenos">188</span></a><span class="sd">        to worry about de-registering them on exit. Note, of course, that this</span>
-</span><span id="StateHandler.on_exit-189"><a href="#StateHandler.on_exit-189"><span class="linenos">189</span></a><span class="sd">        function may be overridden and thus not execute if the child function</span>
-</span><span id="StateHandler.on_exit-190"><a href="#StateHandler.on_exit-190"><span class="linenos">190</span></a><span class="sd">        does not make a call to `super().on_exit()`.</span>
-</span><span id="StateHandler.on_exit-191"><a href="#StateHandler.on_exit-191"><span class="linenos">191</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="StateHandler.on_exit-192"><a href="#StateHandler.on_exit-192"><span class="linenos">192</span></a>        <span class="n">gui_manager</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_gui</span><span class="p">()</span>
-</span><span id="StateHandler.on_exit-193"><a href="#StateHandler.on_exit-193"><span class="linenos">193</span></a>        <span class="n">gui_manager</span><span class="o">.</span><span class="n">clear_and_reset</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="StateHandler.on_exit-202"><a href="#StateHandler.on_exit-202"><span class="linenos">202</span></a>    <span class="k">def</span> <span class="nf">on_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">StateHandlerContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="StateHandler.on_exit-203"><a href="#StateHandler.on_exit-203"><span class="linenos">203</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="StateHandler.on_exit-204"><a href="#StateHandler.on_exit-204"><span class="linenos">204</span></a><span class="sd">        This function is invoked at the falling edge of a state transition. It</span>
+</span><span id="StateHandler.on_exit-205"><a href="#StateHandler.on_exit-205"><span class="linenos">205</span></a><span class="sd">        operates just like `on_enter()`, except it is executed when the current</span>
+</span><span id="StateHandler.on_exit-206"><a href="#StateHandler.on_exit-206"><span class="linenos">206</span></a><span class="sd">        state indicates that it would like to transition to another state. This</span>
+</span><span id="StateHandler.on_exit-207"><a href="#StateHandler.on_exit-207"><span class="linenos">207</span></a><span class="sd">        allows the state handler to clean up anything as necessary.</span>
+</span><span id="StateHandler.on_exit-208"><a href="#StateHandler.on_exit-208"><span class="linenos">208</span></a>
+</span><span id="StateHandler.on_exit-209"><a href="#StateHandler.on_exit-209"><span class="linenos">209</span></a><span class="sd">        For our application, this function is primarily used to reset</span>
+</span><span id="StateHandler.on_exit-210"><a href="#StateHandler.on_exit-210"><span class="linenos">210</span></a><span class="sd">        Pygame GUI for each screen, as well as any state that should not carry</span>
+</span><span id="StateHandler.on_exit-211"><a href="#StateHandler.on_exit-211"><span class="linenos">211</span></a><span class="sd">        over the next time this state is entered.</span>
+</span><span id="StateHandler.on_exit-212"><a href="#StateHandler.on_exit-212"><span class="linenos">212</span></a>
+</span><span id="StateHandler.on_exit-213"><a href="#StateHandler.on_exit-213"><span class="linenos">213</span></a><span class="sd">        By default, `on_exit()` will clear the Pygame GUI, so individual state</span>
+</span><span id="StateHandler.on_exit-214"><a href="#StateHandler.on_exit-214"><span class="linenos">214</span></a><span class="sd">        handlers need only register their components on enter; they don&#39;t have</span>
+</span><span id="StateHandler.on_exit-215"><a href="#StateHandler.on_exit-215"><span class="linenos">215</span></a><span class="sd">        to worry about de-registering them on exit. Note, of course, that this</span>
+</span><span id="StateHandler.on_exit-216"><a href="#StateHandler.on_exit-216"><span class="linenos">216</span></a><span class="sd">        function may be overridden and thus not execute if the child function</span>
+</span><span id="StateHandler.on_exit-217"><a href="#StateHandler.on_exit-217"><span class="linenos">217</span></a><span class="sd">        does not make a call to `super().on_exit()`.</span>
+</span><span id="StateHandler.on_exit-218"><a href="#StateHandler.on_exit-218"><span class="linenos">218</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="StateHandler.on_exit-219"><a href="#StateHandler.on_exit-219"><span class="linenos">219</span></a>        <span class="n">gui_manager</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_gui</span><span class="p">()</span>
+</span><span id="StateHandler.on_exit-220"><a href="#StateHandler.on_exit-220"><span class="linenos">220</span></a>        <span class="n">gui_manager</span><span class="o">.</span><span class="n">clear_and_reset</span><span class="p">()</span>
 </span></pre></div>
 
 
