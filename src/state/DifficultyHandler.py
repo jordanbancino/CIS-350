@@ -1,3 +1,12 @@
+"""
+This handler handles the `DIFFICULTY` state, which allows the user to select
+the difficulty of the game in math mode. The game offers four difficulties:
+
+- Easy
+- Medium
+- Hard
+- Infinite
+"""
 import pygame
 from state.MainMenuHandler import Button
 import game_state
@@ -9,16 +18,16 @@ class DifficultyHandler(game_state.StateHandler):
         super().__init__(context)
 
         self._image_border = load_asset('menu_border.png')
-        self.button = load_asset('button.png')
-        self.infinity = load_asset("infinity.png")
-        self.title_font = pygame.font.SysFont("consolas", 80)
+        self._button = load_asset('button.png')
+        self._infinity = load_asset("infinity.png")
+        self._title_font = pygame.font.SysFont("consolas", 80)
 
         window = context.get_window()
         width = window.get_width()
         height = window.get_height()
 
-        self.infinity_image = pygame.transform.scale(
-            self.infinity, (100, 50))
+        self._infinity_image = pygame.transform.scale(
+            self._infinity, (100, 50))
         self._image_border = pygame.transform.scale(
             self._image_border, (width, height))
 
@@ -29,10 +38,10 @@ class DifficultyHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        easy_button = Button(125, 300, self.button, "EASY")
-        medium_button = Button(350, 300, self.button, "MEDIUM")
-        hard_button = Button(575, 300, self.button, "HARD")
-        infinite_button = Button(350, 175, self.button, "")
+        easy_button = Button(125, 300, self._button, "EASY")
+        medium_button = Button(350, 300, self._button, "MEDIUM")
+        hard_button = Button(575, 300, self._button, "HARD")
+        infinite_button = Button(350, 175, self._button, "")
         buttons = [easy_button, medium_button, hard_button, infinite_button]
 
         window.fill((100, 100, 100))  # Gray
@@ -41,9 +50,9 @@ class DifficultyHandler(game_state.StateHandler):
         for button in buttons:
             button.blit(window)
 
-        difficulty = self.title_font.render("DIFFICULTY", True, "white")
+        difficulty = self._title_font.render("DIFFICULTY", True, "white")
 
-        window.blit(self.infinity_image, (400, 200))
+        window.blit(self._infinity_image, (400, 200))
         window.blit(difficulty, (((window.get_width() / 2) -
                                   (difficulty.get_width() / 2)), 75))
 

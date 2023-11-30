@@ -1,3 +1,9 @@
+"""
+This handler handles the `LEVEL_PAUSE` state, which is invoked by the user
+during game play and allows the user to pause the state of the game. This
+handler specifically displays the pause screen and allows the user to resume
+or abort the current level.
+"""
 import pygame
 
 import game_state
@@ -8,10 +14,10 @@ from state.MainMenuHandler import Button
 class LevelPauseHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
-        self.title_font = pygame.font.SysFont("consolas", 80)
+        self._title_font = pygame.font.SysFont("consolas", 80)
 
         self._border_image = load_asset('menu_border.png')
-        self.button = load_asset('button.png')
+        self._button = load_asset('button.png')
 
         window = context.get_window()
         width = window.get_width()
@@ -26,16 +32,16 @@ class LevelPauseHandler(game_state.StateHandler):
 
         window = context.get_window()
 
-        resume_button = Button(125, 300, self.button, "RESUME")
-        back_button = Button(350, 300, self.button, "BACK")
-        quit_button = Button(575, 300, self.button, "QUIT")
+        resume_button = Button(125, 300, self._button, "RESUME")
+        back_button = Button(350, 300, self._button, "BACK")
+        quit_button = Button(575, 300, self._button, "QUIT")
         buttons = [resume_button, back_button, quit_button]
 
         window.fill((100, 100, 100))
         window.blit(self._border_image, (0, 0))
 
         # antialias makes text look better
-        pause_info = self.title_font.render(
+        pause_info = self._title_font.render(
             "PAUSED", True, "white")
 
         for button in buttons:

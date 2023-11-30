@@ -1,3 +1,7 @@
+"""
+This handler handles the `GAME_MODE` state, which allows the user to select
+either math mode or flashcard mode.
+"""
 import pygame
 from state.MainMenuHandler import Button
 import game_state
@@ -9,8 +13,8 @@ class GameModeHandler(game_state.StateHandler):
         super().__init__(context)
 
         self._image_border = load_asset('menu_border.png')
-        self.button = load_asset('button.png')
-        self.title_font = pygame.font.SysFont("consolas", 80)
+        self._button = load_asset('button.png')
+        self._title_font = pygame.font.SysFont("consolas", 80)
         self._font = pygame.font.SysFont("consolas", 50)
 
         window = context.get_window()
@@ -27,8 +31,8 @@ class GameModeHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        math_button = Button(225, 300, self.button, "MATH")
-        card_button = Button(475, 300, self.button, "CARD")
+        math_button = Button(225, 300, self._button, "MATH")
+        card_button = Button(475, 300, self._button, "CARD")
         buttons = [math_button, card_button]
 
         window.fill((100, 100, 100))  # Gray
@@ -37,7 +41,7 @@ class GameModeHandler(game_state.StateHandler):
         for button in buttons:
             button.blit(window)
 
-        game_mode = self.title_font.render("GAME MODE", True, "white")
+        game_mode = self._title_font.render("GAME MODE", True, "white")
 
         window.blit(game_mode, (((window.get_width() / 2) -
                                  (game_mode.get_width() / 2)), 75))

@@ -17,22 +17,26 @@ class Button:
     """
 
     def __init__(self, x, y, image, text):
+        """
+        Create a new Button using `image` as the background and `text` as the
+        text.
+        """
         self._image = pygame.transform.scale(image, (200, 100))
         self._rect = self._image.get_rect()
         self._rect.topleft = (x, y)
         self._clicked = False
-        self.button_font = pygame.font.SysFont("consolas", 50)
-        self.text = self.button_font.render(text, True, "white")
+        self._button_font = pygame.font.SysFont("consolas", 50)
+        self._text = self._button_font.render(text, True, "white")
 
     def blit(self, window):
         """
         Draw the button image on the screen.
         """
         window.blit(self._image, (self._rect.x, self._rect.y))
-        window.blit(self.text, (
-            self._rect.x + 100 - (self.text.get_width() / 2),
+        window.blit(self._text, (
+            self._rect.x + 100 - (self._text.get_width() / 2),
             self._rect.y + 55 -
-            (self.text.get_height() / 2)))
+            (self._text.get_height() / 2)))
 
     def dispatch_event(self, event) -> bool:
         """
@@ -60,8 +64,8 @@ class MainMenuHandler(game_state.StateHandler):
         super().__init__(context)
 
         self._image_border = load_asset('menu_border.png')
-        self.button = load_asset('button.png')
-        self.logo = load_asset('Arithman Logo.png')
+        self._button = load_asset('button.png')
+        self._logo = load_asset('Arithman Logo.png')
 
         window = context.get_window()
         width = window.get_width()
@@ -77,14 +81,14 @@ class MainMenuHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        start_button = Button(125, 300, self.button, "START")
-        score_button = Button(350, 300, self.button, "SCORE")
-        quit_button = Button(575, 300, self.button, "QUIT")
+        start_button = Button(125, 300, self._button, "START")
+        score_button = Button(350, 300, self._button, "SCORE")
+        quit_button = Button(575, 300, self._button, "QUIT")
         buttons = [start_button, score_button, quit_button]
 
         window.fill((100, 100, 100))  # Gray
         window.blit(self._image_border, (0, 0))
-        window.blit(self.logo, (200, 100))
+        window.blit(self._logo, (200, 100))
 
         for button in buttons:
             button.blit(window)

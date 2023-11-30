@@ -16,7 +16,7 @@ from src import game_state
 from arg import load_asset
 
 
-def get_cards():
+def _get_cards():
     path = os.path.join("assets", "flashcards.txt")
     file = open(path, "r")
     cards = {}
@@ -36,7 +36,7 @@ def get_cards():
 class LevelPlayHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
-        self._qa = get_cards()
+        self._qa = _get_cards()
         self._order = []
         self._qa_cnt = len(self._qa.keys())  # total count of QAs
         self._qa_num = 0  # number of current QA
@@ -160,7 +160,7 @@ class LevelPlayHandler(game_state.StateHandler):
             self._time = context.get_storage()['last_play_time']
         self._clock.tick(60) / 1000  # resets the tick
 
-    def draw_scene(self, context):
+    def _draw_scene(self, context):
         dt = context.get_delta()
 
         d1 = self._image_background_day_pos1.x
@@ -232,7 +232,7 @@ class LevelPlayHandler(game_state.StateHandler):
             # countdown
             self._countdown_time -= self._clock.tick(60) / 1000
 
-    def draw_ui(self, context):
+    def _draw_ui(self, context):
         window = context.get_window()
         # antialias makes text look better
         pause_info = self._font.render(
@@ -270,7 +270,7 @@ class LevelPlayHandler(game_state.StateHandler):
                         ((window.get_width() - question.get_width() * 2) / 3,
                          450))
 
-    def draw_character(self, context):
+    def _draw_character(self, context):
         window = context.get_window()
         dt = context.get_delta()
 
@@ -293,9 +293,9 @@ class LevelPlayHandler(game_state.StateHandler):
             -> game_state.GameState:
         super().process(context)
 
-        self.draw_scene(context)
-        self.draw_character(context)
-        self.draw_ui(context)
+        self._draw_scene(context)
+        self._draw_character(context)
+        self._draw_ui(context)
 
         next_state = game_state.GameState.LEVEL_PLAY
         window = context.get_window()

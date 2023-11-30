@@ -19,10 +19,10 @@ from state.MainMenuHandler import Button
 class LevelEndHandler(game_state.StateHandler):
     def __init__(self, context: game_state.StateHandlerContext):
         super().__init__(context)
-        self.title_font = pygame.font.SysFont("consolas", 80)
+        self._title_font = pygame.font.SysFont("consolas", 80)
         self._font = pygame.font.SysFont("consolas", 50)
         self._border_image = load_asset('menu_border.png')
-        self.button = load_asset('button.png')
+        self._button = load_asset('button.png')
 
         window = context.get_window()
         width = window.get_width()
@@ -88,13 +88,13 @@ class LevelEndHandler(game_state.StateHandler):
 
         window.blit(self._border_image, (0, 0))
 
-        reset_button = Button(125, 300, self.button, "RESET")
-        back_button = Button(350, 300, self.button, "BACK")
-        quit_button = Button(575, 300, self.button, "QUIT")
+        reset_button = Button(125, 300, self._button, "RESET")
+        back_button = Button(350, 300, self._button, "BACK")
+        quit_button = Button(575, 300, self._button, "QUIT")
 
         buttons = [reset_button, back_button, quit_button]
 
-        gameover = self.title_font.render("GAME OVER", True, "white")
+        gameover = self._title_font.render("GAME OVER", True, "white")
 
         end_message = self._font.render(str(context.get_storage()['end_game']),
                                         True, "white")

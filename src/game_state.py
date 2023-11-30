@@ -45,6 +45,8 @@ class GameState:
     """The game is displaying the recent scores"""
 
     GAME_MODE = 7
+    """The game is displaying the mode select screen, which allows users to
+    select between math and flashcard mode."""
 
 
 class StateHandlerContext:

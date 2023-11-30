@@ -1,3 +1,10 @@
+"""
+This handler handles the `SCORE` state, in which the game presents the user
+with the top 5 and most recent 5 scores for infinite math mode and flashcard
+mode. The scores include a numerical component that represents how many
+questions were answered successfully, as well as the amount of time that
+elapsed. Higher scores and higher times are better.
+"""
 import time
 
 import pygame
@@ -13,8 +20,7 @@ class ScoreHandler(game_state.StateHandler):
         super().__init__(context)
 
         self._image_border = load_asset('menu_border.png')
-        self.button = load_asset('button.png')
-        self.button = load_asset('button.png')
+        self._button = load_asset('button.png')
 
         window = context.get_window()
         width = window.get_width()
@@ -26,16 +32,16 @@ class ScoreHandler(game_state.StateHandler):
         self._data = user_data.get().snapshot()
 
     @staticmethod
-    def cell(tot_width, n_cols, width, col=1, off=0):
+    def _cell(tot_width, n_cols, width, col=1, off=0):
         return ((tot_width / (n_cols * 2)) * col) - (width / 2) + off
 
     @staticmethod
-    def center(w1, w2):
-        return ScoreHandler.cell(w1, 1, w2)
+    def _center(w1, w2):
+        return ScoreHandler._cell(w1, 1, w2)
 
-    def make_closure(self, frame_wid, type_col, frame_off, row):
+    def _make_closure(self, frame_wid, type_col, frame_off, row):
         return lambda s: \
-            (self.cell(frame_wid, 4, s.get_width(), type_col, frame_off), row)
+            (self._cell(frame_wid, 4, s.get_width(), type_col, frame_off), row)
 
     def process(self, context: game_state.StateHandlerContext) \
             -> game_state.GameState:
@@ -44,7 +50,7 @@ class ScoreHandler(game_state.StateHandler):
         window = context.get_window()
 
         # create button instances
-        back_button = Button(350, 345, self.button, "BACK")
+        back_button = Button(350, 345, self._button, "BACK")
         buttons = [back_button]
 
         window.fill((100, 100, 100))  # Gray
@@ -58,19 +64,19 @@ class ScoreHandler(game_state.StateHandler):
 
         strings = [
             [55, "SCORES", (lambda s: (
-                self.center(window.get_width(), s.get_width()), 65))],
+                self._center(window.get_width(), s.get_width()), 65))],
             [50, "Math ∞", (lambda s: (
-                self.cell(frame_wid, 2, s.get_width(), 1, frame_off), 110))],
+                self._cell(frame_wid, 2, s.get_width(), 1, frame_off), 110))],
             [50, "Flashcards", (lambda s: (
-                self.cell(frame_wid, 2, s.get_width(), 3, frame_off), 110))],
+                self._cell(frame_wid, 2, s.get_width(), 3, frame_off), 110))],
             [30, "Top", (lambda s: (
-                self.cell(frame_wid, 4, s.get_width(), 1, frame_off), 160))],
+                self._cell(frame_wid, 4, s.get_width(), 1, frame_off), 160))],
             [30, "Recent", (lambda s: (
-                self.cell(frame_wid, 4, s.get_width(), 3, frame_off), 160))],
+                self._cell(frame_wid, 4, s.get_width(), 3, frame_off), 160))],
             [30, "Top", (lambda s: (
-                self.cell(frame_wid, 4, s.get_width(), 5, frame_off), 160))],
+                self._cell(frame_wid, 4, s.get_width(), 5, frame_off), 160))],
             [30, "Recent", (lambda s: (
-                self.cell(frame_wid, 4, s.get_width(), 7, frame_off), 160))]
+                self._cell(frame_wid, 4, s.get_width(), 7, frame_off), 160))]
         ]
 
         lines = [
@@ -91,8 +97,8 @@ class ScoreHandler(game_state.StateHandler):
                                                  time.gmtime(score['time']))
                         string = [30,
                                   f"{score['score']} ({time_str})",
-                                  self.make_closure(frame_wid, type_col,
-                                                    frame_off, row)]
+                                  self._make_closure(frame_wid, type_col,
+                                                     frame_off, row)]
                         strings.append(string)
                         row = row + 30
 
@@ -102,11 +108,11 @@ class ScoreHandler(game_state.StateHandler):
             strings.append(
                 [50, "No scores yet.",
                  (lambda s:
-                  (self.center(window.get_width(), s.get_width()), 220))])
+                  (self._center(window.get_width(), s.get_width()), 220))])
             strings.append(
                 [50, "Play the game first!",
                  (lambda s:
-                  (self.center(window.get_width(), s.get_width()), 270))])
+                  (self._center(window.get_width(), s.get_width()), 270))])
 
         for string in strings:
             font = pygame.font.SysFont('consolas', string[0])
