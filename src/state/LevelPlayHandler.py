@@ -146,7 +146,7 @@ class LevelPlayHandler(game_state.StateHandler):
             elif context.get_storage()['difficulty'] == "hard":
                 self._equation = arithmetic.generate_arithmetic("hard")
             elif context.get_storage()['difficulty'] == "infinite":
-                self._scored = False
+                self._scored = True
                 if self._score >= 10:
                     self._equation = arithmetic.generate_arithmetic("hard")
                 elif self._score >= 5:
