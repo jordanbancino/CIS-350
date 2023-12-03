@@ -357,8 +357,7 @@ class LevelPlayHandler(game_state.StateHandler):
                 if context.get_storage()['live_mode'] == "math":
                     try:
                         # checks if answer is correct
-                        if (float(event.text) == self._equation[1]
-                                and not self._jumping):
+                        if float(event.text) == self._equation[1]:
                             self._jumping = True
                         else:
                             self._jumping = False
@@ -373,19 +372,19 @@ class LevelPlayHandler(game_state.StateHandler):
                         # inputted wrong.
                         if context.get_storage()["difficulty"] != "infinite":
                             self._speed = 2
+                        self._jumping = False
                 else:
                     try:
                         # checks if answer is correct
-                        if (str(event.text).lower() == list(self._qa.values())[
-                            self._order[self._qa_num]]
-                                and not self._jumping):
+                        if str(event.text).lower() == list(self._qa.values())[self._order[self._qa_num]]:
                             self._jumping = True
                         else:
                             self._jumping = False
 
                     except ValueError:
-                        # If the user inputs an invalid number, just clear
-                        # the box.
+                        # If the user inputs an invalid answer, clear
+                        # the box and stop from jumping.
+                        self._jumping = False
                         pass
 
                 self._user_input.set_text("")  # reset textbox
