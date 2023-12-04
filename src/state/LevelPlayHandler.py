@@ -376,7 +376,9 @@ class LevelPlayHandler(game_state.StateHandler):
                 else:
                     try:
                         # checks if answer is correct
-                        if str(event.text).lower() == list(self._qa.values())[self._order[self._qa_num]]:
+                        qa_ans = list(
+                            self._qa.values())[self._order[self._qa_num]]
+                        if str(event.text).lower() == qa_ans:
                             self._jumping = True
                         else:
                             self._jumping = False

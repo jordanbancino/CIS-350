@@ -66,10 +66,12 @@ def recipe_coverage():
     cmd_exec(['coverage', 'run', '--append', 'src/arg.py'])
     recipe_covhtml()
 
+
 def recipe_test():
     print("Executing automated tests...")
     cmd_exec(['pytest', '--cov', 'tests'])
     recipe_covhtml()
+
 
 if not len(sys.argv):
     exclude = ['recipe_test', 'recipe_coverage', 'recipe_coverase']
