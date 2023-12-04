@@ -11,7 +11,6 @@ import pygame
 import pygame_gui
 import os
 import sys
-from pygame import mixer
 
 import user_data
 
