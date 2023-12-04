@@ -2,13 +2,16 @@ astroid==3.0.1
 colorama==0.4.6
 coverage==7.3.2
 dill==0.3.7
+iniconfig==2.0.0
 isort==5.12.0
 Jinja2==3.1.2
 MarkupSafe==2.1.3
 mccabe==0.7.0
+packaging==23.2
 pdoc==14.1.0
 Pillow==10.0.1
 platformdirs==3.11.0
+pluggy==1.3.0
 pycodestyle==2.11.1
 pygame==2.5.2
 pygame-ce==2.3.2
@@ -17,5 +20,7 @@ pygamegui==0.1.2
 Pygments==2.16.1
 pylint==3.0.1
 pylint-pyreverse==0.0.0
+pytest==7.4.3
+pytest-cov==4.1.0
 python-i18n==0.3.9
 tomlkit==0.12.1
