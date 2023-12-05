@@ -64,6 +64,7 @@ class LevelPauseHandler(game_state.StateHandler):
             elif button == resume_button:
                 return game_state.GameState.LEVEL_PLAY
             elif button == back_button:
+                context.get_storage()["reset"] = True
                 return game_state.GameState.MAIN_MENU
 
         return game_state.GameState.LEVEL_PAUSE

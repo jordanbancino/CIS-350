@@ -118,12 +118,15 @@ class LevelPlayHandler(game_state.StateHandler):
         self._obstacle_hitbox = pygame.Rect(950, self._obstacle_y,
                                             self._obstacle_width,
                                             self._obstacle_height)
+        context.get_storage()["reset"] = False
 
     def on_enter(self, context: game_state.StateHandlerContext) -> None:
         super().on_enter(context)
         window = context.get_window()
         input_width = 100
         input_height = 50
+        if context.get_storage()["reset"]:
+            self.__init__(context)
         if context.get_storage()['live_mode'] == "card":
             input_left = (window.get_width() - input_width) - 350
         else:
