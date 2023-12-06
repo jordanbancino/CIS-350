@@ -136,9 +136,10 @@ or abort the current level.</p>
 </span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="k">elif</span> <span class="n">button</span> <span class="o">==</span> <span class="n">resume_button</span><span class="p">:</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PLAY</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>            <span class="k">elif</span> <span class="n">button</span> <span class="o">==</span> <span class="n">back_button</span><span class="p">:</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">MAIN_MENU</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PAUSE</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>                <span class="n">context</span><span class="o">.</span><span class="n">get_storage</span><span class="p">()[</span><span class="s2">&quot;reset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">MAIN_MENU</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PAUSE</span>
 </span></pre></div>
 
 
@@ -207,9 +208,10 @@ or abort the current level.</p>
 </span><span id="LevelPauseHandler-65"><a href="#LevelPauseHandler-65"><span class="linenos">65</span></a>            <span class="k">elif</span> <span class="n">button</span> <span class="o">==</span> <span class="n">resume_button</span><span class="p">:</span>
 </span><span id="LevelPauseHandler-66"><a href="#LevelPauseHandler-66"><span class="linenos">66</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PLAY</span>
 </span><span id="LevelPauseHandler-67"><a href="#LevelPauseHandler-67"><span class="linenos">67</span></a>            <span class="k">elif</span> <span class="n">button</span> <span class="o">==</span> <span class="n">back_button</span><span class="p">:</span>
-</span><span id="LevelPauseHandler-68"><a href="#LevelPauseHandler-68"><span class="linenos">68</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">MAIN_MENU</span>
-</span><span id="LevelPauseHandler-69"><a href="#LevelPauseHandler-69"><span class="linenos">69</span></a>
-</span><span id="LevelPauseHandler-70"><a href="#LevelPauseHandler-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PAUSE</span>
+</span><span id="LevelPauseHandler-68"><a href="#LevelPauseHandler-68"><span class="linenos">68</span></a>                <span class="n">context</span><span class="o">.</span><span class="n">get_storage</span><span class="p">()[</span><span class="s2">&quot;reset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="LevelPauseHandler-69"><a href="#LevelPauseHandler-69"><span class="linenos">69</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">MAIN_MENU</span>
+</span><span id="LevelPauseHandler-70"><a href="#LevelPauseHandler-70"><span class="linenos">70</span></a>
+</span><span id="LevelPauseHandler-71"><a href="#LevelPauseHandler-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PAUSE</span>
 </span></pre></div>
 
 
@@ -304,9 +306,10 @@ lifetime.</p>
 </span><span id="LevelPauseHandler.process-65"><a href="#LevelPauseHandler.process-65"><span class="linenos">65</span></a>            <span class="k">elif</span> <span class="n">button</span> <span class="o">==</span> <span class="n">resume_button</span><span class="p">:</span>
 </span><span id="LevelPauseHandler.process-66"><a href="#LevelPauseHandler.process-66"><span class="linenos">66</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PLAY</span>
 </span><span id="LevelPauseHandler.process-67"><a href="#LevelPauseHandler.process-67"><span class="linenos">67</span></a>            <span class="k">elif</span> <span class="n">button</span> <span class="o">==</span> <span class="n">back_button</span><span class="p">:</span>
-</span><span id="LevelPauseHandler.process-68"><a href="#LevelPauseHandler.process-68"><span class="linenos">68</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">MAIN_MENU</span>
-</span><span id="LevelPauseHandler.process-69"><a href="#LevelPauseHandler.process-69"><span class="linenos">69</span></a>
-</span><span id="LevelPauseHandler.process-70"><a href="#LevelPauseHandler.process-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PAUSE</span>
+</span><span id="LevelPauseHandler.process-68"><a href="#LevelPauseHandler.process-68"><span class="linenos">68</span></a>                <span class="n">context</span><span class="o">.</span><span class="n">get_storage</span><span class="p">()[</span><span class="s2">&quot;reset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="LevelPauseHandler.process-69"><a href="#LevelPauseHandler.process-69"><span class="linenos">69</span></a>                <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">MAIN_MENU</span>
+</span><span id="LevelPauseHandler.process-70"><a href="#LevelPauseHandler.process-70"><span class="linenos">70</span></a>
+</span><span id="LevelPauseHandler.process-71"><a href="#LevelPauseHandler.process-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="n">game_state</span><span class="o">.</span><span class="n">GameState</span><span class="o">.</span><span class="n">LEVEL_PAUSE</span>
 </span></pre></div>
 
 
